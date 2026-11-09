@@ -1,6 +1,7 @@
 import {TextInput, Button} from "@mantine/core"
 import { useForm } from '@mantine/form';
 import { useNavigate } from 'react-router'; 
+import {isValidCallsign, normalizeCallsign} from "@/utils/radio"
 
 import "./ConfigScreen.css"
 
@@ -8,51 +9,18 @@ export default function ConfigScreen(props) {
 
     const navigate = useNavigate();
 
-    const isUSCallsign = (callsign) => {
-        
-        let chars = ["a", "k", "n", "w"];
-
-        for(let c of chars) {
-            if(callsign.startsWith(c)) {
-                return true
-            }
-        }
-
-        return false
-    }
-
     const form = useForm({
         initialValues:{
             callsign:"",
             grid:"",
-            
+        },
+        validate: {
+            callsign: (callsign) => {
+                let c = normalizeCallsign(callsign)
+                return isValidCallsign(c) ? null : "Invalid Callsign"
+            },
 
         },
-                    validate: {
-                callsign: (callsign) => {
-
-                    let msg = "Invalid Callsign"
-                    if(!callsign) {
-                        return msg;
-                    }
-
-                    //US validation is stricter
-                    let isUS = isUSCallsign(callsign)
-
-                    var validUS = false
-                    if(isUS) {
-                        validUS =  /^(?:A[A-L]|K[A-Z]?|N[A-Z]?|W[A-Z]?)[0-9][A-Z]{1,3}$/i.test(callsign)
-
-                        return validUS ? null : msg;
-                    }
-
-                    //if not US, do global validation
-                    let validGlobal = /^[a-zA-Z0-9]{1,3}[0-9][a-zA-Z0-9]{0,4}[a-zA-Z]$/.test(callsign)
-
-                    return validGlobal ? null : msg;
-                },
-
-            },
     })
 
     const onUpdateClick = (props) => {
