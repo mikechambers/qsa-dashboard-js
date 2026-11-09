@@ -13,7 +13,7 @@ export default function ConfigScreen(props) {
         let chars = ["a", "k", "n", "w"];
 
         for(let c of chars) {
-            if(callsign.startsWith(a)) {
+            if(callsign.startsWith(c)) {
                 return true
             }
         }
@@ -26,33 +26,33 @@ export default function ConfigScreen(props) {
             callsign:"",
             grid:"",
             
-            validate: {
-            callsign: (callsign) => {
 
-                let msg = "Invalid Callsign"
-                if(!callsign) {
-                    return msg;
-                }
+        },
+                    validate: {
+                callsign: (callsign) => {
 
-                //US validation is stricter
-                let isUS = isUSCallsign(callsign)
+                    let msg = "Invalid Callsign"
+                    if(!callsign) {
+                        return msg;
+                    }
 
-                var validUS = false
-                if(isUS) {
-                    validUS =  /^(?:A[A-L]|K[A-Z]?|N[A-Z]?|W[A-Z]?)[0-9][A-Z]{1,3}$/i.test(callsign)
+                    //US validation is stricter
+                    let isUS = isUSCallsign(callsign)
 
-                    return validUS ? null : msg;
-                }
+                    var validUS = false
+                    if(isUS) {
+                        validUS =  /^(?:A[A-L]|K[A-Z]?|N[A-Z]?|W[A-Z]?)[0-9][A-Z]{1,3}$/i.test(callsign)
 
-                //if not US, do global validation
-                let validGlobal = /^[a-zA-Z0-9]{1,3}[0-9][a-zA-Z0-9]{0,4}[a-zA-Z]$/.test(callsign)
+                        return validUS ? null : msg;
+                    }
 
-                return validGlobal ? null : msg;
+                    //if not US, do global validation
+                    let validGlobal = /^[a-zA-Z0-9]{1,3}[0-9][a-zA-Z0-9]{0,4}[a-zA-Z]$/.test(callsign)
+
+                    return validGlobal ? null : msg;
+                },
+
             },
-
-
-    },
-        }
     })
 
     const onUpdateClick = (props) => {
