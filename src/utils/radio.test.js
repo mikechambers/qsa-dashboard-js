@@ -1,9 +1,9 @@
 //note, I used AI to help write the tests.
 import { describe, it, expect } from 'vitest'
-import radio from './radio'
+//import radio from '@/utils/radio'
 
+import {isValidCallsign, isValidUSCallsign, isValidGlobalCallsign, normalizeMaidenHeadGrid} from "@/utils/radio"
 
-const { isValidCallsign, isValidUSCallsign, isValidGlobalCallsign } = radio
 
 describe('isValidCallsign: valid', () => {
   it.each([
@@ -94,3 +94,75 @@ describe('known gaps (not implemented yet)', () => {
   it.todo('accepts prefix-style portable: DL/W1AW')
   it.todo('rejects 1x1 special-event calls like W1A if you decide to')
 })
+
+describe('normalizeMaidenHeadGrid', () => {
+    
+    // --- 1. Type Safety & Guard Tests ---
+    describe('Type Safety & Inputs', () => {
+        it('should return an empty string if input is not a string', () => {
+            expect(normalizeMaidenHeadGrid(null)).toBe("");
+            expect(normalizeMaidenHeadGrid(undefined)).toBe("");
+            expect(normalizeMaidenHeadGrid(1234)).toBe("");
+            expect(normalizeMaidenHeadGrid({})).toBe("");
+        });
+
+        it('should return an empty string for an empty input string', () => {
+            expect(normalizeMaidenHeadGrid("")).toBe("");
+            expect(normalizeMaidenHeadGrid("   ")).toBe("");
+        });
+    });
+
+    // --- 2. Length Constraints ---
+    describe('Short Strings (< 4 characters)', () => {
+        it('should uppercase and return strings shorter than 4 characters without slicing', () => {
+            expect(normalizeMaidenHeadGrid("fn")).toBe("FN");
+            expect(normalizeMaidenHeadGrid("fn4")).toBe("FN4");
+        });
+    });
+
+    // --- 3. Standard 4-Character Grids ---
+    describe('4-Character Grids', () => {
+        it('should convert a lowercase 4-character grid to uppercase', () => {
+            expect(normalizeMaidenHeadGrid("fn42")).toBe("FN42");
+            expect(normalizeMaidenHeadGrid("em12")).toBe("EM12");
+        });
+
+        it('should preserve an already uppercase 4-character grid', () => {
+            expect(normalizeMaidenHeadGrid("FN42")).toBe("FN42");
+        });
+
+        it('should clean up surrounding whitespace from 4-character grids', () => {
+            expect(normalizeMaidenHeadGrid("  fn42  ")).toBe("FN42");
+        });
+    });
+
+    // --- 4. Standard 6-Character Grids ---
+    describe('6-Character Grids (Ham Radio Convention)', () => {
+        it('should format a fully lowercase 6-character grid correctly', () => {
+            expect(normalizeMaidenHeadGrid("fn42bb")).toBe("FN42bb");
+        });
+
+        it('should format a fully uppercase 6-character grid correctly', () => {
+            expect(normalizeMaidenHeadGrid("FN42BB")).toBe("FN42bb");
+        });
+
+        it('should handle messy mixed-case inputs gracefully', () => {
+            expect(normalizeMaidenHeadGrid("fN42bB")).toBe("FN42bb");
+            expect(normalizeMaidenHeadGrid("Fn42Bb")).toBe("FN42bb");
+        });
+
+        it('should trim whitespace and cleanly isolate indices 4 and 5', () => {
+            expect(normalizeMaidenHeadGrid("   em12bb   ")).toBe("EM12bb");
+        });
+    });
+
+    // --- 5. Structural Edge Cases ---
+    describe('Extended or Unusual Formats', () => {
+        it('should pass through characters beyond index 5 as lowercase', () => {
+            // Some specialized extended locator maps go up to 8 characters (sub-subsquares)
+            // e.g., FN42bb22 or FN42bbcc. Your slicing approach smoothly handles this!
+            expect(normalizeMaidenHeadGrid("fn42bbcc")).toBe("FN42bbcc");
+            expect(normalizeMaidenHeadGrid("FN42BBCC")).toBe("FN42bbcc");
+        });
+    });
+});

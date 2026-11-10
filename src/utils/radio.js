@@ -1,4 +1,25 @@
 
+export const normalizeMaidenHeadGrid = (grid) => {
+
+    if(typeof grid !== "string") {
+        return ""
+    }
+
+    let g = grid.trim().toUpperCase()
+
+    if(g.length < 4) {
+        return g;
+    }
+
+    return g.slice(0, 4) + g.slice(4).toLowerCase()
+}
+
+export const isValidMaidenHeadGrid = (grid) => {
+
+    //ai helped with the regex
+    return /^[A-Ra-r]{2}[0-9]{2}([A-Xa-x]{2})?$/.test(grid);
+}
+
 export const normalizeCallsign = (callsign) => {
 
     if(typeof callsign !== "string") {
