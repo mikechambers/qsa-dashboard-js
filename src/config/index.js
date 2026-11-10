@@ -1,0 +1,4 @@
+
+
+export const CALLSIGN_STORAGE = "CALLSIGN_STORAGE";
+export const GRID_STORAGE = "GRID_STORAGE";

@@ -1,6 +1,7 @@
 import {TextInput, Button} from "@mantine/core"
 import { useForm } from '@mantine/form';
 import { useLocalStorage } from '@mantine/hooks';
+import {CALLSIGN_STORAGE, GRID_STORAGE} from "@/config/"
 
 
 import { useNavigate } from 'react-router'; 
@@ -12,15 +13,16 @@ export default function ConfigScreen(props) {
 
     const navigate = useNavigate();
 
+    //move these to be reusable
     const [callsign, setCallsign] = useLocalStorage({
-        key:"callsign",
-        defaultValue:"",
+        key:CALLSIGN_STORAGE,
+        defaultValue:undefined,
         getInitialValueInEffect: false
     });
 
     const [grid, setGrid] = useLocalStorage({
-        key:"grid",
-        defaultValue:"",
+        key:GRID_STORAGE,
+        defaultValue:undefined,
         getInitialValueInEffect: false
     });
 
