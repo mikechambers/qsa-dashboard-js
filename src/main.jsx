@@ -13,7 +13,7 @@ ReactDOM.createRoot(root).render(
   <Routes>
     <Route path="/" element={<App />}>
       <Route index element={<ConfigScreen />} />
-      <Route path="dashboard/:callsign/:grid" element={<DashboardScreen />} />
+      <Route path="dashboard/:callsign?/:grid?" element={<DashboardScreen />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Route>
     </Routes>

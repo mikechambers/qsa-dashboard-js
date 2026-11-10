@@ -4,26 +4,31 @@ import {CALLSIGN_STORAGE, GRID_STORAGE} from "@/config/"
 import { useLocalStorage } from '@mantine/hooks';
 import {useSettings} from "@/hooks/useSettings";
 import {isValidCallsign, isValidMaidenHeadGrid, normalizeCallsign} from "@/utils/radio"
+import { useNavigate } from 'react-router'; 
 
 export default function DashboardScreen(props) {
 
     let params = useParams()
     let [settings] = useSettings()
+    const navigate = useNavigate();
 
     let callsign = params.callsign
     let grid = undefined
 
-    //callsign params exist, it is a string, and its a valid callsigh
-
-    if(typeof callsign !== "string" || !isValidCallsign(callsign.trim())) {
+    if(!("callsign" in params)) {
+        console.log("using saved callsign")
         callsign = settings.callsign;
     }
 
-    callsign = normalizeCallsign(callsign)
-    
+    if(typeof callsign !== "string" || !isValidCallsign(callsign.trim())){
+        callsign = normalizeCallsign(callsign)
+    } else {
+        navigate("/")
+    }
+
     console.log(callsign)
 
     return(
-        <div>Dashboard Screen {params.callsign}, {params.grid}</div>
+        <div>Dashboard Screen {callsign}, {grid}</div>
     )
 }
