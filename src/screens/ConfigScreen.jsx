@@ -1,5 +1,8 @@
 import {TextInput, Button} from "@mantine/core"
 import { useForm } from '@mantine/form';
+import { useLocalStorage } from '@mantine/hooks';
+
+
 import { useNavigate } from 'react-router'; 
 import {isValidCallsign, isValidMaidenHeadGrid} from "@/utils/radio"
 
@@ -9,10 +12,22 @@ export default function ConfigScreen(props) {
 
     const navigate = useNavigate();
 
+    const [callsign, setCallsign] = useLocalStorage({
+        key:"callsign",
+        defaultValue:"",
+        getInitialValueInEffect: false
+    });
+
+    const [grid, setGrid] = useLocalStorage({
+        key:"grid",
+        defaultValue:"",
+        getInitialValueInEffect: false
+    });
+
     const form = useForm({
         initialValues:{
-            callsign:"",
-            grid:"",
+            callsign:callsign,
+            grid:grid,
         },
         validate: {
             callsign: (callsign) => {
@@ -31,6 +46,9 @@ export default function ConfigScreen(props) {
 
         const c = encodeURIComponent(props.callsign);
         const g = encodeURIComponent(props.grid);
+
+        setCallsign(props.callsign);
+        setGrid(props.grid);
 
         navigate(`/dashboard/${c}/${g}/`)
     }
