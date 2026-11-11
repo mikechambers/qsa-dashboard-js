@@ -16,7 +16,6 @@ export default function DashboardScreen(props) {
     let grid = undefined
 
     if(!("callsign" in params)) {
-        console.log("using saved callsign")
         callsign = settings.callsign;
     }
 
@@ -29,6 +28,8 @@ export default function DashboardScreen(props) {
     console.log(callsign)
 
     return(
-        <div>Dashboard Screen {callsign}, {grid}</div>
+        <div id="defaultScreen" className="screen">
+            <div>{callsign} : {grid}</div>
+        </div>
     )
 }
