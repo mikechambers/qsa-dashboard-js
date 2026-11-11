@@ -1,7 +1,7 @@
 import {TextInput, Button} from "@mantine/core"
 import { useForm } from '@mantine/form';
 //import { useLocalStorage } from '@mantine/hooks';
-import {useSettings} from "@/hooks/useSettings"
+import { useSettings } from "../context/SettingsContext";
 
 import { useNavigate } from 'react-router'; 
 import {isValidCallsign, isValidMaidenHeadGrid} from "@/utils/radio"
@@ -12,7 +12,7 @@ export default function ConfigScreen(props) {
 
     const navigate = useNavigate();
 
-    const [settings, setCallsign, setGrid] = useSettings()
+    const {settings, setCallsign, setGrid} = useSettings()
 
     const form = useForm({
         initialValues:{
