@@ -7,6 +7,7 @@ import { useState } from 'react'
 
 import { Outlet } from 'react-router'
 import { SettingsProvider } from './context/SettingsContext';
+import { SpotDataProvider } from './context/SpotDataContext';
 
 
 //const App = (props) => {
@@ -18,7 +19,9 @@ export default function App() {
     <MantineProvider>
       <div id="main">
         <SettingsProvider>
-          <Outlet />
+          <SpotDataProvider>
+            <Outlet />
+          </SpotDataProvider>
       </SettingsProvider>
       </div>
     </MantineProvider>
