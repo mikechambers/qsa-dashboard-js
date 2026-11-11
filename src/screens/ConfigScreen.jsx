@@ -34,13 +34,13 @@ export default function ConfigScreen(props) {
 
     const onUpdateClick = (props) => {
 
-        const c = encodeURIComponent(props.callsign);
-        const g = encodeURIComponent(props.grid);
+        const c = props.callsign.trim();
+        const g = props.grid.trim()
 
-        setCallsign(props.callsign);
-        setGrid(props.grid);
+        setCallsign(c);
+        setGrid(g);
 
-        navigate(`/dashboard/${c}/${g}/`)
+        navigate(`/dashboard/${encodeURIComponent(c)}/${encodeURIComponent(g)}/`)
     }
 
     return(
