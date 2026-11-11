@@ -1,8 +1,6 @@
 import { createContext, useContext } from "react";
 import { useLocalStorage } from '@mantine/hooks';
 
-
-
 const SettingsContext = createContext(null);
 
 export function SettingsProvider({children}) {
