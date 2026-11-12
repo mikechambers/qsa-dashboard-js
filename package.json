@@ -11,6 +11,7 @@
     "test": "vitest"
   },
   "dependencies": {
+    "@ham2k/lib-geo-tools": "^1.1.1",
     "@mantine/core": "^9.8.0",
     "@mantine/form": "^9.8.0",
     "@mantine/hooks": "^9.8.0",
