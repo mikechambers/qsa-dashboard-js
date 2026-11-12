@@ -26,11 +26,3 @@ body,
     width: 100%;
     flex-grow: 1;
 }
-
-form {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    width: 100%;
-    max-width: 200px; 
-}
