@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import mqtt from "mqtt";
 import { useSettings } from "./SettingsContext";
+import { ConnectionStatus } from "../enums/ConnectionStatus";
 
 const SpotDataContext = createContext(null);
 
@@ -8,8 +9,26 @@ export function SpotDataProvider({ children }) {
 	const { settings } = useSettings();
 
 	const [spots, setSpots] = useState([])
+    const [status, setStatus] = useState(ConnectionStatus.DISCONNECTED)
 
     const clientRef = useRef(null)
+
+    const updateState = () => {
+        const client = clientRef.current;
+
+        if(!client) {
+            setStatus(ConnectionStatus.DISCONNECTED);
+            return
+        }
+
+        if(client.connected) {
+            setStatus(ConnectionStatus.CONNECTED);
+        } else if (client.reconnecting) {
+            setStatus(ConnectionStatus.RECONNECTING);
+        } else {
+            setStatus(ConnectionStatus.DISCONNECTED);
+        }
+    }
 
     //one once per page to connect
     useEffect(()=>{
@@ -20,21 +39,39 @@ export function SpotDataProvider({ children }) {
 
         clientRef.current = client;
 
+        client.on("connect", updateState);
+        client.on("reconnect", updateState);
+        client.on("offline", updateState);
+        client.on("close", updateState);
+        client.on("end", updateState);
+
         client.on("message", (topic, message) => {
             const spot = JSON.parse(message.toString());
 			console.log("message", topic, spot);
 		});
 
-        client.on("error", (err) => {
+        const errHandler = (err) => {
 			console.error("MQTT connection error:", err);
-		});
+            updateState()
+		};
+
+        client.on("error", errHandler);
 
         return () => {
 			client.end();
+
+            client.off("connect", updateState);
+            client.off("reconnect", updateState);
+            client.off("offline", updateState);
+            client.off("close", updateState);
+            client.off("end", updateState);
+            client.off("error", errHandler);
+
             clientRef.current = null;
 		};
 
     }, [])
+
 
     //re-run when settings.callsign changes
 	useEffect(() => {
@@ -77,7 +114,7 @@ export function SpotDataProvider({ children }) {
 	}, [settings.callsign]);
 
 	return (
-		<SpotDataContext.Provider value={{ spots }}>
+		<SpotDataContext.Provider value={{ spots, status }}>
 			{children}
 		</SpotDataContext.Provider>
 	);

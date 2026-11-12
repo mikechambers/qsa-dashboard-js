@@ -1,16 +1,12 @@
 
 #dashboardScreenMain {
-    background-color: yellow;
     flex-grow:1;
 }
 
 #dashboardScreenHeader {
-    height:40px;
-    background-color: blue;
-    
+    height:40px;    
 }
 
 #dashboardScreenFooter {
     height:40px;
-    background-color: red;
 }

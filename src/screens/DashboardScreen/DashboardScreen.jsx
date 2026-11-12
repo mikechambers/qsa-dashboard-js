@@ -5,6 +5,8 @@ import { useLocalStorage } from '@mantine/hooks';
 import { useSettings } from "@/context/SettingsContext";
 import {isValidCallsign, isValidMaidenHeadGrid, normalizeCallsign} from "@/utils/radio"
 import { useNavigate } from 'react-router';
+import {ConnectionStatusView} from "./ConnectionStatusView";
+import {useSpotData} from "@/context/SpotDataContext";
 
 import "./DashboardScreen.css";
 
@@ -13,6 +15,7 @@ export default function DashboardScreen(props) {
     let params = useParams()
     let {settings} = useSettings()
     const navigate = useNavigate();
+    const {spots, status} = useSpotData();
 
     let callsign = params.callsign
     let grid = undefined
@@ -32,10 +35,10 @@ export default function DashboardScreen(props) {
     return(
         <div id="dashboardScreen" className="screen">
             <div id="dashboardScreenHeader">
-                <h1>Dashboard</h1>
+                <h1>{callsign} : {grid}</h1>
             </div>
-            <div id="dashboardScreenMain">{callsign} : {grid}</div>
-            <div id="dashboardScreenFooter">Footer</div>
+            <div id="dashboardScreenMain">Spots : {spots.length}</div>
+            <div id="dashboardScreenFooter"><ConnectionStatusView /></div>
 
         </div>
     )
