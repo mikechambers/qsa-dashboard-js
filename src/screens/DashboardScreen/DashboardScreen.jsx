@@ -4,7 +4,9 @@ import {CALLSIGN_STORAGE, GRID_STORAGE} from "@/config/"
 import { useLocalStorage } from '@mantine/hooks';
 import { useSettings } from "@/context/SettingsContext";
 import {isValidCallsign, isValidMaidenHeadGrid, normalizeCallsign} from "@/utils/radio"
-import { useNavigate } from 'react-router'; 
+import { useNavigate } from 'react-router';
+
+import "./DashboardScreen.css";
 
 export default function DashboardScreen(props) {
 
@@ -28,8 +30,13 @@ export default function DashboardScreen(props) {
     console.log(callsign)
 
     return(
-        <div id="defaultScreen" className="screen">
-            <div>{callsign} : {grid}</div>
+        <div id="dashboardScreen" className="screen">
+            <div id="dashboardScreenHeader">
+                <h1>Dashboard</h1>
+            </div>
+            <div id="dashboardScreenMain">{callsign} : {grid}</div>
+            <div id="dashboardScreenFooter">Footer</div>
+
         </div>
     )
 }

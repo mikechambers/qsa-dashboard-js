@@ -1,7 +1,7 @@
 import {TextInput, Button} from "@mantine/core"
 import { useForm } from '@mantine/form';
 //import { useLocalStorage } from '@mantine/hooks';
-import { useSettings } from "../context/SettingsContext";
+import { useSettings } from "@/context/SettingsContext";
 
 import { useNavigate } from 'react-router'; 
 import {isValidCallsign, isValidMaidenHeadGrid} from "@/utils/radio"

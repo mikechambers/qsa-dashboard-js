@@ -21,7 +21,8 @@ export function SpotDataProvider({ children }) {
         clientRef.current = client;
 
         client.on("message", (topic, message) => {
-			console.log("message", topic, message);
+            const spot = JSON.parse(message.toString());
+			console.log("message", topic, spot);
 		});
 
         client.on("error", (err) => {
