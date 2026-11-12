@@ -1,4 +1,4 @@
-import { gridToLocation } from "../utils/geo";
+import { getDXCCEntity, gridToLocation } from "../utils/geo";
 
 export default class Spot {
   sequence;
@@ -35,6 +35,9 @@ export default class Spot {
     const senderLocation = gridToLocation(data.sl);
     const receiverLocation = gridToLocation(data.rl);
 
+    const senderDXCC = getDXCCEntity(data.sa);
+    const receiverDXCC = getDXCCEntity(data.ra);
+
     //could do distance here
 
     return new Spot({
@@ -48,8 +51,8 @@ export default class Spot {
       senderLocation: senderLocation,
       receiverCall: data.rc,
       receiverLocator: receiverLocation,
-      senderDXCC: data.sa,
-      receiverDXCC: data.ra,
+      senderDXCC: senderDXCC,
+      receiverDXCC: receiverDXCC,
       band: data.b
     });
   }
