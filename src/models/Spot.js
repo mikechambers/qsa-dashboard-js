@@ -1,3 +1,6 @@
+import { distanceOnEarth } from "@ham2k/lib-geo-tools";
+import { Band } from "../enums/Band";
+import { Mode } from "../enums/Mode";
 import { getDXCCEntity, gridToLocation } from "../utils/geo";
 
 export default class Spot {
@@ -14,16 +17,20 @@ export default class Spot {
   senderDXCC;
   receiverDXCC;
   band;
+  distance;
 
   constructor({
     sequence, frequency, mode, snr, time, t_tx, senderCall,
     senderLocation, receiverCall, receiverLocator,
     senderDXCC, receiverDXCC, band
   } = {}) {
+
+    const distance = distanceOnEarth(senderLocation, receiverLocation);
+
     Object.assign(this, {
       sequence, frequency, mode, snr, time, t_tx, senderCall,
       senderLocation, receiverCall, receiverLocator,
-      senderDXCC, receiverDXCC, band
+      senderDXCC, receiverDXCC, band, distance
     });
   }
 
@@ -38,12 +45,15 @@ export default class Spot {
     const senderDXCC = getDXCCEntity(data.sa);
     const receiverDXCC = getDXCCEntity(data.ra);
 
+    const band = Band.fromData(data.b)
+    const mode = Mode.fromData(data.md)
+    
     //could do distance here
 
     return new Spot({
       sequence: data.sq,
       frequency: data.f,
-      mode: data.md,
+      mode: mode,
       snr: data.rp,
       time: time,
       t_tx: t_tx,
@@ -53,7 +63,7 @@ export default class Spot {
       receiverLocator: receiverLocation,
       senderDXCC: senderDXCC,
       receiverDXCC: receiverDXCC,
-      band: data.b
+      band: band
     });
   }
 }

@@ -1,6 +1,7 @@
 
 #dashboardScreenMain {
     flex-grow:1;
+    flex-wrap: wrap;
 }
 
 #dashboardScreenHeader {

@@ -16,6 +16,7 @@
     "@mantine/core": "^9.8.0",
     "@mantine/form": "^9.8.0",
     "@mantine/hooks": "^9.8.0",
+    "@tanstack/react-virtual": "^3.14.26",
     "mqtt": "^5.16.1",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",

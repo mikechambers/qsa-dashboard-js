@@ -7,6 +7,7 @@ import {isValidCallsign, isValidMaidenHeadGrid, normalizeCallsign} from "@/utils
 import { useNavigate } from 'react-router';
 import {ConnectionStatusView} from "./ConnectionStatusView";
 import {useSpotData} from "@/context/SpotDataContext";
+import {SpotTable} from "./SpotTable"
 
 import "./DashboardScreen.css";
 
@@ -37,7 +38,15 @@ export default function DashboardScreen(props) {
             <div id="dashboardScreenHeader">
                 <h1>{callsign} : {grid}</h1>
             </div>
-            <div id="dashboardScreenMain">Spots : {spots.length}</div>
+            <div id="dashboardScreenMain">
+                <div id="summaryPods">
+                    <div>Spots : {spots.length}</div>
+                </div>
+                <div id="spotMap">MAP</div>
+                <div id="spotTable">
+                    <SpotTable spots={spots} />
+                </div>
+            </div>
             <div id="dashboardScreenFooter"><ConnectionStatusView /></div>
 
         </div>
