@@ -4,6 +4,7 @@ import { useVirtualizer } from "@tanstack/react-virtual";
 import { BandFrequencyView } from "./BandFrequencyView";
 import { TimeView } from "./TimeView";
 import { SNRView } from "./SNRView";
+import { DistanceView } from "./DistanceView";
 //import {useSpotData} from "@/context/SpotDataContext";
 
 export const SpotTable = ({ spots, onSpotHighlight }) => {
@@ -36,7 +37,7 @@ export const SpotTable = ({ spots, onSpotHighlight }) => {
 					<Table.Tr>
 						<Table.Th>UTC</Table.Th>
 
-						<Table.Th ta="right">Loc</Table.Th>
+						<Table.Th ta="left">Loc</Table.Th>
 						<Table.Th ta="right">Distance</Table.Th>
 						<Table.Th ta="right">SNR</Table.Th>
 						
@@ -48,9 +49,9 @@ export const SpotTable = ({ spots, onSpotHighlight }) => {
 					{spots.map((spot) => {
 						return (
 							<Table.Tr key={spot.sequence} onMouseEnter={() => onSpotHighlight?.(spot)}>
-								<Table.Td><TimeView date={spot.time} /></Table.Td>
-						<Table.Td ta="right">{spot.senderDXCC.countryCode}</Table.Td>
-								<Table.Td ta="right">{spot.distance}m</Table.Td>
+								<Table.Td w={20}><TimeView date={spot.time} /></Table.Td>
+						<Table.Td ta="left">{spot.senderDXCC.countryCode}</Table.Td>
+								<Table.Td ta="right"><DistanceView distance={spot.distance} /></Table.Td>
 								
 								<Table.Td ta="right"><SNRView snr={spot.snr} /></Table.Td>
 								
@@ -74,7 +75,7 @@ const debugSpots = [
 		band: "20M",
 		frequency: 14074500,
 		receiverCall: "DL1ABC",
-		distance: 9120,
+		distance: 9120000,
 		snr: -12,
 		senderDXCC: { countryCode: "US" },
 	},

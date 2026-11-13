@@ -15,18 +15,18 @@ import { useNavigate } from "react-router";
 import { isValidCallsign, isValidMaidenHeadGrid } from "@/utils/radio";
 
 import "./ConfigScreen.css";
-import { MeasurementType } from "../../enums/MeasurementType";
+import { UnitType } from "../../enums/UnitType";
 
 export default function ConfigScreen(props) {
 	const navigate = useNavigate();
 
-	const { settings, setCallsign, setGrid, setMeasurement } = useSettings();
+	const { settings, setCallsign, setGrid, setUnitType } = useSettings();
 
 	const form = useForm({
 		initialValues: {
 			callsign: settings.callsign,
 			grid: settings.grid,
-			measurement: settings.measurement,
+			unitType: settings.unitType,
 		},
 		validate: {
 			callsign: (callsign) => {
@@ -44,11 +44,11 @@ export default function ConfigScreen(props) {
 	const onUpdateClick = (props) => {
 		const c = props.callsign.trim();
 		const g = props.grid.trim();
-        const m = props.measurement;
+        const m = props.unitType;
 
 		setCallsign(c);
 		setGrid(g);
-        setMeasurement(m);
+        setUnitType(m);
 
 		navigate(`/dashboard/${encodeURIComponent(c)}/${encodeURIComponent(g)}/`);
 	};
@@ -72,22 +72,22 @@ export default function ConfigScreen(props) {
 						/>
 
 						<Radio.Group
-							name="measurement"
+							name="unitType"
 							label="Units"
-							key={form.key("measurement")}
-							{...form.getInputProps("measurement")}
+							key={form.key("unitType")}
+							{...form.getInputProps("unitType")}
 						>
 							<Group mt="xs" gap="lg" wrap="nowrap">
 								<Radio
-									name="measurement"
+									name="unitType"
 									label="Metric"
-									value={MeasurementType.METRIC}
+									value={UnitType.METRIC}
 									defaultChecked
 								/>
 								<Radio
-									name="measurement"
+									name="unitType"
 									label="Imperial"
-									value={MeasurementType.IMPERIAL}
+									value={UnitType.IMPERIAL}
 								/>
 							</Group>
 						</Radio.Group>

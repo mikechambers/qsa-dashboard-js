@@ -32,7 +32,7 @@ export default function DashboardScreen(props) {
         callsign = normalizeCallsign(callsign)
     } else {
         //return (<Navigate to="/" replace />);
-        console.log("CALLSIGN, callsign)
+        console.log("CALLSIGN", callsign)
     }
 
     console.log(callsign)

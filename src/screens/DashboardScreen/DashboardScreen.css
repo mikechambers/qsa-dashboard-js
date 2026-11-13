@@ -58,8 +58,7 @@
 }
 
 .spotTableCell {
-    white-space: "nowrap";
-    
+    white-space: nowrap;
 }
 
 .bandContainer {

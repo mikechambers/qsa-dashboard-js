@@ -1,6 +1,6 @@
 import { createContext, useContext } from "react";
 import { useLocalStorage } from '@mantine/hooks';
-import { MeasurementType } from "../enums/MeasurementType";
+import { UnitType } from "../enums/UnitType";
 
 const SettingsContext = createContext(null);
 
@@ -19,18 +19,18 @@ export function SettingsProvider({children}) {
         getInitialValueInEffect: false
     });
 
-    const [measurement, setMeasurement] = useLocalStorage({
-        key:"measurement",
-        defaultValue:MeasurementType.METRIC,
+    const [unitType, setUnitType] = useLocalStorage({
+        key:"unitType",
+        defaultValue:UnitType.METRIC,
         getInitialValueInEffect: false
     });
 
     const settings = {
-        grid, callsign, measurement
+        grid, callsign, unitType
     }
 
     return (
-        <SettingsContext.Provider value={{settings, setCallsign, setGrid, setMeasurement}}>
+        <SettingsContext.Provider value={{settings, setCallsign, setGrid, setUnitType}}>
             {children}
         </SettingsContext.Provider>
     )
