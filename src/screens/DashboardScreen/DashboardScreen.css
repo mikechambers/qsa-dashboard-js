@@ -1,7 +1,26 @@
 
+#dashboardScreen {
+
+}
+
 #dashboardScreenMain {
     flex-grow:1;
-    flex-wrap: wrap;
+    display:grid;
+    grid-template-columns: 1fr; /* phone, one column stacked */
+    gap:16px;
+
+    align-content: start;
+}
+
+@media (min-width: 768px) {
+    #dashboardScreenMain {
+        grid-template-columns: 1fr 400px; /* map fills space, table gets 400px */
+        grid-template-rows: auto 1fr; /* first row takes what it needs, second fills space */
+    }
+}
+
+#summaryPods {
+    grid-column: 1 / -1; /* span all */
 }
 
 #dashboardScreenHeader {
@@ -10,4 +29,18 @@
 
 #dashboardScreenFooter {
     height:40px;
+}
+
+#spotMap {
+    background-color: aqua;
+    padding:8px;
+    border-radius: 12px;
+    min-height: 300px;
+    min-width: 200px;
+}
+
+#spotsContainer {
+    min-width: 0;
+    overflow: auto;
+    height: 100%;
 }

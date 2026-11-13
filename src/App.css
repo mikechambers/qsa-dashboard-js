@@ -2,14 +2,16 @@
 html, 
 body, 
 #root {
+  box-sizing: border-box;
   height: 100%;
-  margin: 4px;
+  margin:0;
 
 }
 
 #root {
     display: flex;
     flex-direction: column;
+    padding: 8px;
 }
 
 #main {
@@ -17,6 +19,7 @@ body,
   flex-direction: column;
   flex-grow: 1;
   width: 100%;
+  min-height: 0; 
 }
 
 /* take up all the space */
@@ -25,4 +28,8 @@ body,
     flex-direction: column;
     width: 100%;
     flex-grow: 1;
+            
+  
+    min-height: 0;
+    
 }

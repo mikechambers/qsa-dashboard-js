@@ -5,7 +5,7 @@ import { FrequencyView } from "./FrequencyView";
 import { TimeView } from "./TimeView";
 //import {useSpotData} from "@/context/SpotDataContext";
 
-export const SpotTable = ({ spots }) => {
+export const SpotTable = ({ spots, onSpotHighlight }) => {
 
     //todo
 	spots = debugSpots;
@@ -24,8 +24,8 @@ export const SpotTable = ({ spots }) => {
 
 	return (
 		<Table.ScrollContainer
-			minWidth={760}
-			maxHeight={400}
+			minWidth={400}
+			maxHeight={600}
 			scrollAreaProps={{ viewportRef: setScrollParent }}
 		>
 			<Table striped highlightOnHover withTableBorder withRowBorders={false}>
@@ -45,7 +45,7 @@ export const SpotTable = ({ spots }) => {
 				<Table.Tbody>
 					{spots.map((spot) => {
 						return (
-							<Table.Tr key={spot.sequence}>
+							<Table.Tr key={spot.sequence} onMouseEnter={() => onSpotHighlight?.(spot)}>
 								<Table.Td><TimeView date={spot.time} /></Table.Td>
 								<Table.Td ta="right">{spot.receiverCall}</Table.Td>
 								<Table.Td ta="right">{spot.distance}m</Table.Td>
