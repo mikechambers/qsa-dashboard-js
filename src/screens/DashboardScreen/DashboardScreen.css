@@ -56,3 +56,19 @@
     flex: 1;
     min-height: 0;
 }
+
+.spotTableCell {
+    white-space: "nowrap";
+    
+}
+
+.bandContainer {
+    color: #111;
+    font-weight: 600;
+    padding: 0 0.4em;
+    border-radius: 0.25em;
+    width: fit-content;
+    border-radius: 6px;
+    text-align: center;
+    margin: 0 auto;
+}

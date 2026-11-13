@@ -1,8 +1,9 @@
 import { Table } from "@mantine/core";
 import { useState } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { FrequencyView } from "./FrequencyView";
+import { BandFrequencyView } from "./BandFrequencyView";
 import { TimeView } from "./TimeView";
+import { SNRView } from "./SNRView";
 //import {useSpotData} from "@/context/SpotDataContext";
 
 export const SpotTable = ({ spots, onSpotHighlight }) => {
@@ -28,18 +29,19 @@ export const SpotTable = ({ spots, onSpotHighlight }) => {
 			maxHeight={600}
 			scrollAreaProps={{ viewportRef: setScrollParent }}
 		>
-			<Table striped highlightOnHover withTableBorder withRowBorders={false}>
+			<Table 
+				styles={{ td: { verticalAlign: "top" } }}
+				striped highlightOnHover withTableBorder withRowBorders={false}>
 				<Table.Thead>
 					<Table.Tr>
 						<Table.Th>UTC</Table.Th>
 
-						<Table.Th ta="right">Receiver</Table.Th>
+						<Table.Th ta="right">Loc</Table.Th>
 						<Table.Th ta="right">Distance</Table.Th>
 						<Table.Th ta="right">SNR</Table.Th>
-						<Table.Th ta="right">Location</Table.Th>
-						<Table.Th ta="right">Mode</Table.Th>
-						<Table.Th ta="right">Band</Table.Th>
-						<Table.Th ta="right">Frequency</Table.Th>
+						
+		
+						<Table.Th ta="center">Band</Table.Th>
 					</Table.Tr>
 				</Table.Thead>
 				<Table.Tbody>
@@ -47,13 +49,15 @@ export const SpotTable = ({ spots, onSpotHighlight }) => {
 						return (
 							<Table.Tr key={spot.sequence} onMouseEnter={() => onSpotHighlight?.(spot)}>
 								<Table.Td><TimeView date={spot.time} /></Table.Td>
-								<Table.Td ta="right">{spot.receiverCall}</Table.Td>
+						<Table.Td ta="right">{spot.senderDXCC.countryCode}</Table.Td>
 								<Table.Td ta="right">{spot.distance}m</Table.Td>
-								<Table.Td ta="right">{spot.snr} db</Table.Td>
-								<Table.Td ta="right">{spot.senderDXCC.countryCode}</Table.Td>
-								<Table.Td ta="right">{spot.mode}</Table.Td>
-								<Table.Td ta="right">{spot.band}</Table.Td>
-								<Table.Td ta="right"><FrequencyView frequency={spot.frequency} /></Table.Td>
+								
+								<Table.Td ta="right"><SNRView snr={spot.snr} /></Table.Td>
+								
+								<Table.Td ta="center">
+									<BandFrequencyView 
+									frequency={spot.frequency} 
+									band={spot.band}/></Table.Td>
 							</Table.Tr>
 						);
 					})}
