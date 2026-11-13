@@ -35,7 +35,7 @@
     background-color: aqua;
     padding:8px;
     border-radius: 12px;
-    min-height: 300px;
+    min-height: 500px;
     min-width: 200px;
 }
 
@@ -43,4 +43,16 @@
     min-width: 0;
     overflow: auto;
     height: 100%;
+}
+
+#spotsView {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;  
+}
+
+.spotsViewTable {
+    flex: 1;
+    min-height: 0;
 }

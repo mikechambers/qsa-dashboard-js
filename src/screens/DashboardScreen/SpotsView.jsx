@@ -4,9 +4,11 @@ import { SpotTable } from "./SpotTable";
 
 export const SpotsView = ({ spots, selectedSpot, onSpotHighlight }) => {
     return (
-        <div>
+        <div className="spotsView">
             <SpotDetail spot={selectedSpot} />
-            <SpotTable spots={spots} onSpotHighlight={onSpotHighlight}/>
+            <div className="spotsViewTable">
+                <SpotTable spots={spots} onSpotHighlight={onSpotHighlight}/>
+            </div>
         </div>
     );
 };

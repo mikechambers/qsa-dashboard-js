@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from "react-router";
+import { useParams, Navigate } from "react-router";
 import { useState } from "react";
 
 import { useSettings } from "@/context/SettingsContext";
@@ -12,7 +12,7 @@ export default function DashboardScreen(props) {
 
     let params = useParams()
     let {settings} = useSettings()
-    const navigate = useNavigate();
+    //const navigate = useNavigate();
     const {spots, status} = useSpotData();
 
     const [selectedSpot, setSelectedSpot] = useState()
@@ -31,7 +31,8 @@ export default function DashboardScreen(props) {
     if(typeof callsign === "string" && isValidCallsign(callsign.trim())){
         callsign = normalizeCallsign(callsign)
     } else {
-        navigate("/")
+        //return (<Navigate to="/" replace />);
+        console.log("CALLSIGN, callsign)
     }
 
     console.log(callsign)
