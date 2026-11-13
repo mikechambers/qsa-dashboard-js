@@ -1,6 +1,8 @@
 import { Table } from "@mantine/core";
 import { useState } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
+import { FrequencyView } from "./FrequencyView";
+import { TimeView } from "./TimeView";
 //import {useSpotData} from "@/context/SpotDataContext";
 
 export const SpotTable = ({ spots }) => {
@@ -29,7 +31,7 @@ export const SpotTable = ({ spots }) => {
 			<Table striped highlightOnHover withTableBorder withRowBorders={false}>
 				<Table.Thead>
 					<Table.Tr>
-						<Table.Th>Time</Table.Th>
+						<Table.Th>UTC</Table.Th>
 
 						<Table.Th ta="right">Receiver</Table.Th>
 						<Table.Th ta="right">Distance</Table.Th>
@@ -44,14 +46,14 @@ export const SpotTable = ({ spots }) => {
 					{spots.map((spot) => {
 						return (
 							<Table.Tr key={spot.sequence}>
-								<Table.Td>{spot.time}</Table.Td>
+								<Table.Td><TimeView date={spot.time} /></Table.Td>
 								<Table.Td ta="right">{spot.receiverCall}</Table.Td>
 								<Table.Td ta="right">{spot.distance}m</Table.Td>
 								<Table.Td ta="right">{spot.snr} db</Table.Td>
 								<Table.Td ta="right">{spot.senderDXCC.countryCode}</Table.Td>
 								<Table.Td ta="right">{spot.mode}</Table.Td>
 								<Table.Td ta="right">{spot.band}</Table.Td>
-								<Table.Td ta="right">{spot.frequency}</Table.Td>
+								<Table.Td ta="right"><FrequencyView frequency={spot.frequency} /></Table.Td>
 							</Table.Tr>
 						);
 					})}
@@ -60,11 +62,10 @@ export const SpotTable = ({ spots }) => {
 		</Table.ScrollContainer>
 	);
 };
-
 const debugSpots = [
 	{
 		sequence: 1,
-		time: "2026-11-12T18:42:10Z",
+		time: new Date("2026-11-12T18:42:10Z"),
 		mode: "FT8",
 		band: "20M",
 		frequency: 14074500,
@@ -75,7 +76,7 @@ const debugSpots = [
 	},
 	{
 		sequence: 2,
-		time: "2026-11-12T18:43:25Z",
+		time: new Date("2026-11-12T18:43:25Z"),
 		mode: "FT8",
 		band: "40M",
 		frequency: 7075800,
@@ -86,7 +87,7 @@ const debugSpots = [
 	},
 	{
 		sequence: 3,
-		time: "2026-11-12T18:44:02Z",
+		time: new Date("2026-11-12T18:44:02Z"),
 		mode: "FT4",
 		band: "15M",
 		frequency: 21140300,
@@ -96,8 +97,8 @@ const debugSpots = [
 		senderDXCC: { countryCode: "US" },
 	},
 	{
-		sequence: 3,
-		time: "2026-11-12T18:44:02Z",
+		sequence: 4,
+		time: new Date("2026-11-12T18:44:02Z"),
 		mode: "FT4",
 		band: "15M",
 		frequency: 21140300,
@@ -107,8 +108,8 @@ const debugSpots = [
 		senderDXCC: { countryCode: "US" },
 	},
 	{
-		sequence: 3,
-		time: "2026-11-12T18:44:02Z",
+		sequence: 5,
+		time: new Date("2026-11-12T18:44:02Z"),
 		mode: "FT4",
 		band: "15M",
 		frequency: 21140300,
@@ -118,8 +119,8 @@ const debugSpots = [
 		senderDXCC: { countryCode: "US" },
 	},
 	{
-		sequence: 3,
-		time: "2026-11-12T18:44:02Z",
+		sequence: 6,
+		time: new Date("2026-11-12T18:44:02Z"),
 		mode: "FT4",
 		band: "15M",
 		frequency: 21140300,
@@ -129,8 +130,8 @@ const debugSpots = [
 		senderDXCC: { countryCode: "US" },
 	},
 	{
-		sequence: 3,
-		time: "2026-11-12T18:44:02Z",
+		sequence: 7,
+		time: new Date("2026-11-12T18:44:02Z"),
 		mode: "FT4",
 		band: "15M",
 		frequency: 21140300,
@@ -140,8 +141,8 @@ const debugSpots = [
 		senderDXCC: { countryCode: "US" },
 	},
 	{
-		sequence: 3,
-		time: "2026-11-12T18:44:02Z",
+		sequence: 8,
+		time: new Date("2026-11-12T18:44:02Z"),
 		mode: "FT4",
 		band: "15M",
 		frequency: 21140300,
@@ -151,8 +152,8 @@ const debugSpots = [
 		senderDXCC: { countryCode: "US" },
 	},
 	{
-		sequence: 3,
-		time: "2026-11-12T18:44:02Z",
+		sequence: 9,
+		time: new Date("2026-11-12T18:44:02Z"),
 		mode: "FT4",
 		band: "15M",
 		frequency: 21140300,
@@ -162,8 +163,8 @@ const debugSpots = [
 		senderDXCC: { countryCode: "US" },
 	},
 	{
-		sequence: 3,
-		time: "2026-11-12T18:44:02Z",
+		sequence: 10,
+		time: new Date("2026-11-12T18:44:02Z"),
 		mode: "FT4",
 		band: "15M",
 		frequency: 21140300,
@@ -173,8 +174,8 @@ const debugSpots = [
 		senderDXCC: { countryCode: "US" },
 	},
 	{
-		sequence: 3,
-		time: "2026-11-12T18:44:02Z",
+		sequence: 11,
+		time: new Date("2026-11-12T18:44:02Z"),
 		mode: "FT4",
 		band: "15M",
 		frequency: 21140300,
@@ -184,8 +185,8 @@ const debugSpots = [
 		senderDXCC: { countryCode: "US" },
 	},
 	{
-		sequence: 3,
-		time: "2026-11-12T18:44:02Z",
+		sequence: 12,
+		time: new Date("2026-11-12T18:44:02Z"),
 		mode: "FT4",
 		band: "15M",
 		frequency: 21140300,
@@ -195,8 +196,8 @@ const debugSpots = [
 		senderDXCC: { countryCode: "US" },
 	},
 	{
-		sequence: 3,
-		time: "2026-11-12T18:44:02Z",
+		sequence: 13,
+		time: new Date("2026-11-12T18:44:02Z"),
 		mode: "FT4",
 		band: "15M",
 		frequency: 21140300,
@@ -206,8 +207,8 @@ const debugSpots = [
 		senderDXCC: { countryCode: "US" },
 	},
 	{
-		sequence: 3,
-		time: "2026-11-12T18:44:02Z",
+		sequence: 14,
+		time: new Date("2026-11-12T18:44:02Z"),
 		mode: "FT4",
 		band: "15M",
 		frequency: 21140300,
@@ -217,8 +218,8 @@ const debugSpots = [
 		senderDXCC: { countryCode: "US" },
 	},
 	{
-		sequence: 3,
-		time: "2026-11-12T18:44:02Z",
+		sequence: 15,
+		time: new Date("2026-11-12T18:44:02Z"),
 		mode: "FT4",
 		band: "15M",
 		frequency: 21140300,
