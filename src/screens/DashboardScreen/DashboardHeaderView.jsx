@@ -1,4 +1,3 @@
-import { useSettings } from "@/context/SettingsContext";
 import { Group, Text, Paper, ActionIcon, Title, Button } from "@mantine/core";
 import { ConnectionStatusView } from "./ConnectionStatusView";
 import {
@@ -8,22 +7,20 @@ import {
 
 import { normalizeCallsign, normalizeMaidenHeadGrid } from "@/utils/radio";
 
-export const DashboardHeaderView = () => {
-    const { settings } = useSettings();
-
+export const DashboardHeaderView = ({ callsign, grid }) => {
     //todo: maybe normalize when we save?
-    const callsign = normalizeCallsign(settings.callsign);
-    const grid = normalizeMaidenHeadGrid(settings.grid);
+    const cs = normalizeCallsign(callsign);
+    const g = normalizeMaidenHeadGrid(grid);
 
     return (
         <Paper>
             <Group justify="space-between" wrap="nowrap">
                 <Group gap="xs" align="baseline" wrap="nowrap">
                     <Title order={2} ff="monospace">
-                        {callsign}
+                        {cs}
                     </Title>
                     <Text fz="md" fw={500} c="dimmed" ff="monospace">
-                        {grid}
+                        {g}
                     </Text>
                 </Group>
                 <Group gap="xs" wrap="nowrap">
