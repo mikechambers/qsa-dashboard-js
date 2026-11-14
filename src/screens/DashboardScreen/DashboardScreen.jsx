@@ -27,7 +27,6 @@ export default function DashboardScreen(props) {
     let callsign = params.callsign;
     let grid = params.grid;
 
-    //todo: using wrong callsign in header
     if (!("callsign" in params)) {
         callsign = settings.callsign;
         grid = settings.grid;
@@ -41,8 +40,7 @@ export default function DashboardScreen(props) {
     if (typeof callsign === "string" && isValidCallsign(callsign.trim())) {
         callsign = normalizeCallsign(callsign);
     } else {
-        //return (<Navigate to="/" replace />);
-        console.log("CALLSIGN", callsign);
+        return <Navigate to="/" replace />;
     }
 
     return (

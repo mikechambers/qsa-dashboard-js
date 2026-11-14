@@ -15,10 +15,10 @@ export const getDXCCEntity = function (code) {
     return DXCC_BY_CODE[code];
 };
 
-export const metersToMiles = function (meters) {
-    if (!meters) {
+export const kilometersToMiles = function (kilometers) {
+    if (!kilometers) {
         return 0;
     }
 
-    return meters * 0.000621371;
+    return kilometers * 0.621371;
 };

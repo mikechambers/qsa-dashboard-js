@@ -35,6 +35,7 @@ export default class Spot {
         receiverDXCC,
         band,
     } = {}) {
+        //returns in km
         const distance = distanceOnEarth(senderLocation, receiverLocation);
 
         Object.assign(this, {

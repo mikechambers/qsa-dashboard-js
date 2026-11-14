@@ -1,5 +1,5 @@
 import { UnitType } from "@/enums/UnitType";
-import { metersToMiles } from "@/utils/geo";
+import { kilometersToMiles } from "@/utils/geo";
 import { clamp } from "@/utils/math";
 
 export const formatDistance = (distance, unitType) => {
@@ -8,10 +8,10 @@ export const formatDistance = (distance, unitType) => {
 
     if (distance !== undefined) {
         if (unitType === UnitType.IMPERIAL) {
-            d = `${Math.round(metersToMiles(distance))}`;
+            d = `${Math.round(kilometersToMiles(distance))}`;
             unit = " mi";
         } else {
-            d = `${Math.round(distance / 1000)}`;
+            d = `${Math.round(distance)}`;
             unit = " km";
         }
     }

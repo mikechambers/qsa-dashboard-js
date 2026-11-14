@@ -87,7 +87,6 @@ export function SpotDataProvider({ children }) {
         const client = clientRef.current;
 
         let callsign = settings?.callsign;
-        console.log("callsign", callsign);
 
         if (!client || !callsign) return;
 
