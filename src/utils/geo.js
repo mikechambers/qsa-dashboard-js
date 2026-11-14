@@ -3,9 +3,10 @@ import { gridToLocation as libGridToLocation } from "@ham2k/lib-geo-tools";
 import { DXCC_BY_CODE } from "@ham2k/lib-dxcc-data";
 
 export const gridToLocation = function (grid) {
-    //todo: trim to 6 chars if greater
+    //note : if greater than 6, we trim
 
-    let [lat, long] = libGridToLocation(grid);
+    const g = grid.slice(0, 6);
+    let [lat, long] = libGridToLocation(g);
 
     return new Location({ grid, latitude: lat, longitude: long });
 };
