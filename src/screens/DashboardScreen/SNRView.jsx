@@ -19,12 +19,10 @@ export const SNRView = ({ snr }) => {
                 style={{ fontVariantNumeric: "tabular-nums" }}
             >
                 {snr}{" "}
-
-                          <Text span size="xs" c="dimmed">
-                dB
+                <Text span size="xs" c="dimmed" fw={500}>
+                    dB
+                </Text>
             </Text>
-            </Text>
-  
         </Group>
     );
 };

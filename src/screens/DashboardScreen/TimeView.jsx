@@ -1,20 +1,11 @@
 import { Text } from "@mantine/core";
+import { formatTime } from "@/utils/view";
 
 export const TimeView = ({ date }) => {
-    let utcTime = "";
-
-    if (date) {
-        utcTime = new Intl.DateTimeFormat("en-GB", {
-            timeZone: "UTC",
-            hour: "2-digit",
-            minute: "2-digit",
-
-            hourCycle: "h23",
-        }).format(date);
-    }
+    let utcTime = formatTime(date);
 
     return (
-        <Text size="xs" c="dimmed">
+        <Text size="sm" c="dimmed" fw={500}>
             {utcTime ?? ""}
         </Text>
     );

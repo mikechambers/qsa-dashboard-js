@@ -5,7 +5,7 @@ import { BandFrequencyView } from "./BandFrequencyView";
 import { TimeView } from "./TimeView";
 import { SNRView } from "./SNRView";
 import { DistanceView } from "./DistanceView";
-//import {useSpotData} from "@/context/SpotDataContext";
+import { IconBroadcast } from "@tabler/icons-react";
 
 export const SpotTable = ({ spots, onSpotHighlight }) => {
     //todo
@@ -16,17 +16,28 @@ export const SpotTable = ({ spots, onSpotHighlight }) => {
     const virtualizer = useVirtualizer({
         count: spots.length,
         getScrollElement: () => scrollParent,
-        estimateSize: () => 36,
+        estimateSize: () => 60,
         overscan: 20,
         getItemKey: (index) => spots[index].sequence,
     });
 
     const virtualItems = virtualizer.getVirtualItems();
 
+    const count = spots ? spots.length : 0;
+
     return (
         <Paper p={0}>
-            <Group p="sm">
+            <Group p="sm" gap="sm" justify="space-between">
                 <Title order={3}>Spots</Title>
+
+                <Text
+                    size="sm"
+                    c="dimmed"
+                    fw={500}
+                    style={{ fontVariantNumeric: "tabular-nums" }}
+                >
+                    {count} {count === 1 ? "spot" : "spots"}
+                </Text>
             </Group>
             <Table.ScrollContainer
                 minWidth={400}
