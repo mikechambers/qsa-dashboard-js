@@ -10,6 +10,7 @@ import { SpotMapView } from "./SpotMapView";
 import { SpotDetail } from "./SpotDetail";
 import { SpotTable } from "./SpotTable";
 import { DashboardHeaderView } from "./DashboardHeaderView";
+import { gridToLocation } from "../../utils/geo";
 
 export default function DashboardScreen(props) {
     let params = useParams();
@@ -32,6 +33,11 @@ export default function DashboardScreen(props) {
         grid = settings.grid;
     }
 
+    let location;
+    if (grid) {
+        location = gridToLocation(grid);
+    }
+
     if (typeof callsign === "string" && isValidCallsign(callsign.trim())) {
         callsign = normalizeCallsign(callsign);
     } else {
@@ -48,6 +54,7 @@ export default function DashboardScreen(props) {
                 <div id="summaryPods"></div>
                 <div id="spotMap">
                     <SpotMapView
+                        location={location}
                         spots={spots}
                         onSpotHighlight={onSpotHighlight}
                         selectedSpot={selectedSpot}

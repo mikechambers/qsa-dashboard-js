@@ -7,9 +7,27 @@ import { getCSSColorForSNR } from "@/utils/view";
 
 setWorkerUrl(workerUrl);
 
-export const SpotMapView = ({ spots, selectedSpot, onSpotHighlight }) => {
+export const SpotMapView = ({
+    spots,
+    selectedSpot,
+    onSpotHighlight,
+    location,
+}) => {
     const mapContainer = useRef(null);
     const mapInstance = useRef(null);
+
+    //todo: look into using GeoJSON to display
+    const addMarkerToMap = (location, el) => {
+        const map = mapInstance.current;
+        const loc = location;
+        if (!map || !loc) return;
+
+        const marker = new Marker({ element: el })
+            .setLngLat([loc.longitude, loc.latitude])
+            .addTo(map);
+
+        return marker;
+    };
 
     useEffect(() => {
         if (mapInstance.current) return;
@@ -27,39 +45,43 @@ export const SpotMapView = ({ spots, selectedSpot, onSpotHighlight }) => {
         };
     }, []);
 
-    //todo: look into using GeoJSON to display
-    const addMarkerToMap = (spot) => {
-        const map = mapInstance.current;
-        const loc = spot?.location;
-        if (!map || !loc) return;
+    useEffect(() => {
+        const color = "#1c7ed6";
 
         const el = document.createElement("div");
-        el.style.width = "14px";
-        el.style.height = "14px";
+        el.style.width = "20px";
+        el.style.height = "20px";
         el.style.borderRadius = "50%";
-        el.style.background = getCSSColorForSNR(spot.snr);
-        el.style.border = "2px solid white";
-        el.style.boxShadow = "0 0 4px rgba(0,0,0,0.4)";
+        el.style.background = "#1c7ed6";
+        el.style.border = "3px solid white";
+        el.style.boxShadow =
+            "0 0 0 4px rgba(28,126,214,0.3), 0 0 6px rgba(0,0,0,0.4)";
+        el.className = "home-marker";
 
-        const marker = new Marker({ element: el })
-            .setLngLat([loc.longitude, loc.latitude])
-            .addTo(map);
+        const m = addMarkerToMap(location, el);
 
-        return marker;
-    };
-    /*
-    useEffect(() => {
-        const marker = addMarkerToMap(selectedSpot);
+        return () => {
+            if (m) m.remove();
+        };
+    }, [location]);
 
-        return () => marker.remove();
-    }, [selectedSpot?.location]);
-*/
-    console.log("spots", spots?.length);
     useEffect(() => {
         let markers = [];
 
         for (const s of spots) {
-            const m = addMarkerToMap(s);
+            const color = getCSSColorForSNR(s.snr);
+
+            const el = document.createElement("div");
+            el.style.width = "14px";
+            el.style.height = "14px";
+            el.style.borderRadius = "50%";
+            el.style.background = color;
+            el.style.border = "2px solid white";
+            el.style.boxShadow = "0 0 4px rgba(0,0,0,0.4)";
+
+            const m = addMarkerToMap(s.location, el);
+
+            if (m) markers.push(m);
 
             if (m) markers.push(m);
         }

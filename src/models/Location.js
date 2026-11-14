@@ -3,10 +3,9 @@ export default class Location {
     longitude;
     grid;
 
-    constructor({latitude, longitude, grid}) {
+    constructor({ latitude, longitude, grid }) {
         this.latitude = latitude;
         this.longitude = longitude;
         this.grid = grid;
-
     }
 }
