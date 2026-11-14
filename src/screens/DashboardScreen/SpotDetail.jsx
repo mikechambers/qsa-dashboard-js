@@ -51,16 +51,16 @@ export const SpotDetail = ({ spot }) => {
                     <StatView label="Distance" value={`${d} ${unit}`} />
                     <StatView
                         label="Country"
-                        value={spot?.receiverDXCC.countryCode}
+                        value={spot?.receiverDXCC?.countryCode}
                     />
 
                     <StatView
                         label="ITU zone"
-                        value={spot?.receiverDXCC.ituZone}
+                        value={spot?.receiverDXCC?.ituZone}
                     />
                     <StatView
                         label="CQ zone"
-                        value={spot?.receiverDXCC.cqZone}
+                        value={spot?.receiverDXCC?.cqZone}
                     />
                 </SimpleGrid>
             </Stack>

@@ -45,8 +45,6 @@ export default function DashboardScreen(props) {
         console.log("CALLSIGN", callsign);
     }
 
-    console.log(callsign);
-
     return (
         <div id="dashboardScreen" className="screen">
             <DashboardHeaderView callsign={callsign} grid={grid} />

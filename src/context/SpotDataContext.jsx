@@ -4,6 +4,7 @@ import { useSettings } from "./SettingsContext";
 import { ConnectionStatus } from "../enums/ConnectionStatus";
 
 import { DEBUG, MOCK_SPOTS } from "@/debug/";
+import Spot from "../models/Spot";
 
 const SpotDataContext = createContext(null);
 
@@ -30,7 +31,7 @@ export function SpotDataProvider({ children }) {
         if (client.connected) {
             setStatus(ConnectionStatus.CONNECTED);
         } else if (client.reconnecting) {
-            setStatus(ConnectionStatus.RECONNECTING);
+            setStatus(ConnectionStatus.CONNECTING);
         } else {
             setStatus(ConnectionStatus.DISCONNECTED);
         }
@@ -52,8 +53,12 @@ export function SpotDataProvider({ children }) {
         client.on("end", updateState);
 
         client.on("message", (topic, message) => {
-            const spot = JSON.parse(message.toString());
-            console.log("message", topic, spot);
+            console.log(message.toString());
+
+            const data = JSON.parse(message.toString());
+
+            const spot = Spot.fromData(data);
+            setSpots((prev) => [...prev, spot]);
         });
 
         const errHandler = (err) => {

@@ -17,9 +17,9 @@ export const SpotMapView = ({
     const mapInstance = useRef(null);
 
     //todo: look into using GeoJSON to display
-    const addMarkerToMap = (location, el) => {
+    const addMarkerToMap = (el, loc) => {
         const map = mapInstance.current;
-        const loc = location;
+
         if (!map || !loc) return;
 
         const marker = new Marker({ element: el })
@@ -52,13 +52,13 @@ export const SpotMapView = ({
         el.style.width = "20px";
         el.style.height = "20px";
         el.style.borderRadius = "50%";
-        el.style.background = "#1c7ed6";
+        el.style.background = color;
         el.style.border = "3px solid white";
         el.style.boxShadow =
             "0 0 0 4px rgba(28,126,214,0.3), 0 0 6px rgba(0,0,0,0.4)";
         el.className = "home-marker";
 
-        const m = addMarkerToMap(location, el);
+        const m = addMarkerToMap(el, location);
 
         return () => {
             if (m) m.remove();
@@ -78,10 +78,9 @@ export const SpotMapView = ({
             el.style.background = color;
             el.style.border = "2px solid white";
             el.style.boxShadow = "0 0 4px rgba(0,0,0,0.4)";
+            el.style.opacity = 0.5;
 
-            const m = addMarkerToMap(s.location, el);
-
-            if (m) markers.push(m);
+            const m = addMarkerToMap(el, s.receiverLocation);
 
             if (m) markers.push(m);
         }

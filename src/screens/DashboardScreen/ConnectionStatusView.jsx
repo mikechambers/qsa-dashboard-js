@@ -11,6 +11,7 @@ const STATUS_STYLES = {
 export const ConnectionStatusView = (props) => {
     const { spots, status } = useSpotData();
 
+    console.log("status", status);
     const { color, label } = STATUS_STYLES[status];
 
     return (
