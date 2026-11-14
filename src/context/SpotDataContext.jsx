@@ -3,39 +3,45 @@ import mqtt from "mqtt";
 import { useSettings } from "./SettingsContext";
 import { ConnectionStatus } from "../enums/ConnectionStatus";
 
+import { DEBUG, MOCK_SPOTS } from "@/debug/";
+
 const SpotDataContext = createContext(null);
 
 export function SpotDataProvider({ children }) {
-	const { settings } = useSettings();
+    const { settings } = useSettings();
 
-	const [spots, setSpots] = useState([])
-    const [status, setStatus] = useState(ConnectionStatus.DISCONNECTED)
+    const [spots, setSpots] = useState(DEBUG ? MOCK_SPOTS : []);
+    const [status, setStatus] = useState(
+        DEBUG ? ConnectionStatus.CONNECTED : ConnectionStatus.DISCONNECTED,
+    );
 
-    const clientRef = useRef(null)
+    const clientRef = useRef(null);
 
     const updateState = () => {
+        if (DEBUG) return;
+
         const client = clientRef.current;
 
-        if(!client) {
+        if (!client) {
             setStatus(ConnectionStatus.DISCONNECTED);
-            return
+            return;
         }
 
-        if(client.connected) {
+        if (client.connected) {
             setStatus(ConnectionStatus.CONNECTED);
         } else if (client.reconnecting) {
             setStatus(ConnectionStatus.RECONNECTING);
         } else {
             setStatus(ConnectionStatus.DISCONNECTED);
         }
-    }
+    };
 
     //one once per page to connect
-    useEffect(()=>{
-		const clientId = `qsa-dashboard-${crypto.randomUUID()}`;
-		const client = mqtt.connect("wss://mqtt.pskreporter.info:1886", {
-			clientId: clientId,
-		});
+    useEffect(() => {
+        const clientId = `qsa-dashboard-${crypto.randomUUID()}`;
+        const client = mqtt.connect("wss://mqtt.pskreporter.info:1886", {
+            clientId: clientId,
+        });
 
         clientRef.current = client;
 
@@ -47,18 +53,18 @@ export function SpotDataProvider({ children }) {
 
         client.on("message", (topic, message) => {
             const spot = JSON.parse(message.toString());
-			console.log("message", topic, spot);
-		});
+            console.log("message", topic, spot);
+        });
 
         const errHandler = (err) => {
-			console.error("MQTT connection error:", err);
-            updateState()
-		};
+            console.error("MQTT connection error:", err);
+            updateState();
+        };
 
         client.on("error", errHandler);
 
         return () => {
-			client.end();
+            client.end();
 
             client.off("connect", updateState);
             client.off("reconnect", updateState);
@@ -68,17 +74,14 @@ export function SpotDataProvider({ children }) {
             client.off("error", errHandler);
 
             clientRef.current = null;
-		};
-
-    }, [])
-
+        };
+    }, []);
 
     //re-run when settings.callsign changes
-	useEffect(() => {
-
+    useEffect(() => {
         //todo: check for valid callsign
 
-        const client = clientRef.current
+        const client = clientRef.current;
 
         let callsign = settings?.callsign;
         console.log("callsign", callsign);
@@ -87,39 +90,39 @@ export function SpotDataProvider({ children }) {
 
         let topic = `pskr/filter/v2/+/+/${callsign}/#`;
         const subscribe = () => {
-			client.subscribe(topic, (err) => {
-				if (!err) {
-					console.log("subscribed");
-				} else {
-					console.log(err);
-				}
-			});
+            client.subscribe(topic, (err) => {
+                if (!err) {
+                    console.log("subscribed");
+                } else {
+                    console.log(err);
+                }
+            });
         };
 
-        if(client.connected) {
-            subscribe()
+        if (client.connected) {
+            subscribe();
         }
 
-        client.on("connect", subscribe)
+        client.on("connect", subscribe);
 
         return () => {
             client.off("connect", subscribe);
 
-            if(client.connected) {
-                client.unsubscribe(topic)
+            if (client.connected) {
+                client.unsubscribe(topic);
 
                 //reset spots
             }
         };
-	}, [settings.callsign]);
+    }, [settings.callsign]);
 
-	return (
-		<SpotDataContext.Provider value={{ spots, status }}>
-			{children}
-		</SpotDataContext.Provider>
-	);
+    return (
+        <SpotDataContext.Provider value={{ spots, status }}>
+            {children}
+        </SpotDataContext.Provider>
+    );
 }
 
 export function useSpotData() {
-	return useContext(SpotDataContext);
+    return useContext(SpotDataContext);
 }
