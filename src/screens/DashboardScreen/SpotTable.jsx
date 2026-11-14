@@ -65,7 +65,8 @@ export const SpotTable = ({ spots, onSpotHighlight }) => {
                         </Table.Tr>
                     </Table.Thead>
                     <Table.Tbody>
-                        {spots.map((spot) => {
+                        {virtualItems.map((virtualRow) => {
+                            const spot = spots[virtualRow.index];
                             return (
                                 <Table.Tr
                                     key={spot.sequence}
