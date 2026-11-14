@@ -1,11 +1,11 @@
-import { Paper, Table, Title, Group, Text } from "@mantine/core";
+import { Paper, Table, Title, Group, Text, EmptyState } from "@mantine/core";
 import { useState } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { BandFrequencyView } from "./BandFrequencyView";
 import { TimeView } from "./TimeView";
 import { SNRView } from "./SNRView";
 import { DistanceView } from "./DistanceView";
-import { IconBroadcast } from "@tabler/icons-react";
+import { IconBroadcast, IconInbox } from "@tabler/icons-react";
 
 export const SpotTable = ({ spots, onSpotHighlight }) => {
     const [scrollParent, setScrollParent] = useState(null);
@@ -23,6 +23,18 @@ export const SpotTable = ({ spots, onSpotHighlight }) => {
     const virtualItems = virtualizer.getVirtualItems();
 
     const count = spots ? spots.length : 0;
+
+    if (!spots || !spots.length) {
+        return (
+            <Paper p={0}>
+                <EmptyState
+                    icon={<IconInbox size={40} stroke={1.5} />}
+                    title="No spots yet"
+                    description="Spots will appear here as they come in."
+                />
+            </Paper>
+        );
+    }
 
     return (
         <Paper p={0}>
