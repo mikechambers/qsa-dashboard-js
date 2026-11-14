@@ -1,3 +1,4 @@
+import { Paper } from "@mantine/core";
 import { TimeView } from "./TimeView";
 
 export const SpotDetail = ({ spot }) => {
@@ -7,7 +8,9 @@ export const SpotDetail = ({ spot }) => {
     }
 
     return (
-        <div id="spotDetail">
+        <Paper>
+        <div id="spotDetail" >
+
             <div>{spot?.receiverCall}</div>
             <div>{spot?.band}</div>
 
@@ -20,5 +23,6 @@ export const SpotDetail = ({ spot }) => {
             <div>{spot?.frequency}</div>
             <div>{spot?.mode}</div>
         </div>
+        </Paper>
     );
 };

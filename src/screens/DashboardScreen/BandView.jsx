@@ -30,7 +30,7 @@ export const getColorForBand = (band) => {
 
 export const BandView = ({band}) => {
     return (
-       <Badge radius="md" variant="light" color={getColorForBand(band)}>{band}</Badge>
+       <Badge size="md" variant="light" radius="md" fw={600} color={getColorForBand(band)}>{band}</Badge>
     );
 }
 

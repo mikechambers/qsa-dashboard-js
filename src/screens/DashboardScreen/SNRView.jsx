@@ -1,4 +1,5 @@
-const clamp = (v, min, max) => Math.min(max, Math.max(min, v));
+import { Text, Group } from "@mantine/core";
+import { clamp } from "@/utils/math";
 
 export const getColorForSnr = (snr) => {
     const s = clamp(snr, -24, 10);
@@ -10,18 +11,20 @@ export const getColorForSnr = (snr) => {
 
 export const SNRView = ({ snr }) => {
     return (
-        <div className="spotTableCell">
-            <div style={{ display: "inline-block" }}>
-                <div>{snr} dB</div>
-                <div
-                    style={{
-                        height: "4px",
-                        marginTop: "2px",
-                        borderRadius: "6px",
-                        background: getColorForSnr(snr),
-                    }}
-                />
-            </div>
-        </div>
+        <Group gap={8} justify="flex-end" wrap="nowrap" p={0}>
+            <Text
+                size="sm"
+                ta="right"
+                miw="44"
+                style={{ fontVariantNumeric: "tabular-nums" }}
+            >
+                {snr}{" "}
+
+                          <Text span size="xs" c="dimmed">
+                dB
+            </Text>
+            </Text>
+  
+        </Group>
     );
 };

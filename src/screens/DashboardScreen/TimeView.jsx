@@ -1,3 +1,5 @@
+import { Text } from "@mantine/core";
+
 export const TimeView = ({ date }) => {
     let utcTime = "";
 
@@ -6,10 +8,14 @@ export const TimeView = ({ date }) => {
             timeZone: "UTC",
             hour: "2-digit",
             minute: "2-digit",
-        
+
             hourCycle: "h23",
         }).format(date);
     }
 
-    return <div>{utcTime ?? ""}</div>;
+    return (
+        <Text size="xs" c="dimmed">
+            {utcTime ?? ""}
+        </Text>
+    );
 };

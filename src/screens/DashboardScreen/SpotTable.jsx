@@ -1,4 +1,4 @@
-import { Table } from "@mantine/core";
+import { Paper, Table, Title, Group, Text } from "@mantine/core";
 import { useState } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { BandFrequencyView } from "./BandFrequencyView";
@@ -24,62 +24,72 @@ export const SpotTable = ({ spots, onSpotHighlight }) => {
     const virtualItems = virtualizer.getVirtualItems();
 
     return (
-        <Table.ScrollContainer
-            minWidth={400}
-            maxHeight={600}
-            scrollAreaProps={{ viewportRef: setScrollParent }}
-        >
-            <Table
-                styles={{ td: { verticalAlign: "top" } }}
-                striped
-                highlightOnHover
-                withTableBorder
-                withRowBorders={false}
+        <Paper p={0}>
+            <Group>
+            <Title order={3}>Spots</Title>
+            </Group>
+            <Table.ScrollContainer
+                minWidth={400}
+                maxHeight={600}
+                scrollAreaProps={{ viewportRef: setScrollParent }}
             >
-                <Table.Thead>
-                    <Table.Tr>
-                        <Table.Th>UTC</Table.Th>
+                <Table
+                    styles={{ td: { verticalAlign: "top" } }}
+                    highlightOnHover
+                    withTableBorder
+                    withRowBorders={true}
+                    verticalSpacing="xs"
+                    horizontalSpacing="md"
+                    highlightOnHoverColor="var(--mantine-primary-color-light)"
+                >
+                    <Table.Thead>
+                        <Table.Tr>
+                            <Table.Th>UTC</Table.Th>
 
-                        <Table.Th ta="left">Loc</Table.Th>
-                        <Table.Th ta="right">Distance</Table.Th>
-                        <Table.Th ta="right">SNR</Table.Th>
+                            <Table.Th ta="left">Loc</Table.Th>
+                            <Table.Th ta="right">Distance</Table.Th>
+                            <Table.Th ta="right">SNR</Table.Th>
 
-                        <Table.Th ta="center">Band</Table.Th>
-                    </Table.Tr>
-                </Table.Thead>
-                <Table.Tbody>
-                    {spots.map((spot) => {
-                        return (
-                            <Table.Tr
-                                key={spot.sequence}
-                                onMouseEnter={() => onSpotHighlight?.(spot)}
-                            >
-                                <Table.Td w={20}>
-                                    <TimeView date={spot.time} />
-                                </Table.Td>
-                                <Table.Td ta="left">
-                                    {spot.senderDXCC.countryCode}
-                                </Table.Td>
-                                <Table.Td ta="right">
-                                    <DistanceView distance={spot.distance} />
-                                </Table.Td>
+                            <Table.Th ta="center">Band</Table.Th>
+                        </Table.Tr>
+                    </Table.Thead>
+                    <Table.Tbody>
+                        {spots.map((spot) => {
+                            return (
+                                <Table.Tr
+                                    key={spot.sequence}
+                                    onMouseEnter={() => onSpotHighlight?.(spot)}
+                                >
+                                    <Table.Td w={20}>
+                                        <TimeView date={spot.time} />
+                                    </Table.Td>
+                                    <Table.Td ta="left">
+                                        <Text size="sm">{spot.senderDXCC.countryCode}</Text>
+                                        
+                                    </Table.Td>
+                                    <Table.Td ta="right">
+                                        <DistanceView
+                                            distance={spot.distance}
+                                        />
+                                    </Table.Td>
 
-                                <Table.Td ta="right">
-                                    <SNRView snr={spot.snr} />
-                                </Table.Td>
+                                    <Table.Td ta="right">
+                                        <SNRView snr={spot.snr} />
+                                    </Table.Td>
 
-                                <Table.Td ta="center">
-                                    <BandFrequencyView
-                                        frequency={spot.frequency}
-                                        band={spot.band}
-                                    />
-                                </Table.Td>
-                            </Table.Tr>
-                        );
-                    })}
-                </Table.Tbody>
-            </Table>
-        </Table.ScrollContainer>
+                                    <Table.Td ta="center">
+                                        <BandFrequencyView
+                                            frequency={spot.frequency}
+                                            band={spot.band}
+                                        />
+                                    </Table.Td>
+                                </Table.Tr>
+                            );
+                        })}
+                    </Table.Tbody>
+                </Table>
+            </Table.ScrollContainer>
+        </Paper>
     );
 };
 const debugSpots = [

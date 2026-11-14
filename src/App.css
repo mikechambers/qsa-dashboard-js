@@ -5,13 +5,12 @@ body,
   box-sizing: border-box;
   height: 100%;
   margin:0;
-
 }
 
 #root {
     display: flex;
     flex-direction: column;
-    padding: 8px;
+    
 }
 
 #main {
@@ -20,6 +19,7 @@ body,
   flex-grow: 1;
   width: 100%;
   min-height: 0; 
+  padding: 8px;
 }
 
 /* take up all the space */
