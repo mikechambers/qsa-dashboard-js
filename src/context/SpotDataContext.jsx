@@ -53,8 +53,6 @@ export function SpotDataProvider({ children }) {
         client.on("end", updateState);
 
         client.on("message", (topic, message) => {
-            console.log(message.toString());
-
             const data = JSON.parse(message.toString());
 
             const spot = Spot.fromData(data);

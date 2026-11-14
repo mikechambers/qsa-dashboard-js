@@ -8,16 +8,15 @@ const STATUS_STYLES = {
     [ConnectionStatus.DISCONNECTED]: { color: "red", label: "Disconnected" },
 };
 
-export const ConnectionStatusView = (props) => {
-    const { spots, status } = useSpotData();
+export const ConnectionStatusView = () => {
+    const { status } = useSpotData();
 
-    console.log("status", status);
     const { color, label } = STATUS_STYLES[status];
 
     return (
         <Badge
             variant="light"
-            color="green"
+            color={color}
             size="lg"
             tt="none"
             leftSection={

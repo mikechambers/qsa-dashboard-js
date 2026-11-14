@@ -60,11 +60,8 @@ export default class Spot {
         const t_tx = epochToDate(data.tx);
 
         const senderLocation = gridToLocation(data.sl);
-
-        console.log("data.rl", data.rl);
-
         const receiverLocation = gridToLocation(data.rl);
-        console.log("receiverLocation", receiverLocation);
+
         const senderDXCC = getDXCCEntity(data.sa);
         const receiverDXCC = getDXCCEntity(data.ra);
 
