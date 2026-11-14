@@ -25,8 +25,8 @@ export const SpotTable = ({ spots, onSpotHighlight }) => {
 
     return (
         <Paper p={0}>
-            <Group>
-            <Title order={3}>Spots</Title>
+            <Group p="sm">
+                <Title order={3}>Spots</Title>
             </Group>
             <Table.ScrollContainer
                 minWidth={400}
@@ -64,8 +64,9 @@ export const SpotTable = ({ spots, onSpotHighlight }) => {
                                         <TimeView date={spot.time} />
                                     </Table.Td>
                                     <Table.Td ta="left">
-                                        <Text size="sm">{spot.senderDXCC.countryCode}</Text>
-                                        
+                                        <Text size="sm">
+                                            {spot.senderDXCC.countryCode}
+                                        </Text>
                                     </Table.Td>
                                     <Table.Td ta="right">
                                         <DistanceView
@@ -99,10 +100,12 @@ const debugSpots = [
         mode: "FT8",
         band: "20M",
         frequency: 14075230,
+        senderCall: "N0CALL",
         receiverCall: "VE7DLX",
         distance: 1310000,
         snr: -8,
-        senderDXCC: { countryCode: "US" },
+        senderDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
+        receiverDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
         location: { latitude: 49.28, longitude: -123.12 },
     },
     {
@@ -111,10 +114,12 @@ const debugSpots = [
         mode: "FT8",
         band: "20M",
         frequency: 14076810,
+        senderCall: "N0CALL",
         receiverCall: "W7GJ",
         distance: 1130000,
         snr: -3,
-        senderDXCC: { countryCode: "US" },
+        senderDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
+        receiverDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
         location: { latitude: 47.61, longitude: -122.33 },
     },
     {
@@ -123,10 +128,12 @@ const debugSpots = [
         mode: "FT8",
         band: "20M",
         frequency: 14074960,
+        senderCall: "N0CALL",
         receiverCall: "KH6BZF",
         distance: 3900000,
         snr: -11,
-        senderDXCC: { countryCode: "US" },
+        senderDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
+        receiverDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
         location: { latitude: 21.31, longitude: -157.86 },
     },
     {
@@ -135,10 +142,12 @@ const debugSpots = [
         mode: "FT8",
         band: "20M",
         frequency: 14077350,
+        senderCall: "N0CALL",
         receiverCall: "W5QY",
         distance: 2400000,
         snr: -15,
-        senderDXCC: { countryCode: "US" },
+        senderDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
+        receiverDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
         location: { latitude: 32.78, longitude: -96.8 },
     },
     {
@@ -147,10 +156,12 @@ const debugSpots = [
         mode: "FT4",
         band: "15M",
         frequency: 21141800,
+        senderCall: "N0CALL",
         receiverCall: "VK3DEF",
         distance: 12700000,
         snr: -5,
-        senderDXCC: { countryCode: "US" },
+        senderDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
+        receiverDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
         location: { latitude: -37.81, longitude: 144.96 },
     },
     {
@@ -159,10 +170,12 @@ const debugSpots = [
         mode: "FT8",
         band: "20M",
         frequency: 14075870,
+        senderCall: "N0CALL",
         receiverCall: "N1ABC",
         distance: 4300000,
         snr: -19,
-        senderDXCC: { countryCode: "US" },
+        senderDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
+        receiverDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
         location: { latitude: 42.36, longitude: -71.06 },
     },
     {
@@ -171,10 +184,12 @@ const debugSpots = [
         mode: "FT8",
         band: "17M",
         frequency: 18101640,
+        senderCall: "N0CALL",
         receiverCall: "JH1GEN",
         distance: 8300000,
         snr: -21,
-        senderDXCC: { countryCode: "US" },
+        senderDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
+        receiverDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
         location: { latitude: 35.68, longitude: 139.69 },
     },
     {
@@ -183,10 +198,12 @@ const debugSpots = [
         mode: "FT8",
         band: "15M",
         frequency: 21076100,
+        senderCall: "N0CALL",
         receiverCall: "ZL2BCD",
         distance: 10500000,
         snr: -16,
-        senderDXCC: { countryCode: "US" },
+        senderDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
+        receiverDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
         location: { latitude: -36.85, longitude: 174.76 },
     },
     {
@@ -195,10 +212,12 @@ const debugSpots = [
         mode: "FT8",
         band: "20M",
         frequency: 14075500,
+        senderCall: "N0CALL",
         receiverCall: "DL1ABC",
         distance: 9120000,
         snr: -22,
-        senderDXCC: { countryCode: "US" },
+        senderDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
+        receiverDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
         location: { latitude: 50.11, longitude: 8.68 },
     },
     {
@@ -207,10 +226,12 @@ const debugSpots = [
         mode: "FT8",
         band: "10M",
         frequency: 28076240,
+        senderCall: "N0CALL",
         receiverCall: "XE2YY",
         distance: 2500000,
         snr: -9,
-        senderDXCC: { countryCode: "US" },
+        senderDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
+        receiverDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
         location: { latitude: 25.69, longitude: -100.32 },
     },
     {
@@ -219,10 +240,12 @@ const debugSpots = [
         mode: "FT4",
         band: "17M",
         frequency: 18105200,
+        senderCall: "N0CALL",
         receiverCall: "PY2ABC",
         distance: 10500000,
         snr: -14,
-        senderDXCC: { countryCode: "US" },
+        senderDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
+        receiverDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
         location: { latitude: -23.55, longitude: -46.63 },
     },
     {
@@ -231,10 +254,12 @@ const debugSpots = [
         mode: "FT8",
         band: "20M",
         frequency: 14078200,
+        senderCall: "N0CALL",
         receiverCall: "G4ABC",
         distance: 8600000,
         snr: -23,
-        senderDXCC: { countryCode: "US" },
+        senderDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
+        receiverDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
         location: { latitude: 51.51, longitude: -0.13 },
     },
     {
@@ -243,10 +268,12 @@ const debugSpots = [
         mode: "FT8",
         band: "20M",
         frequency: 14074680,
+        senderCall: "N0CALL",
         receiverCall: "KL7ABC",
         distance: 3200000,
         snr: -6,
-        senderDXCC: { countryCode: "US" },
+        senderDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
+        receiverDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
         location: { latitude: 61.22, longitude: -149.9 },
     },
     {
@@ -255,10 +282,12 @@ const debugSpots = [
         mode: "FT8",
         band: "20M",
         frequency: 14076020,
+        senderCall: "N0CALL",
         receiverCall: "AC0DEN",
         distance: 1550000,
         snr: 2,
-        senderDXCC: { countryCode: "US" },
+        senderDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
+        receiverDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
         location: { latitude: 39.74, longitude: -104.99 },
     },
     {
@@ -267,10 +296,12 @@ const debugSpots = [
         mode: "FT4",
         band: "20M",
         frequency: 14080900,
+        senderCall: "N0CALL",
         receiverCall: "W6DEF",
         distance: 140000,
         snr: 8,
-        senderDXCC: { countryCode: "US" },
+        senderDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
+        receiverDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
         location: { latitude: 38.58, longitude: -121.49 },
     },
 ];
