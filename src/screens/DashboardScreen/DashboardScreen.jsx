@@ -50,9 +50,9 @@ export default function DashboardScreen(props) {
                 </div>
                 <div id="spotMap">
                     <SpotMapView spots={spots} onSpotHighlight={onSpotHighlight} selectedSpot={selectedSpot} />
-                    <SpotDetail spot={selectedSpot} />
                 </div>
                 <div id="spotsContainer">
+                    <SpotDetail spot={selectedSpot} />
                     <SpotTable spots={spots} onSpotHighlight={onSpotHighlight}/>
                 </div>
             </div>

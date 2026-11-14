@@ -2,6 +2,10 @@ import { TimeView } from "./TimeView";
 
 export const SpotDetail = ({ spot }) => {
 
+    if(!spot) {
+        return null;
+    }
+
     return (
         <div id="spotDetail">
             <div>{spot?.receiverCall}</div>
