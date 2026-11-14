@@ -93,6 +93,7 @@ const debugSpots = [
         distance: 1310000,
         snr: -8,
         senderDXCC: { countryCode: "US" },
+        location: { latitude: 49.28, longitude: -123.12 },
     },
     {
         sequence: 2,
@@ -104,6 +105,7 @@ const debugSpots = [
         distance: 1130000,
         snr: -3,
         senderDXCC: { countryCode: "US" },
+        location: { latitude: 47.61, longitude: -122.33 },
     },
     {
         sequence: 3,
@@ -115,6 +117,7 @@ const debugSpots = [
         distance: 3900000,
         snr: -11,
         senderDXCC: { countryCode: "US" },
+        location: { latitude: 21.31, longitude: -157.86 },
     },
     {
         sequence: 4,
@@ -126,6 +129,7 @@ const debugSpots = [
         distance: 2400000,
         snr: -15,
         senderDXCC: { countryCode: "US" },
+        location: { latitude: 32.78, longitude: -96.8 },
     },
     {
         sequence: 5,
@@ -137,6 +141,7 @@ const debugSpots = [
         distance: 12700000,
         snr: -5,
         senderDXCC: { countryCode: "US" },
+        location: { latitude: -37.81, longitude: 144.96 },
     },
     {
         sequence: 6,
@@ -148,6 +153,7 @@ const debugSpots = [
         distance: 4300000,
         snr: -19,
         senderDXCC: { countryCode: "US" },
+        location: { latitude: 42.36, longitude: -71.06 },
     },
     {
         sequence: 7,
@@ -159,6 +165,7 @@ const debugSpots = [
         distance: 8300000,
         snr: -21,
         senderDXCC: { countryCode: "US" },
+        location: { latitude: 35.68, longitude: 139.69 },
     },
     {
         sequence: 8,
@@ -170,6 +177,7 @@ const debugSpots = [
         distance: 10500000,
         snr: -16,
         senderDXCC: { countryCode: "US" },
+        location: { latitude: -36.85, longitude: 174.76 },
     },
     {
         sequence: 9,
@@ -181,6 +189,7 @@ const debugSpots = [
         distance: 9120000,
         snr: -22,
         senderDXCC: { countryCode: "US" },
+        location: { latitude: 50.11, longitude: 8.68 },
     },
     {
         sequence: 10,
@@ -192,6 +201,7 @@ const debugSpots = [
         distance: 2500000,
         snr: -9,
         senderDXCC: { countryCode: "US" },
+        location: { latitude: 25.69, longitude: -100.32 },
     },
     {
         sequence: 11,
@@ -203,6 +213,7 @@ const debugSpots = [
         distance: 10500000,
         snr: -14,
         senderDXCC: { countryCode: "US" },
+        location: { latitude: -23.55, longitude: -46.63 },
     },
     {
         sequence: 12,
@@ -214,6 +225,7 @@ const debugSpots = [
         distance: 8600000,
         snr: -23,
         senderDXCC: { countryCode: "US" },
+        location: { latitude: 51.51, longitude: -0.13 },
     },
     {
         sequence: 13,
@@ -225,6 +237,7 @@ const debugSpots = [
         distance: 3200000,
         snr: -6,
         senderDXCC: { countryCode: "US" },
+        location: { latitude: 61.22, longitude: -149.9 },
     },
     {
         sequence: 14,
@@ -236,6 +249,7 @@ const debugSpots = [
         distance: 1550000,
         snr: 2,
         senderDXCC: { countryCode: "US" },
+        location: { latitude: 39.74, longitude: -104.99 },
     },
     {
         sequence: 15,
@@ -247,5 +261,6 @@ const debugSpots = [
         distance: 140000,
         snr: 8,
         senderDXCC: { countryCode: "US" },
+        location: { latitude: 38.58, longitude: -121.49 },
     },
 ];
