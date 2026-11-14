@@ -26,6 +26,7 @@ export default function DashboardScreen(props) {
     let callsign = params.callsign;
     let grid = undefined;
 
+    //todo: using wrong callsign in header
     if (!("callsign" in params)) {
         callsign = settings.callsign;
     }
@@ -41,9 +42,7 @@ export default function DashboardScreen(props) {
 
     return (
         <div id="dashboardScreen" className="screen">
-            <div id="dashboardScreenHeader">
-                <DashboardHeaderView />
-            </div>
+            <DashboardHeaderView />
             <div id="dashboardScreenMain">
                 <div id="summaryPods"></div>
                 <div id="spotMap">

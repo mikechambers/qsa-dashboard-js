@@ -16,11 +16,11 @@ import "@fontsource/jetbrains-mono/600.css";
 
 const theme = createTheme({
     fontFamilyMonospace: "'JetBrains Mono', ui-monospace, monospace",
+    black: "#212529",
     components: {
         Paper: {
             defaultProps: {
                 p: "sm",
-                shadow: "xs",
                 radius: "sm",
                 withBorder: true,
             },

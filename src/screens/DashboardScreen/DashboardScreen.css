@@ -23,13 +23,7 @@
     grid-column: 1 / -1; /* span all */
 }
 
-#dashboardScreenHeader {
-    height:40px;    
-}
 
-#dashboardScreenFooter {
-    height:40px;
-}
 
 #spotMap {
     border-radius: var(--mantine-radius-default);
