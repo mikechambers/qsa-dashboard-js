@@ -7,8 +7,6 @@ export const DistanceView = ({ distance }) => {
 
     let d = "-";
 
-    console.log(settings.unitType)
-
     if (distance !== undefined) {
         if (settings.unitType === UnitType.IMPERIAL) {
             d = `${Math.round(metersToMiles(distance))} mi`;

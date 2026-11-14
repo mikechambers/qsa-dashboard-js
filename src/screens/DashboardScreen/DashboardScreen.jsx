@@ -6,7 +6,9 @@ import {isValidCallsign, normalizeCallsign} from "@/utils/radio"
 import {ConnectionStatusView} from "./ConnectionStatusView";
 import {useSpotData} from "@/context/SpotDataContext";
 import "./DashboardScreen.css";
-import { SpotsView } from "./SpotsView";
+import { SpotMapView } from "./SpotMapView";
+import { SpotDetail } from "./SpotDetail";
+import { SpotTable } from "./SpotTable";
 
 export default function DashboardScreen(props) {
 
@@ -46,11 +48,12 @@ export default function DashboardScreen(props) {
                 <div id="summaryPods">
                     <div>Spots : {spots.length}</div>
                 </div>
-                <div id="spotMap">MAP</div>
+                <div id="spotMap">
+                    <SpotMapView spots={spots} onSpotHighlight={onSpotHighlight} selectedSpot={selectedSpot} />
+                    <SpotDetail spot={selectedSpot} />
+                </div>
                 <div id="spotsContainer">
-                
-                    <SpotsView spots={spots} onSpotHighlight={onSpotHighlight} selectedSpot={selectedSpot}/>
-              
+                    <SpotTable spots={spots} onSpotHighlight={onSpotHighlight}/>
                 </div>
             </div>
             <div id="dashboardScreenFooter"><ConnectionStatusView /></div>
