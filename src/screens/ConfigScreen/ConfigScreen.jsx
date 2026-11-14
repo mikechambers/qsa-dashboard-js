@@ -35,7 +35,13 @@ export default function ConfigScreen(props) {
                     : "Invalid Callsign";
             },
             grid: (grid) => {
-                let o = isValidMaidenHeadGrid(grid.trim());
+                const g = grid.trim();
+
+                if (!g.length) {
+                    return null;
+                }
+
+                let o = isValidMaidenHeadGrid(grid);
 
                 return o ? null : "Invalid Maidenhead Grid";
             },
@@ -62,6 +68,7 @@ export default function ConfigScreen(props) {
                 <Fieldset legend="Station Setup">
                     <Stack gap="md">
                         <TextInput
+                            required
                             label="Callsign"
                             placeholder="callsign"
                             key={form.key("callsign")}

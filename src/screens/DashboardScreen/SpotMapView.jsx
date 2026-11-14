@@ -46,6 +46,10 @@ export const SpotMapView = ({
     }, []);
 
     useEffect(() => {
+        if (!location) {
+            return;
+        }
+
         const color = "#1c7ed6";
 
         const el = document.createElement("div");
