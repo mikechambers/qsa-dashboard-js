@@ -16,6 +16,8 @@ export const SpotTable = ({ spots, onSpotHighlight }) => {
     const virtualizer = useVirtualizer({
         count: spots.length,
         getScrollElement: () => scrollParent,
+
+        //todo: need to calculate this
         estimateSize: () => 60,
         overscan: 20,
         getItemKey: (index) => spots[index].sequence,

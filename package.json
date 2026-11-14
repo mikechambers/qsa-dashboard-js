@@ -11,6 +11,7 @@
     "test": "vitest"
   },
   "dependencies": {
+    "@fontsource/jetbrains-mono": "^5.3.0",
     "@ham2k/lib-dxcc-data": "^1.1.1",
     "@ham2k/lib-geo-tools": "^1.1.1",
     "@mantine/core": "^9.8.0",
