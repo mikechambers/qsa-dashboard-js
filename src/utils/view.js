@@ -3,24 +3,16 @@ import { kilometersToMiles } from "@/utils/geo";
 import { clamp } from "@/utils/math";
 import { TimeMode } from "../enums/TimeMode";
 
-export const formatDistance = (distance, unitType) => {
-    let d = "-";
-    let unit = " km";
+const distanceFormatter = new Intl.NumberFormat(undefined, {
+    maximumFractionDigits: 0,
+});
+export function formatDistance(km, unitType) {
+    const miles = unitType === "imperial";
 
-    if (distance === undefined) {
-        return "";
-    }
+    const d = distanceFormatter.format(miles ? kilometersToMiles(km) : km);
 
-    if (unitType === UnitType.IMPERIAL) {
-        d = `${Math.round(kilometersToMiles(distance))}`;
-        unit = " mi";
-    } else {
-        d = `${Math.round(distance)}`;
-        unit = " km";
-    }
-
-    return { d, unit };
-};
+    return { d, unit: miles ? "mi" : "km" };
+}
 
 export const formatFrequency = (frequency) => {
     let f = "";
