@@ -11,6 +11,7 @@ import { SpotDetail } from "./SpotDetail";
 import { SpotTable } from "./SpotTable";
 import { DashboardHeaderView } from "./DashboardHeaderView";
 import { gridToLocation } from "../../utils/geo";
+import { ClockView } from "./ClockView";
 
 export default function DashboardScreen(props) {
     let params = useParams();
@@ -57,6 +58,7 @@ export default function DashboardScreen(props) {
                     />
                 </div>
                 <div id="spotsContainer">
+                    <ClockView />
                     <SpotDetail spot={selectedSpot} />
                     <SpotTable
                         spots={spots}
