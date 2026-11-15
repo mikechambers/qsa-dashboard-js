@@ -6,7 +6,7 @@ import { TimeMode } from "../enums/TimeMode";
 const distanceFormatter = new Intl.NumberFormat(undefined, {
     maximumFractionDigits: 0,
 });
-export function formatDistance(km, unitType) {
+export function convertAndFormatDistance(km, unitType) {
     const miles = unitType === "imperial";
 
     const d = distanceFormatter.format(miles ? kilometersToMiles(km) : km);

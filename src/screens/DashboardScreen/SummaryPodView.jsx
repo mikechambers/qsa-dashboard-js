@@ -6,7 +6,7 @@ export const SummaryPodView = ({ value, unit, label }) => {
             <Stack gap={0}>
                 <Group wrap="nowrap" gap={1}>
                     <Text fz={40} fw={500} lh={1}>
-                        {value}
+                        {value ?? "-"}
                         {unit && (
                             <Text span size="lg" c="dimmed" ml={4} ff="text">
                                 {unit}
