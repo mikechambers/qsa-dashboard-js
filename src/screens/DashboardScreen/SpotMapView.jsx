@@ -6,6 +6,7 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import greatCircle from "@turf/great-circle";
 
 import { getCSSColorForSNR } from "@/utils/view";
+import { IconCurrentLocation } from "@tabler/icons-react";
 
 setWorkerUrl(workerUrl);
 
@@ -21,6 +22,16 @@ export const SpotMapView = ({
 }) => {
     const mapContainer = useRef(null);
     const mapInstance = useRef(null);
+
+    const centerOnLocation = () => {
+        if (!mapInstance.current && location) {
+            return;
+        }
+
+        mapInstance.current.flyTo({
+            center: location.coordinates,
+        });
+    };
 
     //todo: look into using GeoJSON to display
     const addMarkerToMap = (el, loc) => {
@@ -75,7 +86,7 @@ export const SpotMapView = ({
                 layout: { "line-cap": "round" },
                 source: "path",
                 paint: {
-                    "line-color": LOCATION_COLOR, //todo:move to reusable
+                    "line-color": LOCATION_COLOR,
                     "line-width": 2,
                     "line-opacity": 0.7,
                     "line-dasharray": [2, 2],
@@ -94,6 +105,11 @@ export const SpotMapView = ({
             return;
         }
 
+        /* right now we draw markers with elements. It makes it
+        easier to handler interactions and animations, but makes it where the markers always overlay maps layers (such as lines).
+        Right now, we will keep it as it is, but at some point we need
+        to refactor to use geojson and not elements
+        */
         const el = document.createElement("div");
         el.style.width = "20px";
         el.style.height = "20px";
@@ -168,9 +184,27 @@ export const SpotMapView = ({
     }, [spots, selectedSpot]);
 
     return (
-        <div
-            ref={mapContainer}
-            style={{ width: "100%", height: "100%", borderRadius: "6px" }}
-        />
+        <div style={{ position: "relative", width: "100%", height: "100%" }}>
+            <div
+                ref={mapContainer}
+                style={{ width: "100%", height: "100%", borderRadius: "6px" }}
+            />
+
+            <ActionIcon
+                variant="default"
+                size="lg"
+                aria-label="Center on my location"
+                disabled={!location}
+                onClick={centerOnLocation}
+                style={{
+                    position: "absolute",
+                    bottom: 10,
+                    left: 10,
+                    zIndex: 1,
+                }}
+            >
+                <IconCurrentLocation size={18} />
+            </ActionIcon>
+        </div>
     );
 };

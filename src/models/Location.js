@@ -8,4 +8,9 @@ export default class Location {
         this.longitude = longitude;
         this.grid = grid;
     }
+
+    //return in format for maplibre
+    get coordinates() {
+        return [this.longitude, this.latitude];
+    }
 }
