@@ -1,4 +1,11 @@
-import { createContext, useContext, useEffect, useRef, useState } from "react";
+import {
+    createContext,
+    useContext,
+    useEffect,
+    useRef,
+    useState,
+    useMemo,
+} from "react";
 import mqtt from "mqtt";
 import { useSettings } from "./SettingsContext";
 import { ConnectionStatus } from "../enums/ConnectionStatus";
@@ -11,13 +18,36 @@ const SpotDataContext = createContext(null);
 export function SpotDataProvider({ children }) {
     const { settings } = useSettings();
 
+    //const { stations, setStations } = useState(new Map());
+
     const [spots, setSpots] = useState(DEBUG ? MOCK_SPOTS : []);
-    const [furthestSpot, setFurthestSpot] = useState(undefined);
+    //const [furthestSpot, setFurthestSpot] = useState(undefined);
     const [status, setStatus] = useState(
         DEBUG ? ConnectionStatus.CONNECTED : ConnectionStatus.DISCONNECTED,
     );
 
     const clientRef = useRef(null);
+
+    const furthestSpot = useMemo(() => {
+        //loop through, check for larger distance on each spot, return largest
+        return spots.reduce(
+            (max, s) => (!max || s.distance > max.distance ? s : max),
+            undefined,
+        );
+    }, [spots]);
+
+    const uniqueStations = useMemo(() => {
+        const me = settings?.callsign?.toUpperCase();
+
+        //sets only store unique values
+        const calls = new Set();
+        for (const s of spots) {
+            if (s.receiverCall && s.receiverCall !== me)
+                calls.add(s.receiverCall);
+            if (s.senderCall && s.senderCall !== me) calls.add(s.senderCall);
+        }
+        return calls.size;
+    }, [spots, settings?.callsign]);
 
     const updateState = () => {
         if (DEBUG) return;
@@ -54,17 +84,8 @@ export function SpotDataProvider({ children }) {
         client.on("end", updateState);
 
         client.on("message", (topic, message) => {
-            const data = JSON.parse(message.toString());
-
-            const spot = Spot.fromData(data);
-
-            if (!furthestSpot || spot.distance > furthestSpot.distance) {
-                setFurthestSpot(spot);
-            }
-
-            let s = (prev) => [...prev, spot].sort((a, b) => b.date - a.date);
-
-            setSpots(s);
+            const spot = Spot.fromData(JSON.parse(message.toString()));
+            setSpots((prev) => [...prev, spot].sort((a, b) => b.date - a.date));
         });
 
         const errHandler = (err) => {
@@ -131,7 +152,9 @@ export function SpotDataProvider({ children }) {
     }, [settings.callsign]);
 
     return (
-        <SpotDataContext.Provider value={{ spots, status, furthestSpot }}>
+        <SpotDataContext.Provider
+            value={{ spots, status, furthestSpot, uniqueStations }}
+        >
             {children}
         </SpotDataContext.Provider>
     );

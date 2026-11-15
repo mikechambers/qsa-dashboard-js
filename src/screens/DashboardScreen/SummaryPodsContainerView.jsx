@@ -5,7 +5,7 @@ import { convertAndFormatDistance } from "../../utils/view";
 import { useSettings } from "../../context/SettingsContext";
 
 export const SummaryPodsContainerView = () => {
-    const { furthestSpot } = useSpotData();
+    const { furthestSpot, uniqueStations } = useSpotData();
     const { settings } = useSettings();
 
     const { d, unit } = furthestSpot
@@ -16,7 +16,10 @@ export const SummaryPodsContainerView = () => {
         <div id="summaryPods">
             <SimpleGrid cols={{ base: 2, sm: 4 }}>
                 <SummaryPodView label="Furthest" value={d} unit={unit} />
-                <SummaryPodView label="Label" value="Value" />
+                <SummaryPodView
+                    label="Unique Stations"
+                    value={uniqueStations}
+                />
                 <SummaryPodView label="Label" value="Value" />
                 <SummaryPodView label="Label" value="Value" />
             </SimpleGrid>

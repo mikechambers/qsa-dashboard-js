@@ -7,10 +7,14 @@ const distanceFormatter = new Intl.NumberFormat(undefined, {
     maximumFractionDigits: 0,
 });
 
+export const formatNumber = (n) => {
+    return distanceFormatter.format(n);
+};
+
 export const convertAndFormatDistance = (km, unitType) => {
     const miles = unitType === "imperial";
 
-    const d = distanceFormatter.format(miles ? kilometersToMiles(km) : km);
+    const d = formatNumber(miles ? kilometersToMiles(km) : km);
 
     return { d, unit: miles ? "mi" : "km" };
 };
