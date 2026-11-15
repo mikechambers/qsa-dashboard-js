@@ -75,13 +75,26 @@ export const SpotMapView = ({
         for (const s of spots) {
             const color = getCSSColorForSNR(s.snr);
 
-            const el = document.createElement("div");
-            el.style.width = "14px";
-            el.style.height = "14px";
-            el.style.borderRadius = "50%";
-            el.style.background = color;
-            el.style.border = "2px solid white";
-            el.style.boxShadow = "0 0 4px rgba(0,0,0,0.4)";
+            const el = document.createElement("div"); // MapLibre positions this one
+
+            const dot = document.createElement("div"); // you style and scale this one
+            dot.style.width = "14px";
+            dot.style.height = "14px";
+            dot.style.borderRadius = "50%";
+            dot.style.background = color;
+            dot.style.border = "2px solid white";
+            dot.style.boxShadow = "0 0 4px rgba(0,0,0,0.4)";
+            dot.style.cursor = "pointer";
+            dot.style.transition = "transform 0.1s";
+            el.appendChild(dot);
+
+            el.addEventListener("mouseenter", () => {
+                onSpotHighlight(s);
+                dot.style.transform = "scale(2.0)";
+            });
+            el.addEventListener("mouseleave", () => {
+                dot.style.transform = "";
+            });
 
             const m = addMarkerToMap(el, s.receiverLocation);
 
