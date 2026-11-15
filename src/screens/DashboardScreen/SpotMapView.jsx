@@ -82,7 +82,6 @@ export const SpotMapView = ({
             el.style.background = color;
             el.style.border = "2px solid white";
             el.style.boxShadow = "0 0 4px rgba(0,0,0,0.4)";
-            el.style.opacity = 0.5;
 
             const m = addMarkerToMap(el, s.receiverLocation);
 

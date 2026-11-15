@@ -84,7 +84,7 @@ export const SpotTable = ({ spots, onSpotHighlight }) => {
                                     onMouseEnter={() => onSpotHighlight?.(spot)}
                                 >
                                     <Table.Td w={20}>
-                                        <TimeView date={spot.time} />
+                                        <TimeView date={spot.date} />
                                     </Table.Td>
                                     <Table.Td ta="left">
                                         <Text size="sm">

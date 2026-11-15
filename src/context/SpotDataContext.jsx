@@ -90,7 +90,11 @@ export function SpotDataProvider({ children }) {
 
         if (!client || !callsign) return;
 
-        let topic = `pskr/filter/v2/+/+/${callsign}/#`;
+        //let topic = `pskr/filter/v2/+/+/${callsign}/#`;
+
+        //https://groups.io/g/pskr-mqtt/topic/122136550
+        const c = callsign.toUpperCase().replace(/\//g, ".");
+        let topic = `pskr/filter/v2/+/+/${c}/+/+/+/+/+`;
         const subscribe = () => {
             client.subscribe(topic, (err) => {
                 if (!err) {

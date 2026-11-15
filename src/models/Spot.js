@@ -9,8 +9,8 @@ export default class Spot {
     frequency;
     mode;
     snr;
-    time;
-    t_tx;
+    receptionDate;
+    transmissionDate;
     senderCall;
     senderLocation;
     receiverCall;
@@ -25,8 +25,8 @@ export default class Spot {
         frequency,
         mode,
         snr,
-        time,
-        t_tx,
+        receptionDate,
+        transmissionDate,
         senderCall,
         senderLocation,
         receiverCall,
@@ -34,17 +34,20 @@ export default class Spot {
         senderDXCC,
         receiverDXCC,
         band,
+        distance,
     } = {}) {
         //returns in km
-        const distance = distanceOnEarth(senderLocation, receiverLocation);
+        if (!distance) {
+            distance = distanceOnEarth(senderLocation, receiverLocation);
+        }
 
         Object.assign(this, {
             sequence,
             frequency,
             mode,
             snr,
-            time,
-            t_tx,
+            receptionDate,
+            transmissionDate,
             senderCall,
             senderLocation,
             receiverCall,
@@ -56,9 +59,13 @@ export default class Spot {
         });
     }
 
+    get date() {
+        return this.transmissionDate ?? this.receptionDate;
+    }
+
     static fromData(data) {
-        const time = epochToDate(data.t);
-        const t_tx = epochToDate(data.tx);
+        const receptionDate = epochToDate(data.t);
+        const transmissionDate = epochToDate(data.t_tx);
 
         const senderLocation = gridToLocation(data.sl);
         const receiverLocation = gridToLocation(data.rl);
@@ -76,8 +83,8 @@ export default class Spot {
             frequency: data.f,
             mode: mode,
             snr: data.rp,
-            time: time,
-            t_tx: t_tx,
+            receptionDate: receptionDate,
+            transmissionDate: transmissionDate,
             senderCall: data.sc,
             senderLocation: senderLocation,
             receiverCall: data.rc,

@@ -61,5 +61,5 @@ export const getCSSColorForSNR = (snr) => {
 
     const hue = s < 0 ? ((s + 24) / 24) * 60 : 60 + (s / 10) * 60;
 
-    return `hsl(${hue}, 100%, 50%)`;
+    return `hsl(${hue}, 90%, 50%)`;
 };

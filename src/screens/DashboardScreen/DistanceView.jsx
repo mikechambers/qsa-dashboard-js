@@ -9,7 +9,7 @@ export const DistanceView = ({ distance }) => {
     let { d, unit } = formatDistance(distance, settings.unitType);
 
     return (
-        <Group wrap="nowrap" gap={4} align="flex-end">
+        <Group wrap="nowrap" gap={4} align="flex-end" justify="flex-end">
             <Text size="sm" style={{ fontVariantNumeric: "tabular-nums" }}>
                 {d}
             </Text>

@@ -1,9 +1,11 @@
+import Spot from "@/models/Spot";
+
 export const DEBUG = import.meta.env.VITE_DEBUG === "true";
 
 export const MOCK_SPOTS = [
-    {
+    new Spot({
         sequence: 1,
-        time: new Date("2026-11-12T18:42:15Z"),
+        transmissionDate: new Date("2026-11-12T18:42:15Z"),
         mode: "FT8",
         band: "20M",
         frequency: 14075230,
@@ -13,11 +15,11 @@ export const MOCK_SPOTS = [
         snr: 8,
         senderDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
         receiverDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
-        location: { latitude: 49.28, longitude: -123.12 },
-    },
-    {
+        location: new Spot({ latitude: 49.28, longitude: -123.12 }),
+    }),
+    new Spot({
         sequence: 2,
-        time: new Date("2026-11-12T18:42:30Z"),
+        transmissionDate: new Date("2026-11-12T18:42:30Z"),
         mode: "FT8",
         band: "20M",
         frequency: 14076810,
@@ -27,11 +29,11 @@ export const MOCK_SPOTS = [
         snr: -3,
         senderDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
         receiverDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
-        location: { latitude: 47.61, longitude: -122.33 },
-    },
-    {
+        location: new Spot({ latitude: 47.61, longitude: -122.33 }),
+    }),
+    new Spot({
         sequence: 3,
-        time: new Date("2026-11-12T18:42:45Z"),
+        transmissionDate: new Date("2026-11-12T18:42:45Z"),
         mode: "FT8",
         band: "20M",
         frequency: 14074960,
@@ -41,11 +43,11 @@ export const MOCK_SPOTS = [
         snr: 0,
         senderDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
         receiverDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
-        location: { latitude: 21.31, longitude: -157.86 },
-    },
-    {
+        location: new Spot({ latitude: 21.31, longitude: -157.86 }),
+    }),
+    new Spot({
         sequence: 4,
-        time: new Date("2026-11-12T18:43:00Z"),
+        transmissionDate: new Date("2026-11-12T18:43:00Z"),
         mode: "FT8",
         band: "20M",
         frequency: 14077350,
@@ -55,11 +57,11 @@ export const MOCK_SPOTS = [
         snr: -15,
         senderDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
         receiverDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
-        location: { latitude: 32.78, longitude: -96.8 },
-    },
-    {
+        location: new Spot({ latitude: 32.78, longitude: -96.8 }),
+    }),
+    new Spot({
         sequence: 5,
-        time: new Date("2026-11-12T18:43:07Z"),
+        transmissionDate: new Date("2026-11-12T18:43:07Z"),
         mode: "FT4",
         band: "15M",
         frequency: 21141800,
@@ -69,11 +71,11 @@ export const MOCK_SPOTS = [
         snr: -5,
         senderDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
         receiverDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
-        location: { latitude: -37.81, longitude: 144.96 },
-    },
-    {
+        location: new Spot({ latitude: -37.81, longitude: 144.96 }),
+    }),
+    new Spot({
         sequence: 6,
-        time: new Date("2026-11-12T18:43:15Z"),
+        transmissionDate: new Date("2026-11-12T18:43:15Z"),
         mode: "FT8",
         band: "20M",
         frequency: 14075870,
@@ -83,11 +85,11 @@ export const MOCK_SPOTS = [
         snr: -19,
         senderDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
         receiverDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
-        location: { latitude: 42.36, longitude: -71.06 },
-    },
-    {
+        location: new Spot({ latitude: 42.36, longitude: -71.06 }),
+    }),
+    new Spot({
         sequence: 7,
-        time: new Date("2026-11-12T18:43:30Z"),
+        transmissionDate: new Date("2026-11-12T18:43:30Z"),
         mode: "FT8",
         band: "17M",
         frequency: 18101640,
@@ -97,11 +99,11 @@ export const MOCK_SPOTS = [
         snr: -21,
         senderDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
         receiverDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
-        location: { latitude: 35.68, longitude: 139.69 },
-    },
-    {
+        location: new Spot({ latitude: 35.68, longitude: 139.69 }),
+    }),
+    new Spot({
         sequence: 8,
-        time: new Date("2026-11-12T18:43:45Z"),
+        transmissionDate: new Date("2026-11-12T18:43:45Z"),
         mode: "FT8",
         band: "15M",
         frequency: 21076100,
@@ -111,11 +113,11 @@ export const MOCK_SPOTS = [
         snr: -16,
         senderDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
         receiverDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
-        location: { latitude: -36.85, longitude: 174.76 },
-    },
-    {
+        location: new Spot({ latitude: -36.85, longitude: 174.76 }),
+    }),
+    new Spot({
         sequence: 9,
-        time: new Date("2026-11-12T18:44:00Z"),
+        transmissionDate: new Date("2026-11-12T18:44:00Z"),
         mode: "FT8",
         band: "20M",
         frequency: 14075500,
@@ -125,11 +127,11 @@ export const MOCK_SPOTS = [
         snr: -22,
         senderDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
         receiverDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
-        location: { latitude: 50.11, longitude: 8.68 },
-    },
-    {
+        location: new Spot({ latitude: 50.11, longitude: 8.68 }),
+    }),
+    new Spot({
         sequence: 10,
-        time: new Date("2026-11-12T18:44:15Z"),
+        transmissionDate: new Date("2026-11-12T18:44:15Z"),
         mode: "FT8",
         band: "10M",
         frequency: 28076240,
@@ -139,11 +141,11 @@ export const MOCK_SPOTS = [
         snr: -9,
         senderDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
         receiverDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
-        location: { latitude: 25.69, longitude: -100.32 },
-    },
-    {
+        location: new Spot({ latitude: 25.69, longitude: -100.32 }),
+    }),
+    new Spot({
         sequence: 11,
-        time: new Date("2026-11-12T18:44:22Z"),
+        transmissionDate: new Date("2026-11-12T18:44:22Z"),
         mode: "FT4",
         band: "17M",
         frequency: 18105200,
@@ -153,11 +155,11 @@ export const MOCK_SPOTS = [
         snr: -14,
         senderDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
         receiverDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
-        location: { latitude: -23.55, longitude: -46.63 },
-    },
-    {
+        location: new Spot({ latitude: -23.55, longitude: -46.63 }),
+    }),
+    new Spot({
         sequence: 12,
-        time: new Date("2026-11-12T18:44:30Z"),
+        transmissionDate: new Date("2026-11-12T18:44:30Z"),
         mode: "FT8",
         band: "20M",
         frequency: 14078200,
@@ -167,11 +169,11 @@ export const MOCK_SPOTS = [
         snr: -23,
         senderDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
         receiverDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
-        location: { latitude: 51.51, longitude: -0.13 },
-    },
-    {
+        location: new Spot({ latitude: 51.51, longitude: -0.13 }),
+    }),
+    new Spot({
         sequence: 13,
-        time: new Date("2026-11-12T18:44:45Z"),
+        transmissionDate: new Date("2026-11-12T18:44:45Z"),
         mode: "FT8",
         band: "20M",
         frequency: 14074680,
@@ -181,11 +183,11 @@ export const MOCK_SPOTS = [
         snr: -6,
         senderDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
         receiverDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
-        location: { latitude: 61.22, longitude: -149.9 },
-    },
-    {
+        location: new Spot({ latitude: 61.22, longitude: -149.9 }),
+    }),
+    new Spot({
         sequence: 14,
-        time: new Date("2026-11-12T18:45:00Z"),
+        transmissionDate: new Date("2026-11-12T18:45:00Z"),
         mode: "FT8",
         band: "20M",
         frequency: 14076020,
@@ -195,11 +197,11 @@ export const MOCK_SPOTS = [
         snr: 2,
         senderDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
         receiverDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
-        location: { latitude: 39.74, longitude: -104.99 },
-    },
-    {
+        location: new Spot({ latitude: 39.74, longitude: -104.99 }),
+    }),
+    new Spot({
         sequence: 15,
-        time: new Date("2026-11-12T18:45:07Z"),
+        transmissionDate: new Date("2026-11-12T18:45:07Z"),
         mode: "FT4",
         band: "20M",
         frequency: 14080900,
@@ -209,6 +211,6 @@ export const MOCK_SPOTS = [
         snr: 8,
         senderDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
         receiverDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
-        location: { latitude: 38.58, longitude: -121.49 },
-    },
+        location: new Spot({ latitude: 38.58, longitude: -121.49 }),
+    }),
 ];

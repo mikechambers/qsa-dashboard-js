@@ -18,7 +18,7 @@ export const SpotDetail = ({ spot }) => {
     const snr = `${spot?.snr} dB`;
     const frequency = `${formatFrequency(spot.frequency)} MHz`;
 
-    let utcTime = formatTime(spot.time, true);
+    let utcTime = formatTime(spot.date, true);
 
     const { d, unit } = formatDistance(spot.distance, settings.unitType);
 
