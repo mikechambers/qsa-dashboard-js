@@ -5,12 +5,16 @@ import { formatDistance } from "../../utils/view";
 import { useSettings } from "../../context/SettingsContext";
 
 export const SummaryPodsContainerView = () => {
-    const { furthestDistance } = useSpotData();
+    const { furthestSpot } = useSpotData();
     const { settings } = useSettings();
 
-    let { d, unit } = formatDistance(furthestDistance, settings.unitType);
-
-    const distance = furthestDistance ? `${d} ${unit}` : "-";
+    let distance;
+    if (!furthestSpot) {
+        distance = "-";
+    } else {
+        const { d, unit } = formatDistance(furthestSpot, settings.unitType);
+        distance = `${d} ${unit}`;
+    }
 
     return (
         <div id="summaryPods">
