@@ -28,6 +28,10 @@ export function SpotDataProvider({ children }) {
 
     const clientRef = useRef(null);
 
+    const mostRecentContact = useMemo(() => {
+        return spots[0];
+    }, [spots]);
+
     const furthestSpot = useMemo(() => {
         //loop through, check for larger distance on each spot, return largest
         return spots.reduce(
@@ -153,7 +157,13 @@ export function SpotDataProvider({ children }) {
 
     return (
         <SpotDataContext.Provider
-            value={{ spots, status, furthestSpot, uniqueStations }}
+            value={{
+                spots,
+                status,
+                furthestSpot,
+                uniqueStations,
+                mostRecentContact,
+            }}
         >
             {children}
         </SpotDataContext.Provider>

@@ -3,9 +3,11 @@ import { SummaryPodView } from "./SummaryPodView";
 import { useSpotData } from "../../context/SpotDataContext";
 import { convertAndFormatDistance } from "../../utils/view";
 import { useSettings } from "../../context/SettingsContext";
+import { ElapsedTimePod } from "./ElapsedTimePod";
+import { RecentContactPod } from "./RecentContactPod";
 
 export const SummaryPodsContainerView = () => {
-    const { furthestSpot, uniqueStations } = useSpotData();
+    const { furthestSpot, uniqueStations, mostRecentContact } = useSpotData();
     const { settings } = useSettings();
 
     const { d, unit } = furthestSpot
@@ -20,8 +22,8 @@ export const SummaryPodsContainerView = () => {
                     label="Unique Stations"
                     value={uniqueStations}
                 />
-                <SummaryPodView label="Label" value="Value" />
-                <SummaryPodView label="Label" value="Value" />
+                <ElapsedTimePod />
+                <RecentContactPod mostRecentContact={mostRecentContact} />
             </SimpleGrid>
         </div>
     );

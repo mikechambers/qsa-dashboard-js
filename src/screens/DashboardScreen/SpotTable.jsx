@@ -57,7 +57,7 @@ export const SpotTable = ({ spots, onSpotHighlight }) => {
                 </Text>
             </Group>
             <Table.ScrollContainer
-                minWidth={420}
+                minWidth={418} //two less than container to preview horizontal scrolling (this is a hack)
                 maxHeight={400}
                 scrollAreaProps={{ viewportRef: setScrollParent }}
             >

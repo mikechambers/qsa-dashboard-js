@@ -1,7 +1,7 @@
 import { useSettings } from "@/context/SettingsContext";
 import { useInterval } from "@mantine/hooks";
 import { formatTime } from "../../utils/view";
-import { Paper, Title, Group } from "@mantine/core";
+import { Paper, Title, Group, EmptyState } from "@mantine/core";
 import { getShortTimeZoneName } from "../../utils/date";
 import { useEffect, useState } from "react";
 
@@ -21,6 +21,10 @@ export const ClockView = () => {
         interval.start();
         return interval.stop;
     }, []);
+
+    if (!time) {
+        return <div></div>;
+    }
 
     return (
         <Group justify="center" visibleFrom="sm">

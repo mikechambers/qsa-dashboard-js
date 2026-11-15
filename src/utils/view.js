@@ -55,3 +55,10 @@ export const getCSSColorForSNR = (snr) => {
 
     return `hsl(${hue}, 90%, 50%)`;
 };
+
+export const formatHMS = (total) => {
+    const h = Math.floor(total / 3600);
+    const m = Math.floor((total % 3600) / 60);
+    const s = Math.floor(total % 60);
+    return [h, m, s].map((n) => String(n).padStart(2, "0")).join(":");
+};
