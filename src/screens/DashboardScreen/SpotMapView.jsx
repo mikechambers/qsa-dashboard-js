@@ -85,7 +85,15 @@ export const SpotMapView = ({
             dot.style.border = "2px solid white";
             dot.style.boxShadow = "0 0 4px rgba(0,0,0,0.4)";
             dot.style.cursor = "pointer";
-            dot.style.transition = "transform 0.1s";
+
+            dot.style.transition = "transform 0.15s ease-out";
+
+            if (selectedSpot === s) {
+                requestAnimationFrame(() => {
+                    dot.style.transform = "scale(2.0)";
+                });
+            }
+
             el.appendChild(dot);
 
             el.addEventListener("mouseenter", () => {
@@ -106,7 +114,7 @@ export const SpotMapView = ({
                 marker.remove();
             });
         };
-    }, [spots]);
+    }, [spots, selectedSpot]);
 
     return (
         <div
