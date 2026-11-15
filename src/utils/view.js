@@ -52,9 +52,9 @@ export const formatTime = (date, timeMode, showSeconds = false) => {
 };
 
 export const getCSSColorForSNR = (snr) => {
-    const s = clamp(snr, -24, 10);
+    const s = clamp(snr, -22, -10);
 
-    const hue = s < 0 ? ((s + 24) / 24) * 60 : 60 + (s / 10) * 60;
+    const hue = ((s + 22) / 12) * 120;
 
     return `hsl(${hue}, 90%, 50%)`;
 };
