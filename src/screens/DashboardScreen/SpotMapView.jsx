@@ -3,9 +3,15 @@ import { Map, Marker, setWorkerUrl } from "maplibre-gl";
 import workerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
 import "maplibre-gl/dist/maplibre-gl.css";
 
+import greatCircle from "@turf/great-circle";
+
 import { getCSSColorForSNR } from "@/utils/view";
 
 setWorkerUrl(workerUrl);
+
+const EMPTY = { type: "FeatureCollection", features: [] };
+
+const LOCATION_COLOR = "#1c7ed6";
 
 export const SpotMapView = ({
     spots,
@@ -29,6 +35,25 @@ export const SpotMapView = ({
         return marker;
     };
 
+    const setPath = (spot) => {
+        const src = mapInstance.current?.getSource("path");
+        if (!src || !location) {
+            return;
+        }
+
+        const to = spot?.receiverLocation;
+
+        src.setData(
+            location && to
+                ? greatCircle(
+                      [location.longitude, location.latitude],
+                      [to.longitude, to.latitude],
+                      { npoints: 64 },
+                  )
+                : EMPTY,
+        );
+    };
+
     useEffect(() => {
         if (mapInstance.current) return;
 
@@ -37,6 +62,25 @@ export const SpotMapView = ({
             style: "https://styles.maptoolkit.org/light.json",
             center: [-122.38, 37.58],
             zoom: 3,
+        });
+
+        mapInstance.current.on("load", () => {
+            const map = mapInstance.current;
+
+            map.addSource("path", { type: "geojson", data: EMPTY });
+
+            map.addLayer({
+                id: "path",
+                type: "line",
+                layout: { "line-cap": "round" },
+                source: "path",
+                paint: {
+                    "line-color": LOCATION_COLOR, //todo:move to reusable
+                    "line-width": 2,
+                    "line-opacity": 0.7,
+                    "line-dasharray": [2, 2],
+                },
+            });
         });
 
         return () => {
@@ -50,13 +94,11 @@ export const SpotMapView = ({
             return;
         }
 
-        const color = "#1c7ed6";
-
         const el = document.createElement("div");
         el.style.width = "20px";
         el.style.height = "20px";
         el.style.borderRadius = "50%";
-        el.style.background = color;
+        el.style.background = LOCATION_COLOR;
         el.style.border = "3px solid white";
         el.style.boxShadow =
             "0 0 0 4px rgba(28,126,214,0.3), 0 0 6px rgba(0,0,0,0.4)";
@@ -75,9 +117,12 @@ export const SpotMapView = ({
         for (const s of spots) {
             const color = getCSSColorForSNR(s.snr);
 
-            const el = document.createElement("div"); // MapLibre positions this one
+            //top level marker
+            const el = document.createElement("div");
 
-            const dot = document.createElement("div"); // you style and scale this one
+            //sub-element so we can transform without repositioning
+            //map uses transform to position
+            const dot = document.createElement("div");
             dot.style.width = "14px";
             dot.style.height = "14px";
             dot.style.borderRadius = "50%";
@@ -96,6 +141,7 @@ export const SpotMapView = ({
 
             el.appendChild(dot);
 
+            //hover events
             el.addEventListener("mouseenter", () => {
                 onSpotHighlight(s);
                 dot.style.transform = "scale(2.0)";
@@ -107,6 +153,11 @@ export const SpotMapView = ({
             const m = addMarkerToMap(el, s.receiverLocation);
 
             if (m) markers.push(m);
+        }
+
+        if (selectedSpot) {
+            console.log("selected");
+            setPath(selectedSpot);
         }
 
         return () => {
