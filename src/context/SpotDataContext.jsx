@@ -56,7 +56,10 @@ export function SpotDataProvider({ children }) {
             const data = JSON.parse(message.toString());
 
             const spot = Spot.fromData(data);
-            setSpots((prev) => [...prev, spot]);
+
+            let s = (prev) => [...prev, spot].sort((a, b) => b.date - a.date);
+
+            setSpots(s);
         });
 
         const errHandler = (err) => {
