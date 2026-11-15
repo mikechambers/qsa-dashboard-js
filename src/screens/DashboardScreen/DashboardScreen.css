@@ -15,8 +15,8 @@
 /* 768px matches mantine sm */
 @media (min-width: 48em) {
     #dashboardScreenMain {
-        grid-template-columns: 1fr 400px; /* map fills space, table gets 400px */
-        grid-template-rows: auto 1fr; /* first row takes what it needs, second fills space */
+        grid-template-columns: 1fr 420px; /* this has to match minWidth in SpotTable */
+        grid-template-rows: auto 1fr; 
     }
 }
 
