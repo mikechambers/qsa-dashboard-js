@@ -1,4 +1,5 @@
 import Spot from "@/models/Spot";
+import Location from "@/models/Location";
 
 export const DEBUG = import.meta.env.VITE_DEBUG === "true";
 
@@ -15,7 +16,16 @@ export const MOCK_SPOTS = [
         snr: 8,
         senderDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
         receiverDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
-        location: new Spot({ latitude: 49.28, longitude: -123.12 }),
+        senderLocation: new Location({
+            latitude: 37.58,
+            longitude: -122.37,
+            grid: "CM87TN",
+        }),
+        receiverLocation: new Location({
+            latitude: 49.28,
+            longitude: -123.12,
+            grid: "CN89KG",
+        }),
     }),
     new Spot({
         sequence: 2,
@@ -29,7 +39,16 @@ export const MOCK_SPOTS = [
         snr: -3,
         senderDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
         receiverDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
-        location: new Spot({ latitude: 47.61, longitude: -122.33 }),
+        senderLocation: new Location({
+            latitude: 37.58,
+            longitude: -122.37,
+            grid: "CM87TN",
+        }),
+        receiverLocation: new Location({
+            latitude: 47.61,
+            longitude: -122.33,
+            grid: "CN87UO",
+        }),
     }),
     new Spot({
         sequence: 3,
@@ -43,7 +62,16 @@ export const MOCK_SPOTS = [
         snr: 0,
         senderDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
         receiverDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
-        location: new Spot({ latitude: 21.31, longitude: -157.86 }),
+        senderLocation: new Location({
+            latitude: 37.58,
+            longitude: -122.37,
+            grid: "CM87TN",
+        }),
+        receiverLocation: new Location({
+            latitude: 21.31,
+            longitude: -157.86,
+            grid: "BL11BH",
+        }),
     }),
     new Spot({
         sequence: 4,
@@ -57,7 +85,16 @@ export const MOCK_SPOTS = [
         snr: -15,
         senderDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
         receiverDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
-        location: new Spot({ latitude: 32.78, longitude: -96.8 }),
+        senderLocation: new Location({
+            latitude: 37.58,
+            longitude: -122.37,
+            grid: "CM87TN",
+        }),
+        receiverLocation: new Location({
+            latitude: 32.78,
+            longitude: -96.8,
+            grid: "EM12OS",
+        }),
     }),
     new Spot({
         sequence: 5,
@@ -71,7 +108,16 @@ export const MOCK_SPOTS = [
         snr: -5,
         senderDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
         receiverDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
-        location: new Spot({ latitude: -37.81, longitude: 144.96 }),
+        senderLocation: new Location({
+            latitude: 37.58,
+            longitude: -122.37,
+            grid: "CM87TN",
+        }),
+        receiverLocation: new Location({
+            latitude: -37.81,
+            longitude: 144.96,
+            grid: "QF22LE",
+        }),
     }),
     new Spot({
         sequence: 6,
@@ -85,7 +131,16 @@ export const MOCK_SPOTS = [
         snr: -19,
         senderDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
         receiverDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
-        location: new Spot({ latitude: 42.36, longitude: -71.06 }),
+        senderLocation: new Location({
+            latitude: 37.58,
+            longitude: -122.37,
+            grid: "CM87TN",
+        }),
+        receiverLocation: new Location({
+            latitude: 42.36,
+            longitude: -71.06,
+            grid: "FN42LI",
+        }),
     }),
     new Spot({
         sequence: 7,
@@ -99,7 +154,16 @@ export const MOCK_SPOTS = [
         snr: -21,
         senderDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
         receiverDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
-        location: new Spot({ latitude: 35.68, longitude: 139.69 }),
+        senderLocation: new Location({
+            latitude: 37.58,
+            longitude: -122.37,
+            grid: "CM87TN",
+        }),
+        receiverLocation: new Location({
+            latitude: 35.68,
+            longitude: 139.69,
+            grid: "PM95UQ",
+        }),
     }),
     new Spot({
         sequence: 8,
@@ -113,7 +177,16 @@ export const MOCK_SPOTS = [
         snr: -16,
         senderDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
         receiverDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
-        location: new Spot({ latitude: -36.85, longitude: 174.76 }),
+        senderLocation: new Location({
+            latitude: 37.58,
+            longitude: -122.37,
+            grid: "CM87TN",
+        }),
+        receiverLocation: new Location({
+            latitude: -36.85,
+            longitude: 174.76,
+            grid: "RF73JD",
+        }),
     }),
     new Spot({
         sequence: 9,
@@ -127,7 +200,16 @@ export const MOCK_SPOTS = [
         snr: -22,
         senderDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
         receiverDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
-        location: new Spot({ latitude: 50.11, longitude: 8.68 }),
+        senderLocation: new Location({
+            latitude: 37.58,
+            longitude: -122.37,
+            grid: "CM87TN",
+        }),
+        receiverLocation: new Location({
+            latitude: 50.11,
+            longitude: 8.68,
+            grid: "JO40IC",
+        }),
     }),
     new Spot({
         sequence: 10,
@@ -141,7 +223,16 @@ export const MOCK_SPOTS = [
         snr: -9,
         senderDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
         receiverDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
-        location: new Spot({ latitude: 25.69, longitude: -100.32 }),
+        senderLocation: new Location({
+            latitude: 37.58,
+            longitude: -122.37,
+            grid: "CM87TN",
+        }),
+        receiverLocation: new Location({
+            latitude: 25.69,
+            longitude: -100.32,
+            grid: "DL95UQ",
+        }),
     }),
     new Spot({
         sequence: 11,
@@ -155,7 +246,16 @@ export const MOCK_SPOTS = [
         snr: -14,
         senderDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
         receiverDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
-        location: new Spot({ latitude: -23.55, longitude: -46.63 }),
+        senderLocation: new Location({
+            latitude: 37.58,
+            longitude: -122.37,
+            grid: "CM87TN",
+        }),
+        receiverLocation: new Location({
+            latitude: -23.55,
+            longitude: -46.63,
+            grid: "GG66QK",
+        }),
     }),
     new Spot({
         sequence: 12,
@@ -169,7 +269,16 @@ export const MOCK_SPOTS = [
         snr: -23,
         senderDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
         receiverDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
-        location: new Spot({ latitude: 51.51, longitude: -0.13 }),
+        senderLocation: new Location({
+            latitude: 37.58,
+            longitude: -122.37,
+            grid: "CM87TN",
+        }),
+        receiverLocation: new Location({
+            latitude: 51.51,
+            longitude: -0.13,
+            grid: "IO91WM",
+        }),
     }),
     new Spot({
         sequence: 13,
@@ -183,7 +292,16 @@ export const MOCK_SPOTS = [
         snr: -6,
         senderDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
         receiverDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
-        location: new Spot({ latitude: 61.22, longitude: -149.9 }),
+        senderLocation: new Location({
+            latitude: 37.58,
+            longitude: -122.37,
+            grid: "CM87TN",
+        }),
+        receiverLocation: new Location({
+            latitude: 61.22,
+            longitude: -149.9,
+            grid: "BP51BF",
+        }),
     }),
     new Spot({
         sequence: 14,
@@ -197,7 +315,16 @@ export const MOCK_SPOTS = [
         snr: 2,
         senderDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
         receiverDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
-        location: new Spot({ latitude: 39.74, longitude: -104.99 }),
+        senderLocation: new Location({
+            latitude: 37.58,
+            longitude: -122.37,
+            grid: "CM87TN",
+        }),
+        receiverLocation: new Location({
+            latitude: 39.74,
+            longitude: -104.99,
+            grid: "DM79MR",
+        }),
     }),
     new Spot({
         sequence: 15,
@@ -211,6 +338,15 @@ export const MOCK_SPOTS = [
         snr: 8,
         senderDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
         receiverDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
-        location: new Spot({ latitude: 38.58, longitude: -121.49 }),
+        senderLocation: new Location({
+            latitude: 37.58,
+            longitude: -122.37,
+            grid: "CM87TN",
+        }),
+        receiverLocation: new Location({
+            latitude: 38.58,
+            longitude: -121.49,
+            grid: "CM98GN",
+        }),
     }),
 ];
