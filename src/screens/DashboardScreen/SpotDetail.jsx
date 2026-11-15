@@ -7,6 +7,7 @@ import { BandView } from "./BandView";
 import { ModeView } from "./ModeView";
 import { formatDistance, formatFrequency, formatTime } from "@/utils/view";
 import { useSettings } from "../../context/SettingsContext";
+import { getShortTimeZoneName } from "../../utils/date";
 
 export const SpotDetail = ({ spot }) => {
     let { settings } = useSettings();
@@ -18,7 +19,8 @@ export const SpotDetail = ({ spot }) => {
     const snr = `${spot?.snr} dB`;
     const frequency = `${formatFrequency(spot.frequency)} MHz`;
 
-    let utcTime = formatTime(spot.date, true);
+    let timeZone = getShortTimeZoneName(settings.timeMode);
+    let time = formatTime(spot.date, settings.timeMode, true);
 
     const { d, unit } = formatDistance(spot.distance, settings.unitType);
 
@@ -43,7 +45,7 @@ export const SpotDetail = ({ spot }) => {
 
                 {/* Row 2: stats */}
                 <SimpleGrid cols={4} spacing="md" verticalSpacing="sm">
-                    <StatView label="UTC" value={utcTime} />
+                    <StatView label={timeZone} value={time} />
                     <StatView label="SNR" value={snr} />
                     <StatView label="Frequency" value={frequency} />
                     <Group></Group>

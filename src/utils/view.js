@@ -1,6 +1,7 @@
 import { UnitType } from "@/enums/UnitType";
 import { kilometersToMiles } from "@/utils/geo";
 import { clamp } from "@/utils/math";
+import { TimeMode } from "../enums/TimeMode";
 
 export const formatDistance = (distance, unitType) => {
     let d = "-";
@@ -32,26 +33,20 @@ export const formatFrequency = (frequency) => {
     return f;
 };
 
-export const formatTime = (date, showSeconds = false) => {
+export const formatTime = (date, timeMode, showSeconds = false) => {
     let time = "";
 
     if (!date) {
         return time;
     }
 
-    let options = {
-        timeZone: "UTC",
+    time = new Intl.DateTimeFormat("en-GB", {
         hour: "2-digit",
         minute: "2-digit",
-
+        timeZone: timeMode === TimeMode.UTC ? "UTC" : undefined,
+        second: showSeconds ? "2-digit" : undefined,
         hourCycle: "h23",
-    };
-
-    if (showSeconds) {
-        options = { ...options, second: "2-digit" };
-    }
-
-    time = new Intl.DateTimeFormat("en-GB", options).format(date);
+    }).format(date);
 
     return time;
 };

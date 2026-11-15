@@ -6,9 +6,15 @@ import { TimeView } from "./TimeView";
 import { SNRView } from "./SNRView";
 import { DistanceView } from "./DistanceView";
 import { IconBroadcast, IconInbox } from "@tabler/icons-react";
+import { useSettings } from "../../context/SettingsContext";
+import { getShortTimeZoneName } from "../../utils/date";
 
 export const SpotTable = ({ spots, onSpotHighlight }) => {
     const [scrollParent, setScrollParent] = useState(null);
+
+    const { settings } = useSettings();
+
+    let timeZone = getShortTimeZoneName(settings.timeMode);
 
     const virtualizer = useVirtualizer({
         count: spots.length,
@@ -66,7 +72,7 @@ export const SpotTable = ({ spots, onSpotHighlight }) => {
                 >
                     <Table.Thead>
                         <Table.Tr>
-                            <Table.Th>UTC</Table.Th>
+                            <Table.Th>{timeZone}</Table.Th>
 
                             <Table.Th ta="left">Loc</Table.Th>
                             <Table.Th ta="right">Distance</Table.Th>

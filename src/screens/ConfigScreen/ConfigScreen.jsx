@@ -16,17 +16,20 @@ import { isValidCallsign, isValidMaidenHeadGrid } from "@/utils/radio";
 
 import "./ConfigScreen.css";
 import { UnitType } from "../../enums/UnitType";
+import { TimeMode } from "../../enums/TimeMode";
 
 export default function ConfigScreen(props) {
     const navigate = useNavigate();
 
-    const { settings, setCallsign, setGrid, setUnitType } = useSettings();
+    const { settings, setCallsign, setGrid, setUnitType, setTimeMode } =
+        useSettings();
 
     const form = useForm({
         initialValues: {
             callsign: settings.callsign,
             grid: settings.grid,
             unitType: settings.unitType,
+            timeMode: settings.timeMode,
         },
         validate: {
             callsign: (callsign) => {
@@ -52,10 +55,12 @@ export default function ConfigScreen(props) {
         const c = props.callsign.trim();
         const g = props.grid.trim();
         const m = props.unitType;
+        const t = props.timeMode;
 
         setCallsign(c);
         setGrid(g);
         setUnitType(m);
+        setTimeMode(t);
 
         navigate(
             `/dashboard/${encodeURIComponent(c)}/${encodeURIComponent(g)}/`,
@@ -93,6 +98,18 @@ export default function ConfigScreen(props) {
                                     label="Imperial"
                                     value={UnitType.IMPERIAL}
                                 />
+                            </Group>
+                        </Radio.Group>
+
+                        <Radio.Group
+                            name="timeMode"
+                            label="Time Mode"
+                            key={form.key("timeMode")}
+                            {...form.getInputProps("timeMode")}
+                        >
+                            <Group mt="xs" gap="lg" wrap="nowrap">
+                                <Radio label="UTC" value={TimeMode.UTC} />
+                                <Radio label="Local" value={TimeMode.LOCAL} />
                             </Group>
                         </Radio.Group>
 
