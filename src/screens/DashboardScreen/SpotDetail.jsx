@@ -1,5 +1,11 @@
-import { Paper, Stack, Group, SimpleGrid } from "@mantine/core";
-import { TimeView } from "./TimeView";
+import {
+    Paper,
+    Stack,
+    Group,
+    SimpleGrid,
+    EmptyState,
+    Center,
+} from "@mantine/core";
 import { IconArrowRight } from "@tabler/icons-react";
 import { StatView } from "./StatView";
 import { CallsignDetailView } from "./CallsignDetailView";
@@ -17,7 +23,16 @@ export const SpotDetail = ({ spot }) => {
     let { settings } = useSettings();
 
     if (!spot) {
-        return null;
+        return (
+            <Paper p={0} h={150}>
+                <Center h="100%">
+                    <EmptyState
+                        title="Spot Detail"
+                        description="Selected spot details will appear here."
+                    />
+                </Center>
+            </Paper>
+        );
     }
 
     const snr = `${spot?.snr} dB`;
@@ -32,7 +47,7 @@ export const SpotDetail = ({ spot }) => {
     );
 
     return (
-        <Paper>
+        <Paper h={150}>
             <Stack gap="sm">
                 {/* Row 1: header */}
                 <Group gap="sm" wrap="nowrap" justify="space-between">
