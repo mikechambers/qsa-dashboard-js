@@ -3,15 +3,14 @@ import { useState } from "react";
 
 import { useSettings } from "@/context/SettingsContext";
 import { isValidCallsign, normalizeCallsign } from "@/utils/radio";
-import { ConnectionStatusView } from "./ConnectionStatusView";
 import { useSpotData } from "@/context/SpotDataContext";
 import "./DashboardScreen.css";
 import { SpotMapView } from "./SpotMapView";
 import { SpotDetail } from "./SpotDetail";
 import { SpotTable } from "./SpotTable";
 import { DashboardHeaderView } from "./DashboardHeaderView";
-import { gridToLocation } from "../../utils/geo";
-import { ClockView } from "./ClockView";
+import { gridToLocation } from "@/utils/geo";
+import { SummaryPodsContainerView } from "./SummaryPodsContainerView";
 
 export default function DashboardScreen(props) {
     let params = useParams();
@@ -47,8 +46,10 @@ export default function DashboardScreen(props) {
     return (
         <div id="dashboardScreen" className="screen">
             <DashboardHeaderView callsign={callsign} grid={grid} />
+
             <div id="dashboardScreenMain">
-                <div id="summaryPods"></div>
+                <SummaryPodsContainerView />
+
                 <div id="spotMap">
                     <SpotMapView
                         location={location}
@@ -58,7 +59,6 @@ export default function DashboardScreen(props) {
                     />
                 </div>
                 <div id="spotsContainer">
-                    <ClockView />
                     <SpotDetail spot={selectedSpot} />
                     <SpotTable
                         spots={spots}

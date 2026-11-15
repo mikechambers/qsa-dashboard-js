@@ -12,6 +12,7 @@ export function SpotDataProvider({ children }) {
     const { settings } = useSettings();
 
     const [spots, setSpots] = useState(DEBUG ? MOCK_SPOTS : []);
+    const [furthestDistance, setFurthestDistance] = useState(0);
     const [status, setStatus] = useState(
         DEBUG ? ConnectionStatus.CONNECTED : ConnectionStatus.DISCONNECTED,
     );
@@ -56,6 +57,10 @@ export function SpotDataProvider({ children }) {
             const data = JSON.parse(message.toString());
 
             const spot = Spot.fromData(data);
+
+            if (spot.distance > furthestDistance) {
+                setFurthestDistance(spot.distance);
+            }
 
             let s = (prev) => [...prev, spot].sort((a, b) => b.date - a.date);
 
@@ -126,7 +131,7 @@ export function SpotDataProvider({ children }) {
     }, [settings.callsign]);
 
     return (
-        <SpotDataContext.Provider value={{ spots, status }}>
+        <SpotDataContext.Provider value={{ spots, status, furthestDistance }}>
             {children}
         </SpotDataContext.Provider>
     );

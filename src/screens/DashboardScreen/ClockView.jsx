@@ -23,12 +23,10 @@ export const ClockView = () => {
     }, []);
 
     return (
-        <Paper>
-            <Group justify="center">
-                <Title order={1} ff="monospace">
-                    {time} {timeZone}
-                </Title>
-            </Group>
-        </Paper>
+        <Group justify="center" visibleFrom="sm">
+            <Title order={3} ff="monospace">
+                {time} {timeZone}
+            </Title>
+        </Group>
     );
 };

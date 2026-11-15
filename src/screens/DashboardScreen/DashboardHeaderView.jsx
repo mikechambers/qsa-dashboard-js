@@ -6,6 +6,7 @@ import {
 } from "@tabler/icons-react";
 
 import { normalizeCallsign, normalizeMaidenHeadGrid } from "@/utils/radio";
+import { ClockView } from "./ClockView";
 
 export const DashboardHeaderView = ({ callsign, grid }) => {
     //todo: maybe normalize when we save?
@@ -23,6 +24,8 @@ export const DashboardHeaderView = ({ callsign, grid }) => {
                         {g}
                     </Text>
                 </Group>
+
+                <ClockView />
                 <Group gap="xs" wrap="nowrap">
                     <ConnectionStatusView />
                     <Button

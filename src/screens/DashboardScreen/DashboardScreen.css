@@ -4,26 +4,21 @@
 }
 
 #dashboardScreenMain {
-    flex-grow:1;
-    display:grid;
-    grid-template-columns: 1fr; /* phone, one column stacked */
-    gap:16px;
-
+    flex-grow: 1;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--mantine-spacing-md);          /* 16px */
+    margin-top: var(--mantine-spacing-md);   /* matches the gap */
     align-content: start;
 }
 
-@media (min-width: 768px) {
+/* 768px matches mantine sm */
+@media (min-width: 48em) {
     #dashboardScreenMain {
         grid-template-columns: 1fr 400px; /* map fills space, table gets 400px */
         grid-template-rows: auto 1fr; /* first row takes what it needs, second fills space */
     }
 }
-
-#summaryPods {
-    grid-column: 1 / -1; /* span all */
-}
-
-
 
 #spotMap {
     border-radius: var(--mantine-radius-default);
@@ -108,4 +103,8 @@
     100% {
         box-shadow: 0 0 0 0 rgba(28, 126, 214, 0), 0 0 6px rgba(0, 0, 0, 0.4);
     }
+}
+
+#summaryPods {
+    grid-column: 1 / -1; /* span the map and table columns */
 }
