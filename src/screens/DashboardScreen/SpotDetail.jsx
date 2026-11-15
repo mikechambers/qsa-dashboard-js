@@ -5,7 +5,11 @@ import { StatView } from "./StatView";
 import { CallsignDetailView } from "./CallsignDetailView";
 import { BandView } from "./BandView";
 import { ModeView } from "./ModeView";
-import { formatDistance, formatFrequency, formatTime } from "@/utils/view";
+import {
+    convertAndFormatDistance,
+    formatFrequency,
+    formatTime,
+} from "@/utils/view";
 import { useSettings } from "../../context/SettingsContext";
 import { getShortTimeZoneName } from "../../utils/date";
 
@@ -22,7 +26,10 @@ export const SpotDetail = ({ spot }) => {
     let timeZone = getShortTimeZoneName(settings.timeMode);
     let time = formatTime(spot.date, settings.timeMode, true);
 
-    const { d, unit } = formatDistance(spot.distance, settings.unitType);
+    const { d, unit } = convertAndFormatDistance(
+        spot.distance,
+        settings.unitType,
+    );
 
     return (
         <Paper>
