@@ -2,6 +2,7 @@ import { createContext, useContext } from "react";
 import { useLocalStorage } from "@mantine/hooks";
 import { UnitType } from "../enums/UnitType";
 import { TimeMode } from "../enums/TimeMode";
+import { DisplayMode } from "../enums/DisplayMode";
 
 const SettingsContext = createContext(null);
 
@@ -31,16 +32,30 @@ export function SettingsProvider({ children }) {
         getInitialValueInEffect: false,
     });
 
+    const [displayMode, setDisplayMode] = useLocalStorage({
+        key: "displayMode",
+        defaultValue: DisplayMode.LIGHT,
+        getInitialValueInEffect: false,
+    });
+
     const settings = {
         timeMode,
         grid,
         callsign,
         unitType,
+        displayMode,
     };
 
     return (
         <SettingsContext.Provider
-            value={{ settings, setCallsign, setGrid, setUnitType, setTimeMode }}
+            value={{
+                settings,
+                setCallsign,
+                setGrid,
+                setUnitType,
+                setTimeMode,
+                setDisplayMode,
+            }}
         >
             {children}
         </SettingsContext.Provider>

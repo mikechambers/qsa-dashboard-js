@@ -5,7 +5,7 @@ import "./App.css";
 import { MantineProvider, createTheme } from "@mantine/core";
 
 import { Outlet } from "react-router";
-import { SettingsProvider } from "./context/SettingsContext";
+import { SettingsProvider, useSettings } from "./context/SettingsContext";
 import { SpotDataProvider } from "./context/SpotDataContext";
 
 //const App = (props) => {
@@ -13,6 +13,8 @@ import { SpotDataProvider } from "./context/SpotDataContext";
 import "@fontsource/roboto-mono/400.css";
 import "@fontsource/roboto-mono/500.css";
 import "@fontsource/roboto-mono/600.css";
+import { DisplayMode } from "./enums/DisplayMode";
+import { useSelection } from "@mantine/hooks";
 
 const theme = createTheme({
     fontFamilyMonospace: "'Roboto Mono', monospace, monospace",
@@ -40,13 +42,24 @@ const theme = createTheme({
 
 export default function App() {
     return (
-        <MantineProvider theme={theme}>
+        <SettingsProvider>
+            <SpotDataProvider>
+                <ThemedApp />
+            </SpotDataProvider>
+        </SettingsProvider>
+    );
+}
+
+function ThemedApp() {
+    const { settings } = useSettings();
+
+    const colorScheme =
+        settings.displayMode === DisplayMode.DARK ? "dark" : "light";
+
+    return (
+        <MantineProvider theme={theme} forceColorScheme={colorScheme}>
             <div id="main">
-                <SettingsProvider>
-                    <SpotDataProvider>
-                        <Outlet />
-                    </SpotDataProvider>
-                </SettingsProvider>
+                <Outlet />
             </div>
         </MantineProvider>
     );

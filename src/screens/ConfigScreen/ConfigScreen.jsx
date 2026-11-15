@@ -17,12 +17,19 @@ import { isValidCallsign, isValidMaidenHeadGrid } from "@/utils/radio";
 import "./ConfigScreen.css";
 import { UnitType } from "../../enums/UnitType";
 import { TimeMode } from "../../enums/TimeMode";
+import { DisplayMode } from "../../enums/DisplayMode";
 
 export default function ConfigScreen(props) {
     const navigate = useNavigate();
 
-    const { settings, setCallsign, setGrid, setUnitType, setTimeMode } =
-        useSettings();
+    const {
+        settings,
+        setCallsign,
+        setGrid,
+        setUnitType,
+        setTimeMode,
+        setDisplayMode,
+    } = useSettings();
 
     const form = useForm({
         initialValues: {
@@ -30,6 +37,7 @@ export default function ConfigScreen(props) {
             grid: settings.grid,
             unitType: settings.unitType,
             timeMode: settings.timeMode,
+            displayMode: settings.displayMode,
         },
         validate: {
             callsign: (callsign) => {
@@ -56,11 +64,13 @@ export default function ConfigScreen(props) {
         const g = props.grid.trim();
         const m = props.unitType;
         const t = props.timeMode;
+        const d = props.displayMode;
 
         setCallsign(c);
         setGrid(g);
         setUnitType(m);
         setTimeMode(t);
+        setDisplayMode(d);
 
         navigate(
             `/dashboard/${encodeURIComponent(c)}/${encodeURIComponent(g)}/`,
@@ -85,6 +95,21 @@ export default function ConfigScreen(props) {
                             key={form.key("grid")}
                             {...form.getInputProps("grid")}
                         />
+
+                        <Radio.Group
+                            name="displayMode"
+                            label="Display"
+                            key={form.key("displayMode")}
+                            {...form.getInputProps("displayMode")}
+                        >
+                            <Group mt="xs" gap="lg" wrap="nowrap">
+                                <Radio
+                                    label="Light"
+                                    value={DisplayMode.LIGHT}
+                                />
+                                <Radio label="Dark" value={DisplayMode.DARK} />
+                            </Group>
+                        </Radio.Group>
 
                         <Radio.Group
                             name="unitType"

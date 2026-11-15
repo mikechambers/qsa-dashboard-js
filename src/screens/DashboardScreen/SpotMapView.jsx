@@ -8,6 +8,8 @@ import greatCircle from "@turf/great-circle";
 import { getCSSColorForSNR } from "@/utils/view";
 import { IconCurrentLocation } from "@tabler/icons-react";
 import { ActionIcon } from "@mantine/core";
+import { useSettings } from "../../context/SettingsContext";
+import { DisplayMode } from "../../enums/DisplayMode";
 
 setWorkerUrl(workerUrl);
 
@@ -21,6 +23,8 @@ export const SpotMapView = ({
     onSpotHighlight,
     location,
 }) => {
+    const { settings } = useSettings();
+
     const mapContainer = useRef(null);
     const mapInstance = useRef(null);
 
@@ -66,12 +70,34 @@ export const SpotMapView = ({
         );
     };
 
+    const getMapStyleUrl = () => {
+        const displayMode =
+            settings.displayMode === DisplayMode.DARK ? "dark" : "light";
+
+        return `https://styles.maptoolkit.org/${displayMode}.json`;
+    };
+
+    useEffect(() => {
+        const map = mapInstance.current;
+        if (!map || !settings?.displayMode) {
+            return;
+        }
+        const url = getMapStyleUrl();
+        map.setStyle(url);
+
+        map.once("style.load", () => {
+            addSpotSourcesAndLayers(map); // your existing add-source/add-layer code
+        });
+    }, [settings?.displayMode]);
+
     useEffect(() => {
         if (mapInstance.current) return;
 
+        const url = getMapStyleUrl();
+        console.log(url);
         mapInstance.current = new Map({
             container: mapContainer.current,
-            style: "https://styles.maptoolkit.org/light.json",
+            style: url,
             center: [-122.38, 37.58],
             zoom: 3,
         });
