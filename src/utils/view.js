@@ -4,16 +4,18 @@ import { clamp } from "@/utils/math";
 
 export const formatDistance = (distance, unitType) => {
     let d = "-";
-    let unit = "km";
+    let unit = " km";
 
-    if (distance !== undefined) {
-        if (unitType === UnitType.IMPERIAL) {
-            d = `${Math.round(kilometersToMiles(distance))}`;
-            unit = " mi";
-        } else {
-            d = `${Math.round(distance)}`;
-            unit = " km";
-        }
+    if (distance === undefined) {
+        return "";
+    }
+
+    if (unitType === UnitType.IMPERIAL) {
+        d = `${Math.round(kilometersToMiles(distance))}`;
+        unit = " mi";
+    } else {
+        d = `${Math.round(distance)}`;
+        unit = " km";
     }
 
     return { d, unit };

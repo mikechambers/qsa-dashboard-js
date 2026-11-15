@@ -1,9 +1,10 @@
 import { Text, Group } from "@mantine/core";
-import { clamp } from "@/utils/math";
+import { SNRBarView } from "./SNRBarView";
 
 export const SNRView = ({ snr }) => {
     return (
-        <Group gap={8} justify="flex-end" wrap="nowrap" p={0}>
+        <Group gap={4} justify="flex-end" wrap="nowrap" p={0}>
+            <SNRBarView snr={snr} />
             <Text
                 size="sm"
                 ta="right"

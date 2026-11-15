@@ -88,7 +88,7 @@ export const SpotTable = ({ spots, onSpotHighlight }) => {
                                     </Table.Td>
                                     <Table.Td ta="left">
                                         <Text size="sm">
-                                            {spot.senderDXCC?.countryCode}
+                                            {spot.senderDXCC?.countryCode?.toUpperCase()}
                                         </Text>
                                     </Table.Td>
                                     <Table.Td ta="right">
