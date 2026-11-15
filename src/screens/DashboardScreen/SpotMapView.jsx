@@ -7,6 +7,7 @@ import greatCircle from "@turf/great-circle";
 
 import { getCSSColorForSNR } from "@/utils/view";
 import { IconCurrentLocation } from "@tabler/icons-react";
+import { ActionIcon } from "@mantine/core";
 
 setWorkerUrl(workerUrl);
 
