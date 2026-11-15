@@ -63,6 +63,7 @@ export const SpotTable = ({ spots, onSpotHighlight }) => {
             >
                 <Table
                     styles={{ td: { verticalAlign: "top" } }}
+                    stickyHeader
                     highlightOnHover
                     withTableBorder
                     withRowBorders={true}
