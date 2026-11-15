@@ -10,12 +10,12 @@ import { SpotDataProvider } from "./context/SpotDataContext";
 
 //const App = (props) => {
 
-import "@fontsource/jetbrains-mono/400.css";
-import "@fontsource/jetbrains-mono/500.css";
-import "@fontsource/jetbrains-mono/600.css";
+import "@fontsource/roboto-mono/400.css";
+import "@fontsource/roboto-mono/500.css";
+import "@fontsource/roboto-mono/600.css";
 
 const theme = createTheme({
-    fontFamilyMonospace: "'JetBrains Mono', ui-monospace, monospace",
+    fontFamilyMonospace: "'Roboto Mono', monospace, monospace",
     black: "#212529",
     components: {
         Paper: {
