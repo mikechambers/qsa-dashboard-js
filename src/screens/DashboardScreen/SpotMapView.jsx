@@ -28,6 +28,7 @@ const CIRCLE_STROKE = 2;
 const TRANSITION_DURATION_IN = 600;
 const TRANSITION_DURATION_OUT = 300;
 const EASING_TYPE = "bounce";
+const DEFAULT_ZOOM = 3;
 
 export const SpotMapView = ({
     spots,
@@ -48,6 +49,7 @@ export const SpotMapView = ({
         //todo: pass in zoom option (maybe default)
         mapInstance.current.flyTo({
             center: location.coordinates,
+            zoom: 4,
         });
     };
 
@@ -125,7 +127,7 @@ export const SpotMapView = ({
             container: mapContainer.current,
             style: url,
             center: [-122.38, 37.58],
-            zoom: 3,
+            zoom: DEFAULT_ZOOM,
         });
 
         MaplibreTransition.init(mapInstance.current);
