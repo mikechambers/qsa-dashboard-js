@@ -4,6 +4,8 @@ export class SpotFilter {
     callsign = "";
     band = ALL_CASES;
     mode = ALL_CASES;
+    snr = -24;
+    distance = 0;
 
     with(changes) {
         return Object.assign(new SpotFilter(), this, changes);
@@ -12,11 +14,8 @@ export class SpotFilter {
     filter(spots) {
         return spots.filter((spot, index, array) => {
             if (this.callsign) {
-                if (
-                    !spot.receiverCall
-                        .toUpperCase()
-                        .startsWith(this.callsign.toUpperCase())
-                ) {
+                const c = this.callsign.toUpperCase();
+                if (!spot.receiverCall.toUpperCase().startsWith(c)) {
                     return false;
                 }
             }
@@ -31,6 +30,14 @@ export class SpotFilter {
                 if (this.mode !== spot.mode) {
                     return false;
                 }
+            }
+
+            if (spot.snr < this.snr) {
+                return false;
+            }
+
+            if (spot.distance < this.distance) {
+                return false;
             }
 
             return true;

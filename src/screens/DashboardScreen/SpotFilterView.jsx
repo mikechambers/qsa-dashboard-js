@@ -15,15 +15,35 @@ import { useSpotData } from "../../context/SpotDataContext";
 import { Band } from "../../enums/Band";
 import { ALL_CASES } from "../../consts";
 import { Mode } from "../../enums/Mode";
+import { useSettings } from "../../context/SettingsContext";
+import { UnitType } from "../../enums/UnitType";
 
 const bandValues = [ALL_CASES, ...Band.cases];
 const modeValues = [ALL_CASES, ...Mode.cases];
 
 export const SpotFilterView = () => {
     const { filter, setFilter, filteredSpots, spots } = useSpotData();
+    const { settings } = useSettings();
 
     //if we only show existing bands
     //const bandValues = [ALL_CASES, ...new Set(spots.map(({ band }) => band))];
+
+    const distanceValues =
+        settings.unitType === UnitType.METRIC
+            ? [
+                  { value: 0, label: "0" },
+                  { value: 5000, label: "5k" },
+                  { value: 10000, label: "10k" },
+                  { value: 15000, label: "15k" },
+                  { value: 20000, label: "20k" },
+              ]
+            : [
+                  { value: 0, label: "0" },
+                  { value: 3000, label: "3k" },
+                  { value: 6000, label: "6k" },
+                  { value: 9000, label: "9k" },
+                  { value: 12000, label: "12k" },
+              ];
 
     return (
         <div id="filter">
@@ -66,6 +86,7 @@ export const SpotFilterView = () => {
                             min={-24}
                             max={10}
                             step={1}
+                            onChange={(v) => setFilter(filter.with({ snr: v }))}
                             marks={[
                                 { value: -24, label: "-24" },
                                 { value: -10, label: "-10" },
@@ -76,23 +97,20 @@ export const SpotFilterView = () => {
                         />
                     </Stack>
                     <Stack gap={4} w={200}>
-                        <Input.Label>Min Distance (km)</Input.Label>
+                        <Input.Label>
+                            Min Distance (
+                            {settings.unitType == UnitType.METRIC ? "km" : "mi"}
+                            )
+                        </Input.Label>
                         <Slider
                             defaultValue={0}
-                            marks={[
-                                { value: 1000, label: "1k" },
-
-                                { value: 5000, label: "5k" },
-
-                                { value: 10000, label: "10k" },
-
-                                { value: 15000, label: "15k" },
-
-                                { value: 20000, label: "20k" },
-                            ]}
+                            marks={distanceValues}
                             min={0}
-                            max={20000}
+                            max={distanceValues.at(-1).value}
                             step={100}
+                            onChange={(v) =>
+                                setFilter(filter.with({ distance: v }))
+                            }
                             label={(v) => `${v.toLocaleString()} km`}
                             mb="md"
                         />
@@ -102,7 +120,12 @@ export const SpotFilterView = () => {
                             Showing {filteredSpots.length} of {spots.length}{" "}
                             spots
                         </Text>
-                        <Button variant="default">Reset</Button>
+                        <Button
+                            variant="default"
+                            onClick={() => setFilter(new SpotFilter())}
+                        >
+                            Reset
+                        </Button>
                     </Group>
                 </Group>
             </Paper>

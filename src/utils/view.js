@@ -12,7 +12,7 @@ export const formatNumber = (n) => {
 };
 
 export const convertAndFormatDistance = (km, unitType) => {
-    const miles = unitType === "imperial";
+    const miles = unitType === UnitType.IMPERIAL;
 
     const d = formatNumber(miles ? kilometersToMiles(km) : km);
 
