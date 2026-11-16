@@ -14,11 +14,16 @@ import { SpotFilter } from "../../models/SpotFilter";
 import { useSpotData } from "../../context/SpotDataContext";
 import { Band } from "../../enums/Band";
 import { ALL_CASES } from "../../consts";
+import { Mode } from "../../enums/Mode";
+
+const bandValues = [ALL_CASES, ...Band.cases];
+const modeValues = [ALL_CASES, ...Mode.cases];
 
 export const SpotFilterView = () => {
     const { filter, setFilter, filteredSpots, spots } = useSpotData();
 
-    const bandValues = [ALL_CASES, ...new Set(spots.map(({ band }) => band))];
+    //if we only show existing bands
+    //const bandValues = [ALL_CASES, ...new Set(spots.map(({ band }) => band))];
 
     return (
         <div id="filter">
@@ -45,11 +50,14 @@ export const SpotFilterView = () => {
                         onChange={(v) => setFilter(filter.with({ band: v }))}
                         allowDeselect={false}
                     />
+
                     <Select
                         label="Mode"
                         placeholder="All"
-                        data={["All", "FT8", "JT65"]}
+                        data={modeValues}
                         w={140}
+                        onChange={(v) => setFilter(filter.with({ mode: v }))}
+                        allowDeselect={false}
                     />
                     <Stack gap={4} w={200}>
                         <Input.Label>Min SNR (dB)</Input.Label>

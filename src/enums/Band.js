@@ -24,7 +24,7 @@ export const Band = Object.freeze({
     ...Bands,
 
     get cases() {
-        return [...bandValues];
+        return Object.values(Bands);
     },
 
     fromData: (v) => {

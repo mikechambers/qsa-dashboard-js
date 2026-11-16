@@ -15,6 +15,10 @@ const Modes = {
 export const Mode = Object.freeze({
     ...Modes,
 
+    get cases() {
+        return Object.values(Modes);
+    },
+
     fromData: (v) => {
         if (!v) {
             return undefined;

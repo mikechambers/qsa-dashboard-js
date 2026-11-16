@@ -3,6 +3,7 @@ import { ALL_CASES } from "../consts";
 export class SpotFilter {
     callsign = "";
     band = ALL_CASES;
+    mode = ALL_CASES;
 
     with(changes) {
         return Object.assign(new SpotFilter(), this, changes);
@@ -22,6 +23,12 @@ export class SpotFilter {
 
             if (!this.band || this.band !== ALL_CASES) {
                 if (this.band !== spot.band) {
+                    return false;
+                }
+            }
+
+            if (!this.mode || this.mode !== ALL_CASES) {
+                if (this.mode !== spot.mode) {
                     return false;
                 }
             }
