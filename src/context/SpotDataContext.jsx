@@ -34,29 +34,29 @@ export function SpotDataProvider({ children }) {
     const clientRef = useRef(null);
 
     const mostRecentContact = useMemo(() => {
-        return spots[0];
-    }, [spots]);
+        return filteredSpots[0];
+    }, [filteredSpots]);
 
     const furthestSpot = useMemo(() => {
         //loop through, check for larger distance on each spot, return largest
-        return spots.reduce(
+        return filteredSpots.reduce(
             (max, s) => (!max || s.distance > max.distance ? s : max),
             undefined,
         );
-    }, [spots]);
+    }, [filteredSpots]);
 
     const uniqueStations = useMemo(() => {
         const me = settings?.callsign?.toUpperCase();
 
         //sets only store unique values
         const calls = new Set();
-        for (const s of spots) {
+        for (const s of filteredSpots) {
             if (s.receiverCall && s.receiverCall !== me)
                 calls.add(s.receiverCall);
             if (s.senderCall && s.senderCall !== me) calls.add(s.senderCall);
         }
         return calls.size;
-    }, [spots, settings?.callsign]);
+    }, [filteredSpots, settings?.callsign]);
 
     const updateState = () => {
         if (DEBUG) return;

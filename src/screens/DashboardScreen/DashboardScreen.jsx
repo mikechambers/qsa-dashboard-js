@@ -11,7 +11,6 @@ import { SpotTable } from "./SpotTable";
 import { DashboardHeaderView } from "./DashboardHeaderView";
 import { gridToLocation } from "@/utils/geo";
 import { SummaryPodsContainerView } from "./SummaryPodsContainerView";
-import { Group, Paper } from "@mantine/core";
 import { SpotFilterView } from "./SpotFilterView";
 
 export default function DashboardScreen(props) {
