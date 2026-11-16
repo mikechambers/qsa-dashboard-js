@@ -63,6 +63,10 @@ export default class Spot {
         return this.transmissionDate ?? this.receptionDate;
     }
 
+    get id() {
+        return this.sequence;
+    }
+
     static fromData(data) {
         const receptionDate = epochToDate(data.t);
         const transmissionDate = epochToDate(data.t_tx);

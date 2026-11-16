@@ -13,6 +13,7 @@ import { DisplayMode } from "../../enums/DisplayMode";
 
 setWorkerUrl(workerUrl);
 
+//empty featurecollection to use to clear layers
 const EMPTY = { type: "FeatureCollection", features: [] };
 
 const LOCATION_COLOR = "#1c7ed6";
@@ -29,10 +30,11 @@ export const SpotMapView = ({
     const mapInstance = useRef(null);
 
     const centerOnLocation = () => {
-        if (!mapInstance.current && location) {
+        if (!mapInstance.current || !location) {
             return;
         }
 
+        //todo: pass in zoom option (maybe default)
         mapInstance.current.flyTo({
             center: location.coordinates,
         });
@@ -51,6 +53,7 @@ export const SpotMapView = ({
         return marker;
     };
 
+    //todo: rename this
     const setPath = (spot) => {
         const src = mapInstance.current?.getSource("path");
         if (!src || !location) {
@@ -86,7 +89,8 @@ export const SpotMapView = ({
         map.setStyle(url);
 
         map.once("style.load", () => {
-            addSpotSourcesAndLayers(map); // your existing add-source/add-layer code
+            //todo: fix this (line 108-121)
+            addSpotSourcesAndLayers(map);
         });
     }, [settings?.displayMode]);
 
@@ -154,6 +158,7 @@ export const SpotMapView = ({
         };
     }, [location]);
 
+    //todo: we could split these between selectedSpot and spots
     useEffect(() => {
         let markers = [];
 
@@ -199,7 +204,6 @@ export const SpotMapView = ({
         }
 
         if (selectedSpot) {
-            console.log("selected");
             setPath(selectedSpot);
         }
 
