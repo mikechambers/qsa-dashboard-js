@@ -1,5 +1,5 @@
 import { Paper, Table, Title, Group, Text, EmptyState } from "@mantine/core";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { BandFrequencyView } from "./BandFrequencyView";
 import { TimeView } from "./TimeView";
@@ -9,12 +9,19 @@ import { IconBroadcast, IconInbox } from "@tabler/icons-react";
 import { useSettings } from "../../context/SettingsContext";
 import { getShortTimeZoneName } from "../../utils/date";
 
-export const SpotTable = ({ spots, onSpotHighlight }) => {
+export const SpotTable = ({ spots, onSpotHighlight, selectedSpot }) => {
     const [scrollParent, setScrollParent] = useState(null);
 
     const { settings } = useSettings();
 
     let timeZone = getShortTimeZoneName(settings.timeMode);
+
+    useEffect(() => {
+        if (selectedSpot == null) return;
+        document
+            .getElementById(`spot-row-${selectedSpot.id}`)
+            ?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    }, [selectedSpot]);
 
     const virtualizer = useVirtualizer({
         count: spots.length,
@@ -87,6 +94,13 @@ export const SpotTable = ({ spots, onSpotHighlight }) => {
                             const spot = spots[virtualRow.index];
                             return (
                                 <Table.Tr
+                                    bg={
+                                        selectedSpot === spot
+                                            ? "var(--mantine-color-blue-light)"
+                                            : undefined
+                                    }
+                                    style={{ scrollMarginTop: 40 }}
+                                    id={`spot-row-${spot.id}`}
                                     key={spot.sequence}
                                     onMouseEnter={() => onSpotHighlight?.(spot)}
                                 >

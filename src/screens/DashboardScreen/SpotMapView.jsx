@@ -21,7 +21,6 @@ const LOCATION_COLOR = "#1c7ed6";
 const CONNECTION_LINE_PATH = "CONNECTION_LINE_PATH";
 const SPOT_PATH = "SPOT_PATH";
 const CONNECTION_POINT = "CONNECTION_POINT";
-//const SELECTED_PATH = "SELECTED_PATH";
 
 const CIRCLE_RADIUS = 6;
 const CIRCLE_RADIUS_SELECTED = 18;
@@ -85,7 +84,7 @@ export const SpotMapView = ({
         const pntSrc = mapInstance.current?.getSource(CONNECTION_POINT);
 
         if (!pntSrc) return;
-        console.log("point", !!pntSrc, to.coordinates);
+
         pntSrc.setData({
             type: "Feature",
             geometry: {
@@ -121,7 +120,7 @@ export const SpotMapView = ({
         if (mapInstance.current) return;
 
         const url = getMapStyleUrl();
-        console.log(url);
+
         mapInstance.current = new Map({
             container: mapContainer.current,
             style: url,
@@ -284,7 +283,6 @@ export const SpotMapView = ({
         const map = mapInstance.current;
         if (!map || !selectedSpot) return;
 
-        // a bare object is enough; the plugin only reads id, source and layer.id
         const feature = {
             id: selectedSpot.id,
             source: SPOT_PATH,
@@ -295,18 +293,18 @@ export const SpotMapView = ({
             duration: TRANSITION_DURATION_IN,
             delay: 0,
             ease: EASING_TYPE,
-            paint: { "circle-radius": [null, CIRCLE_RADIUS_SELECTED] }, // grow
+            paint: { "circle-radius": [null, CIRCLE_RADIUS_SELECTED] },
         });
 
         drawConnectionLine(selectedSpot);
 
         return () => {
             const map = mapInstance.current;
-            if (!map) return; // map already removed on unmount
+            if (!map) return;
             map.transition(feature, {
                 duration: TRANSITION_DURATION_OUT,
                 ease: EASING_TYPE,
-                paint: { "circle-radius": [null, CIRCLE_RADIUS] }, // shrink back
+                paint: { "circle-radius": [null, CIRCLE_RADIUS] },
             });
         };
     }, [selectedSpot]);

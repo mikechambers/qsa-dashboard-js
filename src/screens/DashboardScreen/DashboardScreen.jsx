@@ -65,6 +65,7 @@ export default function DashboardScreen(props) {
                     <SpotDetail spot={selectedSpot} />
                     <SpotTable
                         spots={filteredSpots}
+                        selectedSpot={selectedSpot}
                         onSpotHighlight={onSpotHighlight}
                     />
                 </div>
