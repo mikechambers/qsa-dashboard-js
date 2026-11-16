@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { Map, Marker, setWorkerUrl } from "maplibre-gl";
 import workerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
 import "maplibre-gl/dist/maplibre-gl.css";
+import MaplibreTransition from "maplibre-transition";
 
 import greatCircle from "@turf/great-circle";
 
@@ -20,6 +21,13 @@ const LOCATION_COLOR = "#1c7ed6";
 const CONNECTION_LINE_PATH = "CONNECTION_LINE_PATH";
 const SPOT_PATH = "SPOT_PATH";
 const SELECTED_PATH = "SELECTED_PATH";
+
+const CIRCLE_RADIUS = 6;
+const CIRCLE_RADIUS_SELECTED = 18;
+const CIRCLE_STROKE = 2;
+const TRANSITION_DURATION_IN = 600;
+const TRANSITION_DURATION_OUT = 300;
+const EASING_TYPE = "bounce";
 
 export const SpotMapView = ({
     spots,
@@ -109,6 +117,8 @@ export const SpotMapView = ({
             zoom: 3,
         });
 
+        MaplibreTransition.init(mapInstance.current);
+
         mapInstance.current.on("load", () => {
             const map = mapInstance.current;
 
@@ -131,31 +141,34 @@ export const SpotMapView = ({
                 },
             });
 
-            /*
-            map.addSource(SPOT_PATH, { type: "geojson", data: EMPTY });
+            map.addSource(SPOT_PATH, {
+                type: "geojson",
+                data: EMPTY,
+                promoteId: "spotId",
+            });
 
             map.addLayer({
                 id: SPOT_PATH,
                 source: SPOT_PATH,
                 type: "circle",
                 paint: {
-                    "circle-radius": 7,
+                    "circle-radius": CIRCLE_RADIUS,
                     "circle-color": ["get", "color"],
-                    "circle-stroke-width": 2,
+                    "circle-stroke-width": CIRCLE_STROKE,
                     "circle-stroke-color": "white",
                 },
-            });*/
+            });
 
-            map.addSource(SPOT_PATH, { type: "geojson", data: EMPTY });
+            map.addSource(SELECTED_PATH, { type: "geojson", data: EMPTY });
 
             map.addLayer({
-                id: SPOT_PATH,
-                source: SPOT_PATH,
+                id: SELECTED_PATH,
+                source: SELECTED_PATH,
                 type: "circle",
                 paint: {
-                    "circle-radius": 7,
+                    "circle-radius": ["get", "radius"],
                     "circle-color": ["get", "color"],
-                    "circle-stroke-width": 2,
+                    "circle-stroke-width": CIRCLE_STROKE,
                     "circle-stroke-color": "white",
                 },
             });
@@ -173,7 +186,6 @@ export const SpotMapView = ({
                 console.log("leave");
             });
         });
-
         return () => {
             mapInstance.current?.remove();
             mapInstance.current = null;
@@ -243,13 +255,6 @@ export const SpotMapView = ({
             map.once("load", apply);
             return () => map.off("load", apply);
         }
-
-        /*
-        if (selectedSpot) {
-            setPath(selectedSpot);
-        }
-            */
-
         return () => {
             /*
             markers.forEach((marker) => {
@@ -260,12 +265,32 @@ export const SpotMapView = ({
     }, [spots]);
 
     useEffect(() => {
-        if (!selectedSpot) {
-            return;
-        }
+        const map = mapInstance.current;
+        if (!map || !selectedSpot) return;
 
-        drawConnectionLine(selectedSpot);
-    }, [selectedSpot]);
+        // a bare object is enough; the plugin only reads id, source and layer.id
+        const feature = {
+            id: selectedSpot.id,
+            source: SPOT_PATH,
+            layer: { id: SPOT_PATH },
+        };
+
+        map.transition(feature, {
+            duration: TRANSITION_DURATION_IN,
+            delay: 0,
+            ease: EASING_TYPE,
+            paint: { "circle-radius": [null, CIRCLE_RADIUS_SELECTED] }, // grow
+        });
+
+        return () => {
+            if (!map) return; // map already removed on unmount
+            map.transition(feature, {
+                duration: TRANSITION_DURATION_OUT,
+                ease: EASING_TYPE,
+                paint: { "circle-radius": [null, CIRCLE_RADIUS] }, // shrink back
+            });
+        };
+    }, [selectedSpot?.id]);
 
     return (
         <div style={{ position: "relative", width: "100%", height: "100%" }}>
