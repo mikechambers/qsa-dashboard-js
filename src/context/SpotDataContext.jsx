@@ -12,6 +12,7 @@ import { ConnectionStatus } from "../enums/ConnectionStatus";
 
 import { DEBUG, MOCK_SPOTS } from "@/debug/";
 import Spot from "../models/Spot";
+import { SpotFilter } from "../models/SpotFilter";
 
 const SpotDataContext = createContext(null);
 
@@ -25,6 +26,10 @@ export function SpotDataProvider({ children }) {
     const [status, setStatus] = useState(
         DEBUG ? ConnectionStatus.CONNECTED : ConnectionStatus.DISCONNECTED,
     );
+
+    const [filter, setFilter] = useState(new SpotFilter());
+
+    const filteredSpots = useMemo(() => filter.filter(spots), [filter, spots]);
 
     const clientRef = useRef(null);
 
@@ -159,6 +164,9 @@ export function SpotDataProvider({ children }) {
         <SpotDataContext.Provider
             value={{
                 spots,
+                filteredSpots,
+                filter,
+                setFilter,
                 status,
                 furthestSpot,
                 uniqueStations,

@@ -11,12 +11,14 @@ import { SpotTable } from "./SpotTable";
 import { DashboardHeaderView } from "./DashboardHeaderView";
 import { gridToLocation } from "@/utils/geo";
 import { SummaryPodsContainerView } from "./SummaryPodsContainerView";
+import { Group, Paper } from "@mantine/core";
+import { SpotFilterView } from "./SpotFilterView";
 
 export default function DashboardScreen(props) {
     let params = useParams();
     let { settings } = useSettings();
     //const navigate = useNavigate();
-    const { spots, status } = useSpotData();
+    const { spots, filteredSpots, status } = useSpotData();
 
     const [selectedSpot, setSelectedSpot] = useState();
 
@@ -50,10 +52,12 @@ export default function DashboardScreen(props) {
             <div id="dashboardScreenMain">
                 <SummaryPodsContainerView />
 
+                <SpotFilterView />
+
                 <div id="spotMap">
                     <SpotMapView
                         location={location}
-                        spots={spots}
+                        spots={filteredSpots}
                         onSpotHighlight={onSpotHighlight}
                         selectedSpot={selectedSpot}
                     />
@@ -61,7 +65,7 @@ export default function DashboardScreen(props) {
                 <div id="spotsContainer">
                     <SpotDetail spot={selectedSpot} />
                     <SpotTable
-                        spots={spots}
+                        spots={filteredSpots}
                         onSpotHighlight={onSpotHighlight}
                     />
                 </div>
