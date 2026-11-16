@@ -19,6 +19,7 @@ const EMPTY = { type: "FeatureCollection", features: [] };
 const LOCATION_COLOR = "#1c7ed6";
 const CONNECTION_LINE_PATH = "CONNECTION_LINE_PATH";
 const SPOT_PATH = "SPOT_PATH";
+const SELECTED_PATH = "SELECTED_PATH";
 
 export const SpotMapView = ({
     spots,
@@ -56,7 +57,7 @@ export const SpotMapView = ({
     };
 
     //todo: rename this
-    const setPath = (spot) => {
+    const drawConnectionLine = (spot) => {
         const src = mapInstance.current?.getSource(CONNECTION_LINE_PATH);
         if (!src || !location) {
             return;
@@ -129,6 +130,21 @@ export const SpotMapView = ({
                     "line-dasharray": [2, 2],
                 },
             });
+
+            /*
+            map.addSource(SPOT_PATH, { type: "geojson", data: EMPTY });
+
+            map.addLayer({
+                id: SPOT_PATH,
+                source: SPOT_PATH,
+                type: "circle",
+                paint: {
+                    "circle-radius": 7,
+                    "circle-color": ["get", "color"],
+                    "circle-stroke-width": 2,
+                    "circle-stroke-color": "white",
+                },
+            });*/
 
             map.addSource(SPOT_PATH, { type: "geojson", data: EMPTY });
 
@@ -241,7 +257,15 @@ export const SpotMapView = ({
             });
             */
         };
-    }, [spots, selectedSpot]);
+    }, [spots]);
+
+    useEffect(() => {
+        if (!selectedSpot) {
+            return;
+        }
+
+        drawConnectionLine(selectedSpot);
+    }, [selectedSpot]);
 
     return (
         <div style={{ position: "relative", width: "100%", height: "100%" }}>
