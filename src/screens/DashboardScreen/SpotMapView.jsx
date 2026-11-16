@@ -17,6 +17,8 @@ setWorkerUrl(workerUrl);
 const EMPTY = { type: "FeatureCollection", features: [] };
 
 const LOCATION_COLOR = "#1c7ed6";
+const CONNECTION_LINE_PATH = "CONNECTION_LINE_PATH";
+const SPOT_PATH = "SPOT_PATH";
 
 export const SpotMapView = ({
     spots,
@@ -55,7 +57,7 @@ export const SpotMapView = ({
 
     //todo: rename this
     const setPath = (spot) => {
-        const src = mapInstance.current?.getSource("path");
+        const src = mapInstance.current?.getSource(CONNECTION_LINE_PATH);
         if (!src || !location) {
             return;
         }
@@ -109,19 +111,50 @@ export const SpotMapView = ({
         mapInstance.current.on("load", () => {
             const map = mapInstance.current;
 
-            map.addSource("path", { type: "geojson", data: EMPTY });
+            map.addSource(CONNECTION_LINE_PATH, {
+                type: "geojson",
+                data: EMPTY,
+            });
 
+            //create the layer we draw the line into. default with nothing.
             map.addLayer({
-                id: "path",
+                id: CONNECTION_LINE_PATH,
                 type: "line",
                 layout: { "line-cap": "round" },
-                source: "path",
+                source: CONNECTION_LINE_PATH,
                 paint: {
                     "line-color": LOCATION_COLOR,
                     "line-width": 2,
                     "line-opacity": 0.7,
                     "line-dasharray": [2, 2],
                 },
+            });
+
+            map.addSource(SPOT_PATH, { type: "geojson", data: EMPTY });
+
+            map.addLayer({
+                id: SPOT_PATH,
+                source: SPOT_PATH,
+                type: "circle",
+                paint: {
+                    "circle-radius": 7,
+                    "circle-color": ["get", "color"],
+                    "circle-stroke-width": 2,
+                    "circle-stroke-color": "white",
+                },
+            });
+
+            map.on("mouseenter", SPOT_PATH, (e) => {
+                const f = e.features[0];
+
+                let s = spots.find((spot) => spot.id === f.properties.spotId);
+
+                //maybe we just set directly?
+                onSpotHighlight(s);
+            });
+
+            map.on("mouseleave", SPOT_PATH, () => {
+                console.log("leave");
             });
         });
 
@@ -160,57 +193,53 @@ export const SpotMapView = ({
 
     //todo: we could split these between selectedSpot and spots
     useEffect(() => {
-        let markers = [];
+        let features = [];
+        const map = mapInstance.current;
+
+        if (!map) {
+            return;
+        }
 
         for (const s of spots) {
             const color = getCSSColorForSNR(s.snr);
 
-            //top level marker
-            const el = document.createElement("div");
-
-            //sub-element so we can transform without repositioning
-            //map uses transform to position
-            const dot = document.createElement("div");
-            dot.style.width = "14px";
-            dot.style.height = "14px";
-            dot.style.borderRadius = "50%";
-            dot.style.background = color;
-            dot.style.border = "2px solid white";
-            dot.style.boxShadow = "0 0 4px rgba(0,0,0,0.4)";
-            dot.style.cursor = "pointer";
-
-            dot.style.transition = "transform 0.15s ease-out";
-
-            if (selectedSpot === s) {
-                requestAnimationFrame(() => {
-                    dot.style.transform = "scale(2.0)";
-                });
-            }
-
-            el.appendChild(dot);
-
-            //hover events
-            el.addEventListener("mouseenter", () => {
-                onSpotHighlight(s);
-                dot.style.transform = "scale(2.0)";
+            features.push({
+                type: "Feature",
+                geometry: {
+                    type: "Point",
+                    coordinates: s.receiverLocation.coordinates,
+                },
+                properties: { color: color, spotId: s.id },
             });
-            el.addEventListener("mouseleave", () => {
-                dot.style.transform = "";
+        }
+        console.log("spots:", spots.length, "first feature:", features[0]);
+        console.log("source exists:", !!map.getSource(SPOT_PATH));
+
+        const apply = () =>
+            map.getSource(SPOT_PATH)?.setData({
+                type: "FeatureCollection",
+                features: features,
             });
 
-            const m = addMarkerToMap(el, s.receiverLocation);
-
-            if (m) markers.push(m);
+        if (map.getSource(SPOT_PATH)) {
+            apply();
+        } else {
+            map.once("load", apply);
+            return () => map.off("load", apply);
         }
 
+        /*
         if (selectedSpot) {
             setPath(selectedSpot);
         }
+            */
 
         return () => {
+            /*
             markers.forEach((marker) => {
                 marker.remove();
             });
+            */
         };
     }, [spots, selectedSpot]);
 
