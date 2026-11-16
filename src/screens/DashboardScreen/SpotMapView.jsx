@@ -20,7 +20,8 @@ const EMPTY = { type: "FeatureCollection", features: [] };
 const LOCATION_COLOR = "#1c7ed6";
 const CONNECTION_LINE_PATH = "CONNECTION_LINE_PATH";
 const SPOT_PATH = "SPOT_PATH";
-const SELECTED_PATH = "SELECTED_PATH";
+const CONNECTION_POINT = "CONNECTION_POINT";
+//const SELECTED_PATH = "SELECTED_PATH";
 
 const CIRCLE_RADIUS = 6;
 const CIRCLE_RADIUS_SELECTED = 18;
@@ -75,13 +76,24 @@ export const SpotMapView = ({
 
         src.setData(
             location && to
-                ? greatCircle(
-                      [location.longitude, location.latitude],
-                      [to.longitude, to.latitude],
-                      { npoints: 64 },
-                  )
+                ? greatCircle(location.coordinates, to.coordinates, {
+                      npoints: 64,
+                  })
                 : EMPTY,
         );
+
+        const pntSrc = mapInstance.current?.getSource(CONNECTION_POINT);
+
+        if (!pntSrc) return;
+        console.log("point", !!pntSrc, to.coordinates);
+        pntSrc.setData({
+            type: "Feature",
+            geometry: {
+                type: "Point",
+                coordinates: to.coordinates,
+            },
+            properties: {},
+        });
     };
 
     const getMapStyleUrl = () => {
@@ -122,25 +134,7 @@ export const SpotMapView = ({
         mapInstance.current.on("load", () => {
             const map = mapInstance.current;
 
-            map.addSource(CONNECTION_LINE_PATH, {
-                type: "geojson",
-                data: EMPTY,
-            });
-
-            //create the layer we draw the line into. default with nothing.
-            map.addLayer({
-                id: CONNECTION_LINE_PATH,
-                type: "line",
-                layout: { "line-cap": "round" },
-                source: CONNECTION_LINE_PATH,
-                paint: {
-                    "line-color": LOCATION_COLOR,
-                    "line-width": 2,
-                    "line-opacity": 0.7,
-                    "line-dasharray": [2, 2],
-                },
-            });
-
+            /********* spots ************/
             map.addSource(SPOT_PATH, {
                 type: "geojson",
                 data: EMPTY,
@@ -159,17 +153,39 @@ export const SpotMapView = ({
                 },
             });
 
-            map.addSource(SELECTED_PATH, { type: "geojson", data: EMPTY });
+            /**** connection line *********/
+            map.addSource(CONNECTION_LINE_PATH, {
+                type: "geojson",
+                data: EMPTY,
+            });
+
+            //create the layer we draw the line into. default with nothing.
+            map.addLayer({
+                id: CONNECTION_LINE_PATH,
+                type: "line",
+                layout: { "line-cap": "round" },
+                source: CONNECTION_LINE_PATH,
+                paint: {
+                    "line-color": LOCATION_COLOR,
+                    "line-width": 2,
+                    "line-opacity": 1.0,
+                    "line-dasharray": [2, 2],
+                },
+            });
+
+            map.addSource(CONNECTION_POINT, {
+                type: "geojson",
+                data: EMPTY,
+            });
 
             map.addLayer({
-                id: SELECTED_PATH,
-                source: SELECTED_PATH,
+                id: CONNECTION_POINT,
+                source: CONNECTION_POINT,
                 type: "circle",
                 paint: {
-                    "circle-radius": ["get", "radius"],
-                    "circle-color": ["get", "color"],
-                    "circle-stroke-width": CIRCLE_STROKE,
-                    "circle-stroke-color": "white",
+                    "circle-radius": 4,
+                    "circle-color": LOCATION_COLOR,
+                    "circle-stroke-width": 0,
                 },
             });
 
@@ -182,9 +198,11 @@ export const SpotMapView = ({
                 onSpotHighlight(s);
             });
 
+            /*
             map.on("mouseleave", SPOT_PATH, () => {
                 console.log("leave");
             });
+            */
         });
         return () => {
             mapInstance.current?.remove();
@@ -240,8 +258,6 @@ export const SpotMapView = ({
                 properties: { color: color, spotId: s.id },
             });
         }
-        console.log("spots:", spots.length, "first feature:", features[0]);
-        console.log("source exists:", !!map.getSource(SPOT_PATH));
 
         const apply = () =>
             map.getSource(SPOT_PATH)?.setData({
@@ -282,7 +298,10 @@ export const SpotMapView = ({
             paint: { "circle-radius": [null, CIRCLE_RADIUS_SELECTED] }, // grow
         });
 
+        drawConnectionLine(selectedSpot);
+
         return () => {
+            const map = mapInstance.current;
             if (!map) return; // map already removed on unmount
             map.transition(feature, {
                 duration: TRANSITION_DURATION_OUT,
@@ -290,7 +309,7 @@ export const SpotMapView = ({
                 paint: { "circle-radius": [null, CIRCLE_RADIUS] }, // shrink back
             });
         };
-    }, [selectedSpot?.id]);
+    }, [selectedSpot]);
 
     return (
         <div style={{ position: "relative", width: "100%", height: "100%" }}>
