@@ -11,6 +11,7 @@ import { IconCurrentLocation } from "@tabler/icons-react";
 import { ActionIcon } from "@mantine/core";
 import { useSettings } from "../../context/SettingsContext";
 import { DisplayMode } from "../../enums/DisplayMode";
+import { SNRKeyView } from "./SNRKeyView";
 
 setWorkerUrl(workerUrl);
 
@@ -333,6 +334,14 @@ export const SpotMapView = ({
             >
                 <IconCurrentLocation size={18} />
             </ActionIcon>
+            <SNRKeyView
+                style={{
+                    position: "absolute",
+                    top: 10,
+                    left: 10,
+                    zIndex: 1,
+                }}
+            />
         </div>
     );
 };

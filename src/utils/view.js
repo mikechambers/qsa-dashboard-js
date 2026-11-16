@@ -2,6 +2,7 @@ import { UnitType } from "@/enums/UnitType";
 import { kilometersToMiles } from "@/utils/geo";
 import { clamp } from "@/utils/math";
 import { TimeMode } from "../enums/TimeMode";
+import { SignalColor } from "../enums/SignalColors";
 
 const distanceFormatter = new Intl.NumberFormat(undefined, {
     maximumFractionDigits: 0,
@@ -49,11 +50,7 @@ export const formatTime = (date, timeMode, showSeconds = false) => {
 };
 
 export const getCSSColorForSNR = (snr) => {
-    const s = clamp(snr, -22, -10);
-
-    const hue = ((s + 22) / 12) * 120;
-
-    return `hsl(${hue}, 90%, 50%)`;
+    return SignalColor.getColorForSNR(snr);
 };
 
 export const formatHMS = (total) => {
