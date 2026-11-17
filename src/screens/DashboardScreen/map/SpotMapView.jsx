@@ -3,9 +3,6 @@ import { setWorkerUrl } from "maplibre-gl";
 import workerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
 import "maplibre-gl/dist/maplibre-gl.css";
 
-import greatCircle from "@turf/great-circle";
-
-import { getCSSColorForSNR } from "@/utils/view";
 import { IconCurrentLocation } from "@tabler/icons-react";
 import { ActionIcon } from "@mantine/core";
 import { useSettings } from "../../../context/SettingsContext";
@@ -26,16 +23,14 @@ import {
     SPOT_PATH,
     CONNECTION_POINT,
     CIRCLE_RADIUS,
-    CIRCLE_RADIUS_SELECTED,
     CIRCLE_STROKE,
-    TRANSITION_DURATION_IN,
-    TRANSITION_DURATION_OUT,
-    EASING_TYPE,
     DEFAULT_ZOOM,
 } from "./config";
+
 import { useMapInstance } from "./useMapInstance";
 import { useHomeMarker } from "./useHomeMarker";
 import { useSpotLayer } from "./useSpotsLayer";
+import { useSelectedSpot } from "./useSelectedSpot";
 
 setWorkerUrl(workerUrl);
 
@@ -140,36 +135,6 @@ export const SpotMapView = ({
         map.flyTo({
             center: location.coordinates,
             zoom: 4,
-        });
-    };
-
-    const drawConnectionLine = (spot) => {
-        const src = map?.getSource(CONNECTION_LINE_PATH);
-        if (!src || !location) {
-            return;
-        }
-
-        const to = spot?.receiverLocation;
-
-        src.setData(
-            location && to
-                ? greatCircle(location.coordinates, to.coordinates, {
-                      npoints: 64,
-                  })
-                : EMPTY,
-        );
-
-        const pntSrc = map?.getSource(CONNECTION_POINT);
-
-        if (!pntSrc) return;
-
-        pntSrc.setData({
-            type: "Feature",
-            geometry: {
-                type: "Point",
-                coordinates: to.coordinates,
-            },
-            properties: {},
         });
     };
 
@@ -310,46 +275,10 @@ export const SpotMapView = ({
                 "circle-stroke-width": 0,
             },
         });
-
-        /*
-        map.on("mouseenter", SPOT_PATH, (e) => {
-            const id = e.features[0]?.properties.spotId;
-            const s = spotsRef.current.find((spot) => spot.id === id);
-            if (s) highlightRef.current(s);
-        });*/
     }, [ready]);
 
+    useSelectedSpot(map, ready, selectedSpot, location);
     useSpotLayer(map, ready, spots, onSpotHighlight);
-
-    //run when selected spot changes
-    useEffect(() => {
-        if (!map || !ready || !selectedSpot) return;
-
-        const feature = {
-            id: selectedSpot.id,
-            source: SPOT_PATH,
-            layer: { id: SPOT_PATH },
-        };
-
-        //uses animation library
-        map.transition(feature, {
-            duration: TRANSITION_DURATION_IN,
-            delay: 0,
-            ease: EASING_TYPE,
-            paint: { "circle-radius": [null, CIRCLE_RADIUS_SELECTED] },
-        });
-
-        drawConnectionLine(selectedSpot);
-
-        return () => {
-            //when new selected item, the transition to original size
-            map.transition(feature, {
-                duration: TRANSITION_DURATION_OUT,
-                ease: EASING_TYPE,
-                paint: { "circle-radius": [null, CIRCLE_RADIUS] },
-            });
-        };
-    }, [map, ready, selectedSpot]);
 
     return (
         <div style={{ position: "relative", width: "100%", height: "100%" }}>
