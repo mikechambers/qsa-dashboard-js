@@ -3,7 +3,7 @@ import { useLocalStorage } from "@mantine/hooks";
 import { UnitType } from "../enums/UnitType";
 import { TimeMode } from "../enums/TimeMode";
 import { DisplayMode } from "../enums/DisplayMode";
-import { ElevationValue } from "../utils/twilight";
+import { ElevationValue } from "@/twilight";
 
 const SettingsContext = createContext(null);
 

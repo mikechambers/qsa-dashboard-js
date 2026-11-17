@@ -1,9 +1,5 @@
 import { DisplayMode } from "../../../enums/DisplayMode";
-import {
-    getTwilightGeoJSON,
-    getNightGeoJSON,
-    getDayGeoJSON,
-} from "@/utils/twilight";
+import { getTwilightGeoJSON, getNightGeoJSON, getDayGeoJSON } from "@/twilight";
 import { EMPTY_FEATURE_COLLECTION } from "./config";
 
 export const TWILIGHT_REFRESH_MS = 60_000;

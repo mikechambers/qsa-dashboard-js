@@ -19,10 +19,10 @@ import { useNavigate } from "react-router";
 import { isValidCallsign, isValidMaidenHeadGrid } from "@/utils/radio";
 
 import "./ConfigScreen.css";
-import { UnitType } from "../../enums/UnitType";
-import { TimeMode } from "../../enums/TimeMode";
-import { DisplayMode } from "../../enums/DisplayMode";
-import { ElevationValue } from "../../utils/twilight";
+import { UnitType } from "@/enums/UnitType";
+import { TimeMode } from "@/enums/TimeMode";
+import { DisplayMode } from "@/enums/DisplayMode";
+import { ElevationValue } from "@/twilight";
 
 const greylineLayers = [
     {

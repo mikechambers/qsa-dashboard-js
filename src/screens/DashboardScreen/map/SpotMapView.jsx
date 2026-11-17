@@ -26,8 +26,6 @@ import { useSelectedSpot } from "../../../context/SelectedSpotContext";
 import { useSpotHighlightEffects } from "./useSpotHighlightEffects";
 setWorkerUrl(workerUrl);
 
-const TWILIGHT_REFRESH_MS = 60_000;
-
 export const SpotMapView = ({ spots, location }) => {
     const { settings } = useSettings();
 
