@@ -13,6 +13,13 @@ import { useSettings } from "../../context/SettingsContext";
 import { DisplayMode } from "../../enums/DisplayMode";
 import { SNRKeyView } from "./SNRKeyView";
 
+import {
+    getTwilightGeoJSON,
+    getNightGeoJSON,
+    getDayGeoJSON,
+    TWILIGHT,
+} from "@/utils/twilight";
+
 setWorkerUrl(workerUrl);
 
 //empty featurecollection to use to clear layers
@@ -31,6 +38,56 @@ const TRANSITION_DURATION_OUT = 300;
 const EASING_TYPE = "bounce";
 const DEFAULT_ZOOM = 3;
 
+const TWILIGHT_REFRESH_MS = 60_000;
+
+//todo: move to settings
+const TWILIGHT_ELEVATIONS = [TWILIGHT.CIVIL, TWILIGHT.NAUTICAL];
+
+const TWILIGHT_LINES = "TWILIGHT_LINES";
+const NIGHT_PATH = "NIGHT_PATH";
+const DAY_PATH = "DAY_PATH";
+
+const TWILIGHT_PALETTE = {
+    dark: {
+        fill: "#1b2f7a",
+        fillOpacity: 0, // night shading off in dark mode
+        dayFill: "#fff4d6", // soft warm white
+        dayFillOpacity: 0.08,
+        line: "#ffc07800",
+        lineWidth: 1.5,
+        lineOpacity: [
+            "match",
+            ["get", "elevation"],
+            0,
+            1,
+            -6,
+            0.9,
+            -12,
+            0.8,
+            0.6,
+        ],
+    },
+    light: {
+        fill: "#000000",
+        fillOpacity: 0.15,
+        dayFill: "#ffffff",
+        dayFillOpacity: 0,
+        line: "#f08c0000",
+        lineWidth: 1,
+        lineOpacity: [
+            "match",
+            ["get", "elevation"],
+            0,
+            0.9,
+            -6,
+            0.7,
+            -12,
+            0.6,
+            0.45,
+        ],
+    },
+};
+
 export const SpotMapView = ({
     spots,
     selectedSpot,
@@ -42,6 +99,31 @@ export const SpotMapView = ({
     const mapContainer = useRef(null);
     const mapInstance = useRef(null);
 
+    //update greyline position once a minute
+    useEffect(() => {
+        const timer = setInterval(() => {
+            const map = mapInstance.current;
+
+            console.log("update");
+            if (!map) return;
+
+            const now = new Date();
+
+            map.getSource(TWILIGHT_LINES)?.setData(
+                getTwilightGeoJSON(now, TWILIGHT_ELEVATIONS),
+            );
+            map.getSource(NIGHT_PATH)?.setData(
+                getNightGeoJSON(now, TWILIGHT_ELEVATIONS),
+            );
+            map.getSource(DAY_PATH)?.setData(
+                getDayGeoJSON(now, TWILIGHT_ELEVATIONS),
+            );
+        }, TWILIGHT_REFRESH_MS);
+
+        return () => clearInterval(timer);
+    }, []);
+
+    //center and zoom on home location
     const centerOnLocation = () => {
         if (!mapInstance.current || !location) {
             return;
@@ -54,7 +136,7 @@ export const SpotMapView = ({
         });
     };
 
-    //todo: look into using GeoJSON to display
+    //takes an element and adds to specified location
     const addMarkerToMap = (el, loc) => {
         const map = mapInstance.current;
 
@@ -67,7 +149,6 @@ export const SpotMapView = ({
         return marker;
     };
 
-    //todo: rename this
     const drawConnectionLine = (spot) => {
         const src = mapInstance.current?.getSource(CONNECTION_LINE_PATH);
         if (!src || !location) {
@@ -98,31 +179,13 @@ export const SpotMapView = ({
         });
     };
 
-    const getMapStyleUrl = () => {
-        const displayMode =
-            settings.displayMode === DisplayMode.DARK ? "dark" : "light";
-
-        return `https://styles.maptoolkit.org/${displayMode}.json`;
-    };
-
-    useEffect(() => {
-        const map = mapInstance.current;
-        if (!map || !settings?.displayMode) {
-            return;
-        }
-        const url = getMapStyleUrl();
-        map.setStyle(url);
-
-        map.once("style.load", () => {
-            //todo: fix this (line 108-121)
-            addSpotSourcesAndLayers(map);
-        });
-    }, [settings?.displayMode]);
-
+    //initial load
     useEffect(() => {
         if (mapInstance.current) return;
 
-        const url = getMapStyleUrl();
+        const displayMode =
+            settings.displayMode === DisplayMode.DARK ? "dark" : "light";
+        const url = `https://styles.maptoolkit.org/${displayMode}.json`;
 
         mapInstance.current = new Map({
             container: mapContainer.current,
@@ -131,12 +194,85 @@ export const SpotMapView = ({
             zoom: DEFAULT_ZOOM,
         });
 
+        //initialize animation library to animate spots
         MaplibreTransition.init(mapInstance.current);
 
         mapInstance.current.on("load", () => {
             const map = mapInstance.current;
 
-            /********* spots ************/
+            const p =
+                settings.displayMode === DisplayMode.DARK
+                    ? TWILIGHT_PALETTE.dark
+                    : TWILIGHT_PALETTE.light;
+
+            const now = new Date();
+            const beforeId = map.getLayer(SPOT_PATH) ? SPOT_PATH : undefined;
+
+            /******** GREYLINE DAY LAYER ***********/
+            map.addSource(DAY_PATH, {
+                type: "geojson",
+                data: getDayGeoJSON(now, TWILIGHT_ELEVATIONS),
+            });
+
+            map.addLayer(
+                {
+                    id: DAY_PATH,
+                    type: "fill",
+                    source: DAY_PATH,
+                    paint: {
+                        "fill-color": p.dayFill,
+                        "fill-opacity": p.dayFillOpacity,
+                        "fill-antialias": false,
+                    },
+                },
+                beforeId,
+            );
+
+            /******** GREYLINE NIGHT LAYER ***********/
+            map.addSource(NIGHT_PATH, {
+                type: "geojson",
+                data: getNightGeoJSON(now, TWILIGHT_ELEVATIONS),
+            });
+            map.addLayer(
+                {
+                    id: NIGHT_PATH,
+                    type: "fill",
+                    source: NIGHT_PATH,
+                    paint: {
+                        "fill-color": p.fill,
+                        "fill-opacity": p.fillOpacity,
+                        "fill-antialias": false,
+                    },
+                },
+                beforeId,
+            );
+
+            /******** GREYLINE LINES LAYER ***********/
+            map.addSource(TWILIGHT_LINES, {
+                type: "geojson",
+                data: getTwilightGeoJSON(now, TWILIGHT_ELEVATIONS),
+            });
+            map.addLayer(
+                {
+                    id: TWILIGHT_LINES,
+                    type: "line",
+                    source: TWILIGHT_LINES,
+                    paint: {
+                        "line-color": p.line,
+                        "line-width": [
+                            "match",
+                            ["get", "elevation"],
+                            0,
+                            p.lineWidth + 1,
+                            p.lineWidth,
+                        ],
+                        "line-opacity": p.lineOpacity,
+                    },
+                },
+                beforeId,
+            );
+
+            /******** SPOTS LAYER ***********/
             map.addSource(SPOT_PATH, {
                 type: "geojson",
                 data: EMPTY,
@@ -155,7 +291,7 @@ export const SpotMapView = ({
                 },
             });
 
-            /**** connection line *********/
+            /******** CONNECTION LINE LAYER ***********/
             map.addSource(CONNECTION_LINE_PATH, {
                 type: "geojson",
                 data: EMPTY,
@@ -175,6 +311,7 @@ export const SpotMapView = ({
                 },
             });
 
+            /******** CONNECTION POINT LAYER ***********/
             map.addSource(CONNECTION_POINT, {
                 type: "geojson",
                 data: EMPTY,
@@ -196,15 +333,8 @@ export const SpotMapView = ({
 
                 let s = spots.find((spot) => spot.id === f.properties.spotId);
 
-                //maybe we just set directly?
                 onSpotHighlight(s);
             });
-
-            /*
-            map.on("mouseleave", SPOT_PATH, () => {
-                console.log("leave");
-            });
-            */
         });
         return () => {
             mapInstance.current?.remove();
@@ -217,11 +347,8 @@ export const SpotMapView = ({
             return;
         }
 
-        /* right now we draw markers with elements. It makes it
-        easier to handler interactions and animations, but makes it where the markers always overlay maps layers (such as lines).
-        Right now, we will keep it as it is, but at some point we need
-        to refactor to use geojson and not elements
-        */
+        //draw location spot with an html element to make it easier to constantly
+        //animate
         const el = document.createElement("div");
         el.style.width = "20px";
         el.style.height = "20px";
@@ -230,6 +357,8 @@ export const SpotMapView = ({
         el.style.border = "3px solid white";
         el.style.boxShadow =
             "0 0 0 4px rgba(28,126,214,0.3), 0 0 6px rgba(0,0,0,0.4)";
+
+        //this links to css class which handles animation / pulsing
         el.className = "home-marker";
 
         const m = addMarkerToMap(el, location);
@@ -239,7 +368,7 @@ export const SpotMapView = ({
         };
     }, [location]);
 
-    //todo: we could split these between selectedSpot and spots
+    //Redraw Spots when spots is updated
     useEffect(() => {
         let features = [];
         const map = mapInstance.current;
@@ -273,15 +402,10 @@ export const SpotMapView = ({
             map.once("load", apply);
             return () => map.off("load", apply);
         }
-        return () => {
-            /*
-            markers.forEach((marker) => {
-                marker.remove();
-            });
-            */
-        };
+        return () => {};
     }, [spots]);
 
+    //run when selected spot changes
     useEffect(() => {
         const map = mapInstance.current;
         if (!map || !selectedSpot) return;
@@ -292,6 +416,7 @@ export const SpotMapView = ({
             layer: { id: SPOT_PATH },
         };
 
+        //uses animation library
         map.transition(feature, {
             duration: TRANSITION_DURATION_IN,
             delay: 0,
@@ -304,6 +429,8 @@ export const SpotMapView = ({
         return () => {
             const map = mapInstance.current;
             if (!map) return;
+
+            //when new selected item, the transition to original size
             map.transition(feature, {
                 duration: TRANSITION_DURATION_OUT,
                 ease: EASING_TYPE,
