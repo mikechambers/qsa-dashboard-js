@@ -1,4 +1,12 @@
-import { Group, Text, Paper, ActionIcon, Title, Button } from "@mantine/core";
+import {
+    Group,
+    Text,
+    Paper,
+    ActionIcon,
+    Title,
+    Button,
+    ButtonGroup,
+} from "@mantine/core";
 import { ConnectionStatusView } from "./ConnectionStatusView";
 import {
     IconAdjustmentsHorizontal,
@@ -7,8 +15,13 @@ import {
 
 import { normalizeCallsign, normalizeMaidenHeadGrid } from "@/utils/radio";
 import { ClockView } from "./ClockView";
+import { useFullscreenDocument } from "@mantine/hooks";
+
+import { IconArrowsMaximize, IconArrowsMinimize } from "@tabler/icons-react";
 
 export const DashboardHeaderView = ({ callsign, grid }) => {
+    const { toggle, fullscreen } = useFullscreenDocument();
+
     //todo: maybe normalize when we save?
     const cs = normalizeCallsign(callsign);
     const g = normalizeMaidenHeadGrid(grid);
@@ -26,17 +39,37 @@ export const DashboardHeaderView = ({ callsign, grid }) => {
                 </Group>
 
                 <ClockView />
-                <Group gap="xs" wrap="nowrap">
+                <Group gap="xs" wrap="nowrap" gap={32}>
                     <ConnectionStatusView />
-                    <Button
-                        variant="default"
-                        component="a"
-                        href="/"
-                        leftSection={<IconAdjustmentsHorizontal size={16} />}
-                    >
-                        Config
-                    </Button>
+                    <ButtonGroup>
+                        <Button
+                            variant="default"
+                            component="a"
+                            href="/"
+                            leftSection={
+                                <IconAdjustmentsHorizontal size={16} />
+                            }
+                        >
+                            Config
+                        </Button>
 
+                        <Button
+                            variant="default"
+                            onClick={toggle}
+                            px="xs"
+                            aria-label={
+                                fullscreen
+                                    ? "Exit fullscreen"
+                                    : "Enter fullscreen"
+                            }
+                        >
+                            {fullscreen ? (
+                                <IconArrowsMinimize size={18} />
+                            ) : (
+                                <IconArrowsMaximize size={18} />
+                            )}
+                        </Button>
+                    </ButtonGroup>
                     <ActionIcon
                         variant="subtle"
                         color="gray"
@@ -45,7 +78,8 @@ export const DashboardHeaderView = ({ callsign, grid }) => {
                         href="https://github.com/mikechambers/qsa-dashboard-js"
                         target="_blank"
                         rel="noopener noreferrer"
-                        aria-label="View source on GitHub"
+                        aria-label="View project home and source on GitHub"
+                        title="View project home and source on GitHub"
                     >
                         <IconBrandGithub size={20} />
                     </ActionIcon>
