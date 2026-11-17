@@ -10,6 +10,7 @@
     gap: var(--mantine-spacing-md);          /* 16px */
     margin-top: var(--mantine-spacing-md);   /* matches the gap */
     align-content: start;
+    min-height: 0;
 }
 
 /* 768px matches mantine sm */
@@ -23,7 +24,7 @@
 #spotMap {
     border-radius: var(--mantine-radius-default);
     border: 1px solid var(--mantine-color-default-border);
-    min-height: 500px;
+    min-height: 400px;
     min-width: 200px;
     position: relative;
 }
