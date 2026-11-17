@@ -1,5 +1,5 @@
 import {
-    EMPTY,
+    EMPTY_FEATURE_COLLECTION,
     LOCATION_COLOR,
     SPOT_PATH,
     CONNECTION_LINE_PATH,
@@ -11,7 +11,7 @@ import {
 export function addSpotLayer(map) {
     map.addSource(SPOT_PATH, {
         type: "geojson",
-        data: EMPTY,
+        data: EMPTY_FEATURE_COLLECTION,
         promoteId: "spotId",
     });
 
@@ -31,7 +31,7 @@ export function addSpotLayer(map) {
 export function addConnectionLineLayer(map) {
     map.addSource(CONNECTION_LINE_PATH, {
         type: "geojson",
-        data: EMPTY,
+        data: EMPTY_FEATURE_COLLECTION,
     });
 
     //the layer we draw the line into. empty until a spot is selected.
@@ -52,7 +52,7 @@ export function addConnectionLineLayer(map) {
 export function addConnectionPointLayer(map) {
     map.addSource(CONNECTION_POINT, {
         type: "geojson",
-        data: EMPTY,
+        data: EMPTY_FEATURE_COLLECTION,
     });
 
     map.addLayer({

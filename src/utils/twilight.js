@@ -188,8 +188,6 @@ const getElevationValues = (elevations) => {
         .map((e) => ElevationValue.getValue(e))
         .sort((a, b) => b - a);
 
-    console.log(values);
-
     return values;
 };
 

@@ -1,5 +1,8 @@
 //empty featurecollection to use to clear layers
-export const EMPTY = { type: "FeatureCollection", features: [] };
+export const EMPTY_FEATURE_COLLECTION = {
+    type: "FeatureCollection",
+    features: [],
+};
 
 export const LOCATION_COLOR = "#1c7ed6";
 export const CONNECTION_LINE_PATH = "CONNECTION_LINE_PATH";

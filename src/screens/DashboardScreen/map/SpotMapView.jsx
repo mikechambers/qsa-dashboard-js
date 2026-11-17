@@ -21,7 +21,7 @@ import {
     addConnectionPointLayer,
     addSpotLayer,
 } from "./spotLayers";
-import { useGreylineRefresh } from "./useGreylineRefresh";
+import { useGreyline } from "./useGreyline";
 
 setWorkerUrl(workerUrl);
 
@@ -45,7 +45,6 @@ export const SpotMapView = ({
     });
 
     useHomeMarker(map, location);
-    useGreylineRefresh(map, ready, settings);
 
     //initial load
     useEffect(() => {
@@ -56,6 +55,8 @@ export const SpotMapView = ({
         addConnectionLineLayer(map);
         addConnectionPointLayer(map);
     }, [ready]);
+
+    useGreyline(map, ready, settings);
 
     useSelectedSpot(map, ready, selectedSpot, location);
     useSpotLayer(map, ready, spots, onSpotHighlight);

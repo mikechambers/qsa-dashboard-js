@@ -9,7 +9,7 @@ import {
     TRANSITION_DURATION_IN,
     TRANSITION_DURATION_OUT,
     EASING_TYPE,
-    EMPTY,
+    EMPTY_FEATURE_COLLECTION,
 } from "./config";
 
 export function useSelectedSpot(map, ready, selectedSpot, location) {
@@ -58,8 +58,10 @@ export function useSelectedSpot(map, ready, selectedSpot, location) {
             properties: {},
         });
         return () => {
-            map.getSource(CONNECTION_LINE_PATH)?.setData(EMPTY);
-            map.getSource(CONNECTION_POINT)?.setData(EMPTY);
+            map.getSource(CONNECTION_LINE_PATH)?.setData(
+                EMPTY_FEATURE_COLLECTION,
+            );
+            map.getSource(CONNECTION_POINT)?.setData(EMPTY_FEATURE_COLLECTION);
         };
     }, [map, ready, selectedSpot, location]);
 }

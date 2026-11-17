@@ -4,6 +4,7 @@ import {
     getNightGeoJSON,
     getDayGeoJSON,
 } from "@/utils/twilight";
+import { EMPTY_FEATURE_COLLECTION } from "./config";
 
 export const TWILIGHT_REFRESH_MS = 60_000;
 
@@ -53,8 +54,6 @@ const TWILIGHT_PALETTE = {
 };
 
 export function addGreylineLayers(map, settings) {
-    if (!settings.showGreyline) return;
-
     const p =
         settings.displayMode === DisplayMode.DARK
             ? TWILIGHT_PALETTE.dark
@@ -65,7 +64,7 @@ export function addGreylineLayers(map, settings) {
     /******** GREYLINE DAY LAYER ***********/
     map.addSource(DAY_PATH, {
         type: "geojson",
-        data: getDayGeoJSON(now, settings.elevationValues),
+        data: EMPTY_FEATURE_COLLECTION,
     });
 
     map.addLayer(
@@ -85,7 +84,7 @@ export function addGreylineLayers(map, settings) {
     /******** GREYLINE NIGHT LAYER ***********/
     map.addSource(NIGHT_PATH, {
         type: "geojson",
-        data: getNightGeoJSON(now, settings.elevationValues),
+        data: EMPTY_FEATURE_COLLECTION,
     });
     map.addLayer(
         {
@@ -104,7 +103,7 @@ export function addGreylineLayers(map, settings) {
     /******** GREYLINE LINES LAYER ***********/
     map.addSource(TWILIGHT_LINES, {
         type: "geojson",
-        data: getTwilightGeoJSON(now, settings.elevationValues),
+        data: EMPTY_FEATURE_COLLECTION,
     });
     map.addLayer({
         id: TWILIGHT_LINES,
@@ -122,6 +121,12 @@ export function addGreylineLayers(map, settings) {
             "line-opacity": p.lineOpacity,
         },
     });
+}
+
+export function clearGreyline(map) {
+    map.getSource(TWILIGHT_LINES)?.setData(EMPTY_FEATURE_COLLECTION);
+    map.getSource(NIGHT_PATH)?.setData(EMPTY_FEATURE_COLLECTION);
+    map.getSource(DAY_PATH)?.setData(EMPTY_FEATURE_COLLECTION);
 }
 
 export function updateGreyline(map, settings) {
