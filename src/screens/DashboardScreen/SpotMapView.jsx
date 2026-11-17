@@ -51,10 +51,10 @@ const TWILIGHT_PALETTE = {
     dark: {
         fill: "#1b2f7a",
         fillOpacity: 0, // night shading off in dark mode
-        dayFill: "#fff4d6", // soft warm white
+        dayFill: "#ffffff",
         dayFillOpacity: 0.08,
-        line: "#ffc07800",
-        lineWidth: 1.5,
+        line: "#555555",
+        lineWidth: 1.0,
         lineOpacity: [
             "match",
             ["get", "elevation"],
@@ -71,8 +71,8 @@ const TWILIGHT_PALETTE = {
         fill: "#000000",
         fillOpacity: 0.15,
         dayFill: "#ffffff",
-        dayFillOpacity: 0,
-        line: "#f08c0000",
+        dayFillOpacity: 0, //day off in light mode
+        line: "#AAAAAA",
         lineWidth: 1,
         lineOpacity: [
             "match",
@@ -104,7 +104,6 @@ export const SpotMapView = ({
         const timer = setInterval(() => {
             const map = mapInstance.current;
 
-            console.log("update");
             if (!map) return;
 
             const now = new Date();
