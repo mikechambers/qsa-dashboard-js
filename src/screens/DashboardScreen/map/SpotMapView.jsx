@@ -2,7 +2,6 @@ import { useEffect, useRef } from "react";
 import { Map, Marker, setWorkerUrl } from "maplibre-gl";
 import workerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
 import "maplibre-gl/dist/maplibre-gl.css";
-import MaplibreTransition from "maplibre-transition";
 
 import greatCircle from "@turf/great-circle";
 
@@ -386,7 +385,7 @@ export const SpotMapView = ({
 
     //run when selected spot changes
     useEffect(() => {
-        if (!map || !selectedSpot) return;
+        if (!map || !ready || !selectedSpot) return;
 
         const feature = {
             id: selectedSpot.id,
@@ -405,8 +404,6 @@ export const SpotMapView = ({
         drawConnectionLine(selectedSpot);
 
         return () => {
-            if (!map) return;
-
             //when new selected item, the transition to original size
             map.transition(feature, {
                 duration: TRANSITION_DURATION_OUT,
@@ -414,7 +411,7 @@ export const SpotMapView = ({
                 paint: { "circle-radius": [null, CIRCLE_RADIUS] },
             });
         };
-    }, [map, selectedSpot]);
+    }, [map, ready, selectedSpot]);
 
     return (
         <div style={{ position: "relative", width: "100%", height: "100%" }}>
