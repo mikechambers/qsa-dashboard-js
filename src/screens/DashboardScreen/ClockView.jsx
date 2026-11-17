@@ -1,30 +1,23 @@
 import { useSettings } from "@/context/SettingsContext";
 import { useInterval } from "@mantine/hooks";
 import { formatTime } from "../../utils/view";
-import { Paper, Title, Group, EmptyState } from "@mantine/core";
+import { Title, Group } from "@mantine/core";
 import { getShortTimeZoneName } from "../../utils/date";
 import { useEffect, useState } from "react";
 
 export const ClockView = () => {
     const { settings } = useSettings();
-    const [time, setTime] = useState();
+    const [now, setNow] = useState(() => new Date());
 
-    const updateTime = () => {
-        setTime(formatTime(new Date(), settings.timeMode, true));
-    };
-
-    const interval = useInterval(() => updateTime(), 1000);
-
-    const timeZone = getShortTimeZoneName(settings.timeMode);
+    const interval = useInterval(() => setNow(new Date()), 1000);
 
     useEffect(() => {
         interval.start();
         return interval.stop;
     }, []);
 
-    if (!time) {
-        return <div></div>;
-    }
+    const time = formatTime(now, settings.timeMode, true);
+    const timeZone = getShortTimeZoneName(settings.timeMode);
 
     return (
         <Group justify="center" visibleFrom="sm">
