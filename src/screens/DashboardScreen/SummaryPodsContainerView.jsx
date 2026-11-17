@@ -5,8 +5,11 @@ import { convertAndFormatDistance } from "../../utils/view";
 import { useSettings } from "../../context/SettingsContext";
 import { ElapsedTimePod } from "./ElapsedTimePod";
 import { RecentContactPod } from "./RecentContactPod";
+import { useSelectedSpot } from "../../context/SelectedSpotContext";
 
-export const SummaryPodsContainerView = ({ onSpotHighlight }) => {
+export const SummaryPodsContainerView = () => {
+    const { selectedSpot, setSelectedSpot } = useSelectedSpot();
+
     const { furthestSpot, uniqueStations, mostRecentContact } = useSpotData();
     const { settings } = useSettings();
 
@@ -15,7 +18,7 @@ export const SummaryPodsContainerView = ({ onSpotHighlight }) => {
         : {};
 
     const onFurthestClick = () => {
-        if (onSpotHighlight) onSpotHighlight(furthestSpot);
+        setSelectedSpot(furthestSpot);
     };
 
     return (

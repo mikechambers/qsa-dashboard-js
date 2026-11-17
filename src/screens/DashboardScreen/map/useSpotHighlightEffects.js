@@ -12,7 +12,7 @@ import {
     EMPTY_FEATURE_COLLECTION,
 } from "./config";
 
-export function useSelectedSpot(map, ready, selectedSpot, location) {
+export function useSpotHighlightEffects(map, ready, selectedSpot, location) {
     //grow the selected spot, shrink it back when selection changes
     useEffect(() => {
         if (!map || !ready || !selectedSpot) return;

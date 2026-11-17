@@ -14,7 +14,7 @@ import { DEFAULT_ZOOM } from "./config";
 import { useMapInstance } from "./useMapInstance";
 import { useHomeMarker } from "./useHomeMarker";
 import { useSpotLayer } from "./useSpotLayer";
-import { useSelectedSpot } from "./useSelectedSpot";
+
 import { addGreylineLayers, updateGreyline } from "./greylineLayers";
 import {
     addConnectionLineLayer,
@@ -22,18 +22,16 @@ import {
     addSpotLayer,
 } from "./spotLayers";
 import { useGreyline } from "./useGreyline";
-
+import { useSelectedSpot } from "../../../context/SelectedSpotContext";
+import { useSpotHighlightEffects } from "./useSpotHighlightEffects";
 setWorkerUrl(workerUrl);
 
 const TWILIGHT_REFRESH_MS = 60_000;
 
-export const SpotMapView = ({
-    spots,
-    selectedSpot,
-    onSpotHighlight,
-    location,
-}) => {
+export const SpotMapView = ({ spots, location }) => {
     const { settings } = useSettings();
+
+    const { selectedSpot, setSelectedSpot } = useSelectedSpot();
 
     const mapContainer = useRef(null);
     const { map, ready } = useMapInstance(mapContainer, {
@@ -58,8 +56,8 @@ export const SpotMapView = ({
 
     useGreyline(map, ready, settings);
 
-    useSelectedSpot(map, ready, selectedSpot, location);
-    useSpotLayer(map, ready, spots, onSpotHighlight);
+    useSpotHighlightEffects(map, ready, selectedSpot, location);
+    useSpotLayer(map, ready, spots, setSelectedSpot);
 
     //center and zoom on home location
     const centerOnLocation = () => {

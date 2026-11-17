@@ -5,11 +5,13 @@ import { BandFrequencyView } from "./BandFrequencyView";
 import { TimeView } from "./TimeView";
 import { SNRView } from "./SNRView";
 import { DistanceView } from "./DistanceView";
-import { IconBroadcast, IconInbox } from "@tabler/icons-react";
 import { useSettings } from "../../context/SettingsContext";
 import { getShortTimeZoneName } from "../../utils/date";
+import { useSelectedSpot } from "../../context/SelectedSpotContext";
 
-export const SpotTable = ({ spots, onSpotHighlight, selectedSpot }) => {
+export const SpotTable = ({ spots }) => {
+    const { selectedSpot, setSelectedSpot } = useSelectedSpot();
+
     const [scrollParent, setScrollParent] = useState(null);
 
     const { settings } = useSettings();
@@ -102,7 +104,7 @@ export const SpotTable = ({ spots, onSpotHighlight, selectedSpot }) => {
                                     style={{ scrollMarginTop: 40 }}
                                     id={`spot-row-${spot.id}`}
                                     key={spot.sequence}
-                                    onMouseEnter={() => onSpotHighlight?.(spot)}
+                                    onMouseEnter={() => setSelectedSpot(spot)}
                                 >
                                     <Table.Td w={20}>
                                         <TimeView date={spot.date} />
