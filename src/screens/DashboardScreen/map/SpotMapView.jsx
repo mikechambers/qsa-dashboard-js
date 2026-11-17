@@ -9,9 +9,9 @@ import greatCircle from "@turf/great-circle";
 import { getCSSColorForSNR } from "@/utils/view";
 import { IconCurrentLocation } from "@tabler/icons-react";
 import { ActionIcon } from "@mantine/core";
-import { useSettings } from "../../context/SettingsContext";
-import { DisplayMode } from "../../enums/DisplayMode";
-import { SNRKeyView } from "./SNRKeyView";
+import { useSettings } from "../../../context/SettingsContext";
+import { DisplayMode } from "../../../enums/DisplayMode";
+import { SNRKeyView } from "../SNRKeyView";
 
 import {
     getTwilightGeoJSON,
@@ -20,23 +20,23 @@ import {
     ElevationValue,
 } from "@/utils/twilight";
 
+import {
+    EMPTY,
+    LOCATION_COLOR,
+    CONNECTION_LINE_PATH,
+    SPOT_PATH,
+    CONNECTION_POINT,
+    CIRCLE_RADIUS,
+    CIRCLE_RADIUS_SELECTED,
+    CIRCLE_STROKE,
+    TRANSITION_DURATION_IN,
+    TRANSITION_DURATION_OUT,
+    EASING_TYPE,
+    DEFAULT_ZOOM,
+} from "./config";
+import { useMapInstance } from "./useMapInstance";
+
 setWorkerUrl(workerUrl);
-
-//empty featurecollection to use to clear layers
-const EMPTY = { type: "FeatureCollection", features: [] };
-
-const LOCATION_COLOR = "#1c7ed6";
-const CONNECTION_LINE_PATH = "CONNECTION_LINE_PATH";
-const SPOT_PATH = "SPOT_PATH";
-const CONNECTION_POINT = "CONNECTION_POINT";
-
-const CIRCLE_RADIUS = 6;
-const CIRCLE_RADIUS_SELECTED = 18;
-const CIRCLE_STROKE = 2;
-const TRANSITION_DURATION_IN = 600;
-const TRANSITION_DURATION_OUT = 300;
-const EASING_TYPE = "bounce";
-const DEFAULT_ZOOM = 3;
 
 const TWILIGHT_REFRESH_MS = 60_000;
 
@@ -94,7 +94,13 @@ export const SpotMapView = ({
     const { settings } = useSettings();
 
     const mapContainer = useRef(null);
-    const mapInstance = useRef(null);
+    const { map, ready } = useMapInstance(mapContainer, {
+        style: `https://styles.maptoolkit.org/${
+            settings.displayMode === DisplayMode.DARK ? "dark" : "light"
+        }.json`,
+        center: [-122.38, 37.58],
+        zoom: DEFAULT_ZOOM,
+    });
 
     //need these for spot enclosures for selected animations
     const spotsRef = useRef(spots);
@@ -112,8 +118,6 @@ export const SpotMapView = ({
                 return;
             }
 
-            const map = mapInstance.current;
-
             if (!map) return;
 
             const now = new Date();
@@ -130,16 +134,16 @@ export const SpotMapView = ({
         }, TWILIGHT_REFRESH_MS);
 
         return () => clearInterval(timer);
-    }, [settings.showGreyline]);
+    }, [map, settings.showGreyline]);
 
     //center and zoom on home location
     const centerOnLocation = () => {
-        if (!mapInstance.current || !location) {
+        if (!map || !location) {
             return;
         }
 
         //todo: pass in zoom option (maybe default)
-        mapInstance.current.flyTo({
+        map.flyTo({
             center: location.coordinates,
             zoom: 4,
         });
@@ -147,8 +151,6 @@ export const SpotMapView = ({
 
     //takes an element and adds to specified location
     const addMarkerToMap = (el, loc) => {
-        const map = mapInstance.current;
-
         if (!map || !loc) return;
 
         const marker = new Marker({ element: el })
@@ -159,7 +161,7 @@ export const SpotMapView = ({
     };
 
     const drawConnectionLine = (spot) => {
-        const src = mapInstance.current?.getSource(CONNECTION_LINE_PATH);
+        const src = map?.getSource(CONNECTION_LINE_PATH);
         if (!src || !location) {
             return;
         }
@@ -174,7 +176,7 @@ export const SpotMapView = ({
                 : EMPTY,
         );
 
-        const pntSrc = mapInstance.current?.getSource(CONNECTION_POINT);
+        const pntSrc = map?.getSource(CONNECTION_POINT);
 
         if (!pntSrc) return;
 
@@ -190,171 +192,148 @@ export const SpotMapView = ({
 
     //initial load
     useEffect(() => {
-        if (mapInstance.current) return;
+        if (!ready) return;
 
-        const displayMode =
-            settings.displayMode === DisplayMode.DARK ? "dark" : "light";
-        const url = `https://styles.maptoolkit.org/${displayMode}.json`;
+        if (settings.showGreyline) {
+            const p =
+                settings.displayMode === DisplayMode.DARK
+                    ? TWILIGHT_PALETTE.dark
+                    : TWILIGHT_PALETTE.light;
 
-        mapInstance.current = new Map({
-            container: mapContainer.current,
-            style: url,
-            center: [-122.38, 37.58],
-            zoom: DEFAULT_ZOOM,
-        });
-
-        //initialize animation library to animate spots
-        MaplibreTransition.init(mapInstance.current);
-
-        mapInstance.current.on("load", () => {
-            const map = mapInstance.current;
-
-            if (settings.showGreyline) {
-                const p =
-                    settings.displayMode === DisplayMode.DARK
-                        ? TWILIGHT_PALETTE.dark
-                        : TWILIGHT_PALETTE.light;
-
-                const now = new Date();
-                /*
+            const now = new Date();
+            /*
                 const beforeId = map.getLayer(SPOT_PATH)
                     ? SPOT_PATH
                     : undefined;
 */
-                /******** GREYLINE DAY LAYER ***********/
-                map.addSource(DAY_PATH, {
-                    type: "geojson",
-                    data: getDayGeoJSON(now, settings.elevationValues),
-                });
-
-                map.addLayer(
-                    {
-                        id: DAY_PATH,
-                        type: "fill",
-                        source: DAY_PATH,
-                        paint: {
-                            "fill-color": p.dayFill,
-                            "fill-opacity": p.dayFillOpacity,
-                            "fill-antialias": false,
-                        },
-                    },
-                    // beforeId,
-                );
-
-                /******** GREYLINE NIGHT LAYER ***********/
-                map.addSource(NIGHT_PATH, {
-                    type: "geojson",
-                    data: getNightGeoJSON(now, settings.elevationValues),
-                });
-                map.addLayer(
-                    {
-                        id: NIGHT_PATH,
-                        type: "fill",
-                        source: NIGHT_PATH,
-                        paint: {
-                            "fill-color": p.fill,
-                            "fill-opacity": p.fillOpacity,
-                            "fill-antialias": false,
-                        },
-                    },
-                    //beforeId,
-                );
-
-                /******** GREYLINE LINES LAYER ***********/
-                map.addSource(TWILIGHT_LINES, {
-                    type: "geojson",
-                    data: getTwilightGeoJSON(now, settings.elevationValues),
-                });
-                map.addLayer(
-                    {
-                        id: TWILIGHT_LINES,
-                        type: "line",
-                        source: TWILIGHT_LINES,
-                        paint: {
-                            "line-color": p.line,
-                            "line-width": [
-                                "match",
-                                ["get", "elevation"],
-                                0,
-                                p.lineWidth + 1,
-                                p.lineWidth,
-                            ],
-                            "line-opacity": p.lineOpacity,
-                        },
-                    },
-                    //beforeId,
-                );
-            }
-            /******* End Grey Line  **************/
-
-            /******** SPOTS LAYER ***********/
-            map.addSource(SPOT_PATH, {
+            /******** GREYLINE DAY LAYER ***********/
+            map.addSource(DAY_PATH, {
                 type: "geojson",
-                data: EMPTY,
-                promoteId: "spotId",
+                data: getDayGeoJSON(now, settings.elevationValues),
             });
 
-            map.addLayer({
-                id: SPOT_PATH,
-                source: SPOT_PATH,
-                type: "circle",
-                paint: {
-                    "circle-radius": CIRCLE_RADIUS,
-                    "circle-color": ["get", "color"],
-                    "circle-stroke-width": CIRCLE_STROKE,
-                    "circle-stroke-color": "white",
+            map.addLayer(
+                {
+                    id: DAY_PATH,
+                    type: "fill",
+                    source: DAY_PATH,
+                    paint: {
+                        "fill-color": p.dayFill,
+                        "fill-opacity": p.dayFillOpacity,
+                        "fill-antialias": false,
+                    },
                 },
-            });
+                // beforeId,
+            );
 
-            /******** CONNECTION LINE LAYER ***********/
-            map.addSource(CONNECTION_LINE_PATH, {
+            /******** GREYLINE NIGHT LAYER ***********/
+            map.addSource(NIGHT_PATH, {
                 type: "geojson",
-                data: EMPTY,
+                data: getNightGeoJSON(now, settings.elevationValues),
             });
-
-            //create the layer we draw the line into. default with nothing.
-            map.addLayer({
-                id: CONNECTION_LINE_PATH,
-                type: "line",
-                layout: { "line-cap": "round" },
-                source: CONNECTION_LINE_PATH,
-                paint: {
-                    "line-color": LOCATION_COLOR,
-                    "line-width": 2,
-                    "line-opacity": 1.0,
-                    "line-dasharray": [2, 2],
+            map.addLayer(
+                {
+                    id: NIGHT_PATH,
+                    type: "fill",
+                    source: NIGHT_PATH,
+                    paint: {
+                        "fill-color": p.fill,
+                        "fill-opacity": p.fillOpacity,
+                        "fill-antialias": false,
+                    },
                 },
-            });
+                //beforeId,
+            );
 
-            /******** CONNECTION POINT LAYER ***********/
-            map.addSource(CONNECTION_POINT, {
+            /******** GREYLINE LINES LAYER ***********/
+            map.addSource(TWILIGHT_LINES, {
                 type: "geojson",
-                data: EMPTY,
+                data: getTwilightGeoJSON(now, settings.elevationValues),
             });
-
-            map.addLayer({
-                id: CONNECTION_POINT,
-                source: CONNECTION_POINT,
-                type: "circle",
-                paint: {
-                    "circle-radius": 4,
-                    "circle-color": LOCATION_COLOR,
-                    "circle-stroke-width": 0,
+            map.addLayer(
+                {
+                    id: TWILIGHT_LINES,
+                    type: "line",
+                    source: TWILIGHT_LINES,
+                    paint: {
+                        "line-color": p.line,
+                        "line-width": [
+                            "match",
+                            ["get", "elevation"],
+                            0,
+                            p.lineWidth + 1,
+                            p.lineWidth,
+                        ],
+                        "line-opacity": p.lineOpacity,
+                    },
                 },
-            });
+                //beforeId,
+            );
+        }
+        /******* End Grey Line  **************/
 
-            map.on("mouseenter", SPOT_PATH, (e) => {
-                const id = e.features[0]?.properties.spotId;
-                const s = spotsRef.current.find((spot) => spot.id === id);
-                if (s) highlightRef.current(s);
-            });
+        /******** SPOTS LAYER ***********/
+        map.addSource(SPOT_PATH, {
+            type: "geojson",
+            data: EMPTY,
+            promoteId: "spotId",
         });
 
-        return () => {
-            mapInstance.current?.remove();
-            mapInstance.current = null;
-        };
-    }, []);
+        map.addLayer({
+            id: SPOT_PATH,
+            source: SPOT_PATH,
+            type: "circle",
+            paint: {
+                "circle-radius": CIRCLE_RADIUS,
+                "circle-color": ["get", "color"],
+                "circle-stroke-width": CIRCLE_STROKE,
+                "circle-stroke-color": "white",
+            },
+        });
+
+        /******** CONNECTION LINE LAYER ***********/
+        map.addSource(CONNECTION_LINE_PATH, {
+            type: "geojson",
+            data: EMPTY,
+        });
+
+        //create the layer we draw the line into. default with nothing.
+        map.addLayer({
+            id: CONNECTION_LINE_PATH,
+            type: "line",
+            layout: { "line-cap": "round" },
+            source: CONNECTION_LINE_PATH,
+            paint: {
+                "line-color": LOCATION_COLOR,
+                "line-width": 2,
+                "line-opacity": 1.0,
+                "line-dasharray": [2, 2],
+            },
+        });
+
+        /******** CONNECTION POINT LAYER ***********/
+        map.addSource(CONNECTION_POINT, {
+            type: "geojson",
+            data: EMPTY,
+        });
+
+        map.addLayer({
+            id: CONNECTION_POINT,
+            source: CONNECTION_POINT,
+            type: "circle",
+            paint: {
+                "circle-radius": 4,
+                "circle-color": LOCATION_COLOR,
+                "circle-stroke-width": 0,
+            },
+        });
+
+        map.on("mouseenter", SPOT_PATH, (e) => {
+            const id = e.features[0]?.properties.spotId;
+            const s = spotsRef.current.find((spot) => spot.id === id);
+            if (s) highlightRef.current(s);
+        });
+    }, [ready]);
 
     useEffect(() => {
         if (!location) {
@@ -380,48 +359,33 @@ export const SpotMapView = ({
         return () => {
             if (m) m.remove();
         };
-    }, [location]);
+    }, [map, location]);
 
     //Redraw Spots when spots is updated
     useEffect(() => {
-        let features = [];
-        const map = mapInstance.current;
+        if (!map || !ready) return;
 
-        if (!map) {
-            return;
-        }
+        const features = [];
 
         for (const s of spots) {
-            const color = getCSSColorForSNR(s.snr);
-
             features.push({
                 type: "Feature",
                 geometry: {
                     type: "Point",
                     coordinates: s.receiverLocation.coordinates,
                 },
-                properties: { color: color, spotId: s.id },
+                properties: { color: getCSSColorForSNR(s.snr), spotId: s.id },
             });
         }
 
-        const apply = () =>
-            map.getSource(SPOT_PATH)?.setData({
-                type: "FeatureCollection",
-                features: features,
-            });
-
-        if (map.getSource(SPOT_PATH)) {
-            apply();
-        } else {
-            map.once("load", apply);
-            return () => map.off("load", apply);
-        }
-        return () => {};
-    }, [spots]);
+        map.getSource(SPOT_PATH)?.setData({
+            type: "FeatureCollection",
+            features,
+        });
+    }, [map, ready, spots]);
 
     //run when selected spot changes
     useEffect(() => {
-        const map = mapInstance.current;
         if (!map || !selectedSpot) return;
 
         const feature = {
@@ -441,7 +405,6 @@ export const SpotMapView = ({
         drawConnectionLine(selectedSpot);
 
         return () => {
-            const map = mapInstance.current;
             if (!map) return;
 
             //when new selected item, the transition to original size
@@ -451,7 +414,7 @@ export const SpotMapView = ({
                 paint: { "circle-radius": [null, CIRCLE_RADIUS] },
             });
         };
-    }, [selectedSpot]);
+    }, [map, selectedSpot]);
 
     return (
         <div style={{ position: "relative", width: "100%", height: "100%" }}>

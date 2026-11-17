@@ -5,7 +5,7 @@ import { useSettings } from "@/context/SettingsContext";
 import { isValidCallsign, normalizeCallsign } from "@/utils/radio";
 import { useSpotData } from "@/context/SpotDataContext";
 import "./DashboardScreen.css";
-import { SpotMapView } from "./SpotMapView";
+import { SpotMapView } from "./map/SpotMapView";
 import { SpotDetail } from "./SpotDetail";
 import { SpotTable } from "./SpotTable";
 import { DashboardHeaderView } from "./DashboardHeaderView";
