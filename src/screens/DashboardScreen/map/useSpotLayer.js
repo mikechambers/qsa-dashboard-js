@@ -41,6 +41,20 @@ export function useSpotLayer(map, ready, spots, onSpotHighlight) {
         };
 
         map.on("mouseenter", SPOT_PATH, onEnter);
-        return () => map.off("mouseenter", SPOT_PATH, onEnter);
+
+        const onClick = (e) => {
+            const hits = map.queryRenderedFeatures(e.point, {
+                layers: [SPOT_PATH],
+            });
+            if (hits.length === 0) {
+                onSpotHighlight(undefined);
+            }
+        };
+        map.on("click", onClick);
+
+        return () => {
+            map.off("mouseenter", SPOT_PATH, onEnter);
+            map.off("click", SPOT_PATH, onClick);
+        };
     }, [map, ready]);
 }

@@ -9,6 +9,7 @@ import {
     TRANSITION_DURATION_IN,
     TRANSITION_DURATION_OUT,
     EASING_TYPE,
+    EMPTY,
 } from "./config";
 
 export function useSelectedSpot(map, ready, selectedSpot, location) {
@@ -56,5 +57,9 @@ export function useSelectedSpot(map, ready, selectedSpot, location) {
             geometry: { type: "Point", coordinates: to.coordinates },
             properties: {},
         });
+        return () => {
+            map.getSource(CONNECTION_LINE_PATH)?.setData(EMPTY);
+            map.getSource(CONNECTION_POINT)?.setData(EMPTY);
+        };
     }, [map, ready, selectedSpot, location]);
 }
