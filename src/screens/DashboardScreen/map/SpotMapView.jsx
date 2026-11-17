@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { Map, Marker, setWorkerUrl } from "maplibre-gl";
+import { setWorkerUrl } from "maplibre-gl";
 import workerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
 import "maplibre-gl/dist/maplibre-gl.css";
 
@@ -34,6 +34,7 @@ import {
     DEFAULT_ZOOM,
 } from "./config";
 import { useMapInstance } from "./useMapInstance";
+import { useHomeMarker } from "./useHomeMarker";
 
 setWorkerUrl(workerUrl);
 
@@ -101,6 +102,8 @@ export const SpotMapView = ({
         zoom: DEFAULT_ZOOM,
     });
 
+    useHomeMarker(map, location);
+
     //need these for spot enclosures for selected animations
     const spotsRef = useRef(spots);
     const highlightRef = useRef(onSpotHighlight);
@@ -146,17 +149,6 @@ export const SpotMapView = ({
             center: location.coordinates,
             zoom: 4,
         });
-    };
-
-    //takes an element and adds to specified location
-    const addMarkerToMap = (el, loc) => {
-        if (!map || !loc) return;
-
-        const marker = new Marker({ element: el })
-            .setLngLat([loc.longitude, loc.latitude])
-            .addTo(map);
-
-        return marker;
     };
 
     const drawConnectionLine = (spot) => {
@@ -333,32 +325,6 @@ export const SpotMapView = ({
             if (s) highlightRef.current(s);
         });
     }, [ready]);
-
-    useEffect(() => {
-        if (!location) {
-            return;
-        }
-
-        //draw location spot with an html element to make it easier to constantly
-        //animate
-        const el = document.createElement("div");
-        el.style.width = "20px";
-        el.style.height = "20px";
-        el.style.borderRadius = "50%";
-        el.style.background = LOCATION_COLOR;
-        el.style.border = "3px solid white";
-        el.style.boxShadow =
-            "0 0 0 4px rgba(28,126,214,0.3), 0 0 6px rgba(0,0,0,0.4)";
-
-        //this links to css class which handles animation / pulsing
-        el.className = "home-marker";
-
-        const m = addMarkerToMap(el, location);
-
-        return () => {
-            if (m) m.remove();
-        };
-    }, [map, location]);
 
     //Redraw Spots when spots is updated
     useEffect(() => {
