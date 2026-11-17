@@ -1,14 +1,18 @@
 import {
     TextInput,
     Button,
-    Radio,
     Fieldset,
     Stack,
     Group,
+    Box,
+    Text,
+    Switch,
+    Checkbox,
+    Divider,
+    SegmentedControl,
 } from "@mantine/core";
 
 import { useForm } from "@mantine/form";
-//import { useLocalStorage } from '@mantine/hooks';
 import { useSettings } from "@/context/SettingsContext";
 
 import { useNavigate } from "react-router";
@@ -18,6 +22,30 @@ import "./ConfigScreen.css";
 import { UnitType } from "../../enums/UnitType";
 import { TimeMode } from "../../enums/TimeMode";
 import { DisplayMode } from "../../enums/DisplayMode";
+import { ElevationValue } from "../../utils/twilight";
+
+const greylineLayers = [
+    {
+        value: ElevationValue.HORIZON,
+        label: "Horizon",
+        color: "orange.7",
+    },
+    {
+        value: ElevationValue.CIVIL,
+        label: "Civil twilight",
+        color: "blue.7",
+    },
+    {
+        value: ElevationValue.NAUTICAL,
+        label: "Nautical twilight",
+        color: "violet.9",
+    },
+    {
+        value: ElevationValue.ASTRONOMICAL,
+        label: "Astronomical twilight",
+        color: "gray.7",
+    },
+];
 
 export default function ConfigScreen(props) {
     const navigate = useNavigate();
@@ -29,15 +57,14 @@ export default function ConfigScreen(props) {
         setUnitType,
         setTimeMode,
         setDisplayMode,
+        setShowGreyline,
+        setElevationValues,
     } = useSettings();
 
     const form = useForm({
         initialValues: {
             callsign: settings.callsign,
             grid: settings.grid,
-            unitType: settings.unitType,
-            timeMode: settings.timeMode,
-            displayMode: settings.displayMode,
         },
         validate: {
             callsign: (callsign) => {
@@ -62,87 +89,178 @@ export default function ConfigScreen(props) {
     const onUpdateClick = (props) => {
         const c = props.callsign.trim();
         const g = props.grid.trim();
-        const m = props.unitType;
-        const t = props.timeMode;
-        const d = props.displayMode;
 
         setCallsign(c);
         setGrid(g);
-        setUnitType(m);
-        setTimeMode(t);
-        setDisplayMode(d);
 
         navigate(
             `/dashboard/${encodeURIComponent(c)}/${encodeURIComponent(g)}/`,
         );
     };
 
+    const onBackClick = () => {
+        navigate(
+            `/dashboard/${encodeURIComponent(settings.callsign)}/${encodeURIComponent(settings.grid)}/`,
+        );
+    };
+
     return (
         <div id="configScreen" className="screen">
             <form onSubmit={form.onSubmit(onUpdateClick)}>
-                <Fieldset legend="Station Setup">
-                    <Stack gap="md">
-                        <TextInput
-                            required
-                            label="Callsign"
-                            placeholder="callsign"
-                            key={form.key("callsign")}
-                            {...form.getInputProps("callsign")}
-                        />
-                        <TextInput
-                            label="Location Grid"
-                            placeholder="grid"
-                            key={form.key("grid")}
-                            {...form.getInputProps("grid")}
-                        />
+                <Stack gap="lg">
+                    {settings.callsign && (
+                        <Group>
+                            <Button
+                                variant="subtle"
+                                size="compact-sm"
+                                onClick={onBackClick}
+                            >
+                                ← Back to dashboard
+                            </Button>
+                        </Group>
+                    )}
+                    <Fieldset legend="Station">
+                        <Stack gap="md">
+                            <TextInput
+                                required
+                                label="Callsign"
+                                placeholder="callsign"
+                                key={form.key("callsign")}
+                                {...form.getInputProps("callsign")}
+                            />
+                            <TextInput
+                                label="Location Grid"
+                                description="Maidenhead locator, 4 or 6 characters"
+                                placeholder="grid"
+                                key={form.key("grid")}
+                                {...form.getInputProps("grid")}
+                            />
+                            <Button type="submit" variant="filled">
+                                Update station
+                            </Button>
+                        </Stack>
+                    </Fieldset>
 
-                        <Radio.Group
-                            name="displayMode"
-                            label="Display"
-                            key={form.key("displayMode")}
-                            {...form.getInputProps("displayMode")}
-                        >
-                            <Group mt="xs" gap="lg" wrap="nowrap">
-                                <Radio
-                                    label="Light"
-                                    value={DisplayMode.LIGHT}
+                    <Fieldset legend="Display">
+                        <Stack gap="md">
+                            <Stack gap={4}>
+                                <Text size="sm" fw={600}>
+                                    Display
+                                </Text>
+                                <SegmentedControl
+                                    fullWidth
+                                    value={settings.displayMode}
+                                    onChange={setDisplayMode}
+                                    data={[
+                                        {
+                                            label: "Light",
+                                            value: DisplayMode.LIGHT,
+                                        },
+                                        {
+                                            label: "Dark",
+                                            value: DisplayMode.DARK,
+                                        },
+                                    ]}
                                 />
-                                <Radio label="Dark" value={DisplayMode.DARK} />
-                            </Group>
-                        </Radio.Group>
+                            </Stack>
 
-                        <Radio.Group
-                            name="unitType"
-                            label="Units"
-                            key={form.key("unitType")}
-                            {...form.getInputProps("unitType")}
-                        >
-                            <Group mt="xs" gap="lg" wrap="nowrap">
-                                <Radio label="Metric" value={UnitType.METRIC} />
-                                <Radio
-                                    label="Imperial"
-                                    value={UnitType.IMPERIAL}
+                            <Stack gap={4}>
+                                <Text size="sm" fw={600}>
+                                    Units
+                                </Text>
+                                <SegmentedControl
+                                    fullWidth
+                                    value={settings.unitType}
+                                    onChange={setUnitType}
+                                    data={[
+                                        {
+                                            label: "Metric",
+                                            value: UnitType.METRIC,
+                                        },
+                                        {
+                                            label: "Imperial",
+                                            value: UnitType.IMPERIAL,
+                                        },
+                                    ]}
                                 />
-                            </Group>
-                        </Radio.Group>
+                            </Stack>
 
-                        <Radio.Group
-                            name="timeMode"
-                            label="Time Mode"
-                            key={form.key("timeMode")}
-                            {...form.getInputProps("timeMode")}
-                        >
-                            <Group mt="xs" gap="lg" wrap="nowrap">
-                                <Radio label="UTC" value={TimeMode.UTC} />
-                                <Radio label="Local" value={TimeMode.LOCAL} />
-                            </Group>
-                        </Radio.Group>
+                            <Stack gap={4}>
+                                <Text size="sm" fw={600}>
+                                    Time Mode
+                                </Text>
+                                <SegmentedControl
+                                    fullWidth
+                                    value={settings.timeMode}
+                                    onChange={setTimeMode}
+                                    data={[
+                                        { label: "UTC", value: TimeMode.UTC },
+                                        {
+                                            label: "Local",
+                                            value: TimeMode.LOCAL,
+                                        },
+                                    ]}
+                                />
+                            </Stack>
+                        </Stack>
+                    </Fieldset>
 
-                        <Button type="submit" variant="filled">
-                            Update
-                        </Button>
-                    </Stack>
-                </Fieldset>
+                    <Fieldset legend="Map overlays">
+                        <Stack gap="md">
+                            <Switch
+                                label="Grey Line"
+                                description="Display grey line and twilight bands"
+                                labelPosition="left"
+                                disabled={settings.elevationValues.length == 0}
+                                checked={settings.showGreyline}
+                                onChange={(e) =>
+                                    setShowGreyline(e.currentTarget.checked)
+                                }
+                                styles={{
+                                    body: { justifyContent: "space-between" },
+                                }}
+                            />
+
+                            <Divider />
+
+                            <Checkbox.Group
+                                value={settings.elevationValues}
+                                onChange={setElevationValues}
+                            >
+                                <Stack gap="md">
+                                    {greylineLayers.map((layer) => (
+                                        <Checkbox
+                                            key={layer.value}
+                                            value={layer.value}
+                                            disabled={!settings.showGreyline}
+                                            label={
+                                                <Group
+                                                    gap="xs"
+                                                    wrap="nowrap"
+                                                    justify="space-between"
+                                                >
+                                                    <span>{layer.label}</span>
+                                                    <Box
+                                                        w={24}
+                                                        h={4}
+                                                        bg={layer.color}
+                                                        style={{
+                                                            borderRadius: 2,
+                                                        }}
+                                                    />
+                                                </Group>
+                                            }
+                                            styles={{
+                                                label: { width: "100%" },
+                                                labelWrapper: { flex: 1 },
+                                            }}
+                                        />
+                                    ))}
+                                </Stack>
+                            </Checkbox.Group>
+                        </Stack>
+                    </Fieldset>
+                </Stack>
             </form>
         </div>
     );

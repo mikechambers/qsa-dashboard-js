@@ -29,12 +29,26 @@ const J2000_MS = Date.UTC(2000, 0, 1, 12, 0, 0);
  * Sun elevation angles (degrees) for the lines we can draw.
  * Negative means below the horizon.
  */
-export const TWILIGHT = {
+
+const Elevations = Object.freeze({
+    HORIZON: "HORIZON", // sunrise/sunset line (the grey line)
+    CIVIL: "CIVIL",
+    NAUTICAL: "NAUTICAL",
+    ASTRONOMICAL: "ASTRONOMICAL",
+});
+
+const elevationValues = {
     HORIZON: -0.83, // sunrise/sunset line (the grey line)
     CIVIL: -6,
     NAUTICAL: -12,
     ASTRONOMICAL: -18,
 };
+
+export const ElevationValue = Object.freeze({
+    ...Elevations,
+
+    getValue: (name) => elevationValues[name],
+});
 
 /** Wrap any angle into the range -180..180. */
 function normalize180(deg) {
@@ -169,6 +183,16 @@ export function getRing(center, distanceDeg, stepDeg = 2) {
     return coords;
 }
 
+const getElevationValues = (elevations) => {
+    const values = elevations
+        .map((e) => ElevationValue.getValue(e))
+        .sort((a, b) => b - a);
+
+    console.log(values);
+
+    return values;
+};
+
 /**
  * The main entry point: one LineString feature per requested sun elevation.
  *
@@ -180,27 +204,21 @@ export function getRing(center, distanceDeg, stepDeg = 2) {
  * @param {number[]} elevations  sun elevations to draw (see TWILIGHT)
  * @returns {object} GeoJSON FeatureCollection
  */
-export function getTwilightGeoJSON(
-    date = new Date(),
-    elevations = [
-        TWILIGHT.HORIZON,
-        TWILIGHT.CIVIL,
-        TWILIGHT.NAUTICAL,
-        TWILIGHT.ASTRONOMICAL,
-    ],
-) {
+export function getTwilightGeoJSON(date = new Date(), elevations) {
     const sun = getSubsolarPoint(date);
+
+    const values = getElevationValues(elevations);
 
     return {
         type: "FeatureCollection",
-        features: elevations.map((elevation) => ({
+        features: values.map((elevation) => ({
             type: "Feature",
             geometry: {
                 type: "LineString",
                 // Sun at elevation h sits (90 - h) degrees from the subsolar point.
                 coordinates: getRing(sun, 90 - elevation),
             },
-            properties: { elevation },
+            properties: { elevation: elevation },
         })),
     };
 }
@@ -273,21 +291,15 @@ function capFeature(center, radiusDeg, elevation) {
  * The caps are nested. Draw them with a low fill opacity and they stack,
  * so the shading gets stronger toward the middle of the night.
  */
-export function getNightGeoJSON(
-    date = new Date(),
-    elevations = [
-        TWILIGHT.HORIZON,
-        TWILIGHT.CIVIL,
-        TWILIGHT.NAUTICAL,
-        TWILIGHT.ASTRONOMICAL,
-    ],
-) {
+export function getNightGeoJSON(date = new Date(), elevations) {
+    const values = getElevationValues(elevations);
+
     const sun = getSubsolarPoint(date);
     const antisolar = { lat: -sun.lat, lon: normalize180(sun.lon + 180) };
 
     return {
         type: "FeatureCollection",
-        features: elevations.map((elevation) =>
+        features: values.map((elevation) =>
             capFeature(antisolar, 90 + elevation, elevation),
         ),
     };
@@ -303,20 +315,14 @@ export function getNightGeoJSON(
  * Nested again: draw with a low fill opacity and they stack, so the
  * lightening is strongest in full daylight and fades out through twilight.
  */
-export function getDayGeoJSON(
-    date = new Date(),
-    elevations = [
-        TWILIGHT.HORIZON,
-        TWILIGHT.CIVIL,
-        TWILIGHT.NAUTICAL,
-        TWILIGHT.ASTRONOMICAL,
-    ],
-) {
+export function getDayGeoJSON(date = new Date(), elevations) {
     const sun = getSubsolarPoint(date);
+
+    const values = getElevationValues(elevations);
 
     return {
         type: "FeatureCollection",
-        features: elevations.map((elevation) =>
+        features: values.map((elevation) =>
             capFeature(sun, 90 - elevation, elevation),
         ),
     };

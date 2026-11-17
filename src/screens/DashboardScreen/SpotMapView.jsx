@@ -17,7 +17,7 @@ import {
     getTwilightGeoJSON,
     getNightGeoJSON,
     getDayGeoJSON,
-    TWILIGHT,
+    ElevationValue,
 } from "@/utils/twilight";
 
 setWorkerUrl(workerUrl);
@@ -39,13 +39,6 @@ const EASING_TYPE = "bounce";
 const DEFAULT_ZOOM = 3;
 
 const TWILIGHT_REFRESH_MS = 60_000;
-
-//todo: move to settings
-const TWILIGHT_ELEVATIONS = [
-    TWILIGHT.HORIZON,
-    TWILIGHT.CIVIL,
-    TWILIGHT.NAUTICAL,
-];
 
 const TWILIGHT_LINES = "TWILIGHT_LINES";
 const NIGHT_PATH = "NIGHT_PATH";
@@ -115,6 +108,10 @@ export const SpotMapView = ({
     //update greyline position once a minute
     useEffect(() => {
         const timer = setInterval(() => {
+            if (!settings.showGreyline) {
+                return;
+            }
+
             const map = mapInstance.current;
 
             if (!map) return;
@@ -122,18 +119,18 @@ export const SpotMapView = ({
             const now = new Date();
 
             map.getSource(TWILIGHT_LINES)?.setData(
-                getTwilightGeoJSON(now, TWILIGHT_ELEVATIONS),
+                getTwilightGeoJSON(now, settings.elevationValues),
             );
             map.getSource(NIGHT_PATH)?.setData(
-                getNightGeoJSON(now, TWILIGHT_ELEVATIONS),
+                getNightGeoJSON(now, settings.elevationValues),
             );
             map.getSource(DAY_PATH)?.setData(
-                getDayGeoJSON(now, TWILIGHT_ELEVATIONS),
+                getDayGeoJSON(now, settings.elevationValues),
             );
         }, TWILIGHT_REFRESH_MS);
 
         return () => clearInterval(timer);
-    }, []);
+    }, [settings.showGreyline]);
 
     //center and zoom on home location
     const centerOnLocation = () => {
@@ -212,77 +209,83 @@ export const SpotMapView = ({
         mapInstance.current.on("load", () => {
             const map = mapInstance.current;
 
-            const p =
-                settings.displayMode === DisplayMode.DARK
-                    ? TWILIGHT_PALETTE.dark
-                    : TWILIGHT_PALETTE.light;
+            if (settings.showGreyline) {
+                const p =
+                    settings.displayMode === DisplayMode.DARK
+                        ? TWILIGHT_PALETTE.dark
+                        : TWILIGHT_PALETTE.light;
 
-            const now = new Date();
-            const beforeId = map.getLayer(SPOT_PATH) ? SPOT_PATH : undefined;
+                const now = new Date();
+                /*
+                const beforeId = map.getLayer(SPOT_PATH)
+                    ? SPOT_PATH
+                    : undefined;
+*/
+                /******** GREYLINE DAY LAYER ***********/
+                map.addSource(DAY_PATH, {
+                    type: "geojson",
+                    data: getDayGeoJSON(now, settings.elevationValues),
+                });
 
-            /******** GREYLINE DAY LAYER ***********/
-            map.addSource(DAY_PATH, {
-                type: "geojson",
-                data: getDayGeoJSON(now, TWILIGHT_ELEVATIONS),
-            });
-
-            map.addLayer(
-                {
-                    id: DAY_PATH,
-                    type: "fill",
-                    source: DAY_PATH,
-                    paint: {
-                        "fill-color": p.dayFill,
-                        "fill-opacity": p.dayFillOpacity,
-                        "fill-antialias": false,
+                map.addLayer(
+                    {
+                        id: DAY_PATH,
+                        type: "fill",
+                        source: DAY_PATH,
+                        paint: {
+                            "fill-color": p.dayFill,
+                            "fill-opacity": p.dayFillOpacity,
+                            "fill-antialias": false,
+                        },
                     },
-                },
-                beforeId,
-            );
+                    // beforeId,
+                );
 
-            /******** GREYLINE NIGHT LAYER ***********/
-            map.addSource(NIGHT_PATH, {
-                type: "geojson",
-                data: getNightGeoJSON(now, TWILIGHT_ELEVATIONS),
-            });
-            map.addLayer(
-                {
-                    id: NIGHT_PATH,
-                    type: "fill",
-                    source: NIGHT_PATH,
-                    paint: {
-                        "fill-color": p.fill,
-                        "fill-opacity": p.fillOpacity,
-                        "fill-antialias": false,
+                /******** GREYLINE NIGHT LAYER ***********/
+                map.addSource(NIGHT_PATH, {
+                    type: "geojson",
+                    data: getNightGeoJSON(now, settings.elevationValues),
+                });
+                map.addLayer(
+                    {
+                        id: NIGHT_PATH,
+                        type: "fill",
+                        source: NIGHT_PATH,
+                        paint: {
+                            "fill-color": p.fill,
+                            "fill-opacity": p.fillOpacity,
+                            "fill-antialias": false,
+                        },
                     },
-                },
-                beforeId,
-            );
+                    //beforeId,
+                );
 
-            /******** GREYLINE LINES LAYER ***********/
-            map.addSource(TWILIGHT_LINES, {
-                type: "geojson",
-                data: getTwilightGeoJSON(now, TWILIGHT_ELEVATIONS),
-            });
-            map.addLayer(
-                {
-                    id: TWILIGHT_LINES,
-                    type: "line",
-                    source: TWILIGHT_LINES,
-                    paint: {
-                        "line-color": p.line,
-                        "line-width": [
-                            "match",
-                            ["get", "elevation"],
-                            0,
-                            p.lineWidth + 1,
-                            p.lineWidth,
-                        ],
-                        "line-opacity": p.lineOpacity,
+                /******** GREYLINE LINES LAYER ***********/
+                map.addSource(TWILIGHT_LINES, {
+                    type: "geojson",
+                    data: getTwilightGeoJSON(now, settings.elevationValues),
+                });
+                map.addLayer(
+                    {
+                        id: TWILIGHT_LINES,
+                        type: "line",
+                        source: TWILIGHT_LINES,
+                        paint: {
+                            "line-color": p.line,
+                            "line-width": [
+                                "match",
+                                ["get", "elevation"],
+                                0,
+                                p.lineWidth + 1,
+                                p.lineWidth,
+                            ],
+                            "line-opacity": p.lineOpacity,
+                        },
                     },
-                },
-                beforeId,
-            );
+                    //beforeId,
+                );
+            }
+            /******* End Grey Line  **************/
 
             /******** SPOTS LAYER ***********/
             map.addSource(SPOT_PATH, {

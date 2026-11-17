@@ -3,6 +3,7 @@ import { useLocalStorage } from "@mantine/hooks";
 import { UnitType } from "../enums/UnitType";
 import { TimeMode } from "../enums/TimeMode";
 import { DisplayMode } from "../enums/DisplayMode";
+import { ElevationValue } from "../utils/twilight";
 
 const SettingsContext = createContext(null);
 
@@ -38,12 +39,30 @@ export function SettingsProvider({ children }) {
         getInitialValueInEffect: false,
     });
 
+    const [showGreyline, setShowGreyline] = useLocalStorage({
+        key: "showGreyline",
+        defaultValue: true,
+        getInitialValueInEffect: false,
+    });
+
+    const [elevationValues, setElevationValues] = useLocalStorage({
+        key: "elevationValues",
+        defaultValue: [
+            ElevationValue.HORIZON,
+            ElevationValue.CIVIL,
+            ElevationValue.NAUTICAL,
+        ],
+        getInitialValueInEffect: false,
+    });
+
     const settings = {
         timeMode,
         grid,
         callsign,
         unitType,
         displayMode,
+        showGreyline,
+        elevationValues,
     };
 
     return (
@@ -55,6 +74,8 @@ export function SettingsProvider({ children }) {
                 setUnitType,
                 setTimeMode,
                 setDisplayMode,
+                setShowGreyline,
+                setElevationValues,
             }}
         >
             {children}
