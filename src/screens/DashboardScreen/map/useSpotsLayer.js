@@ -1,8 +1,18 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { getCSSColorForSNR } from "@/utils/view";
 import { SPOT_PATH } from "./config";
 
-export function useSpotLayer(map, ready, spots) {
+export function useSpotLayer(map, ready, spots, onSpotHighlight) {
+    //so references in enclosures dont become stale
+    const spotsRef = useRef(spots);
+    const highlightRef = useRef(onSpotHighlight);
+
+    useEffect(() => {
+        spotsRef.current = spots;
+        highlightRef.current = onSpotHighlight;
+    }, [spots, onSpotHighlight]);
+
+    //redraw when spots change
     useEffect(() => {
         if (!map || !ready) return;
 
@@ -20,4 +30,17 @@ export function useSpotLayer(map, ready, spots) {
             features,
         });
     }, [map, ready, spots]);
+
+    useEffect(() => {
+        if (!map || !ready) return;
+
+        const onEnter = (e) => {
+            const id = e.features[0]?.properties.spotId;
+            const s = spotsRef.current.find((spot) => spot.id === id);
+            if (s) highlightRef.current(s);
+        };
+
+        map.on("mouseenter", SPOT_PATH, onEnter);
+        return () => map.off("mouseenter", SPOT_PATH, onEnter);
+    }, [map, ready]);
 }
