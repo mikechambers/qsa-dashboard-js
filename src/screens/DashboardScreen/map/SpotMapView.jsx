@@ -35,6 +35,7 @@ import {
 } from "./config";
 import { useMapInstance } from "./useMapInstance";
 import { useHomeMarker } from "./useHomeMarker";
+import { useSpotLayer } from "./useSpotsLayer";
 
 setWorkerUrl(workerUrl);
 
@@ -326,28 +327,7 @@ export const SpotMapView = ({
         });
     }, [ready]);
 
-    //Redraw Spots when spots is updated
-    useEffect(() => {
-        if (!map || !ready) return;
-
-        const features = [];
-
-        for (const s of spots) {
-            features.push({
-                type: "Feature",
-                geometry: {
-                    type: "Point",
-                    coordinates: s.receiverLocation.coordinates,
-                },
-                properties: { color: getCSSColorForSNR(s.snr), spotId: s.id },
-            });
-        }
-
-        map.getSource(SPOT_PATH)?.setData({
-            type: "FeatureCollection",
-            features,
-        });
-    }, [map, ready, spots]);
+    useSpotLayer(map, ready, spots);
 
     //run when selected spot changes
     useEffect(() => {
