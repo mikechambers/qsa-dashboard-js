@@ -3,7 +3,7 @@ import { Badge, Box } from "@mantine/core";
 import { ConnectionStatus } from "../../enums/ConnectionStatus";
 
 const STATUS_STYLES = {
-    [ConnectionStatus.CONNECTED]: { color: "green", label: "Live, connected" },
+    [ConnectionStatus.CONNECTED]: { color: "green", label: "Connected" },
     [ConnectionStatus.CONNECTING]: { color: "yellow", label: "Connecting" },
     [ConnectionStatus.DISCONNECTED]: { color: "red", label: "Disconnected" },
 };
