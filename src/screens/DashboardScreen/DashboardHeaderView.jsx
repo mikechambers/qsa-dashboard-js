@@ -39,7 +39,7 @@ export const DashboardHeaderView = ({ callsign, grid }) => {
                 </Group>
 
                 <ClockView />
-                <Group gap="xs" wrap="nowrap" gap={32}>
+                <Group wrap="nowrap" gap={32}>
                     <ConnectionStatusView />
                     <ButtonGroup>
                         <Button

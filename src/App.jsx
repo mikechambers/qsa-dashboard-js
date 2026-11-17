@@ -14,7 +14,7 @@ import "@fontsource/roboto-mono/400.css";
 import "@fontsource/roboto-mono/500.css";
 import "@fontsource/roboto-mono/600.css";
 import { DisplayMode } from "./enums/DisplayMode";
-import { useSelection } from "@mantine/hooks";
+import { ModalsProvider } from "@mantine/modals";
 
 const theme = createTheme({
     fontFamilyMonospace: "'Roboto Mono', monospace, monospace",
@@ -58,9 +58,11 @@ function ThemedApp() {
 
     return (
         <MantineProvider theme={theme} forceColorScheme={colorScheme}>
-            <div id="main">
-                <Outlet />
-            </div>
+            <ModalsProvider>
+                <div id="main">
+                    <Outlet />
+                </div>
+            </ModalsProvider>
         </MantineProvider>
     );
 }

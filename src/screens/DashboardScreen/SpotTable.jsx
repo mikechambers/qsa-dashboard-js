@@ -1,4 +1,12 @@
-import { Paper, Table, Title, Group, Text, EmptyState } from "@mantine/core";
+import {
+    Paper,
+    Table,
+    Title,
+    Group,
+    Text,
+    EmptyState,
+    ActionIcon,
+} from "@mantine/core";
 import { useEffect, useState } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { BandFrequencyView } from "./BandFrequencyView";
@@ -8,14 +16,32 @@ import { DistanceView } from "./DistanceView";
 import { useSettings } from "../../context/SettingsContext";
 import { getShortTimeZoneName } from "../../utils/date";
 import { useSelectedSpot } from "../../context/SelectedSpotContext";
-import { IconInbox } from "@tabler/icons-react";
+import { IconInbox, IconTrash } from "@tabler/icons-react";
+import { modals } from "@mantine/modals";
+import { useSpotData } from "@/context/SpotDataContext";
 
 export const SpotTable = ({ spots }) => {
+    const { clearSpots } = useSpotData();
     const { selectedSpot, setSelectedSpot } = useSelectedSpot();
 
     const [scrollParent, setScrollParent] = useState(null);
 
     const { settings } = useSettings();
+
+    const onDeleteSpots = () =>
+        modals.openConfirmModal({
+            title: "Delete All Spots",
+            centered: true,
+            confirmProps: { color: "red" },
+            children: (
+                <Text size="sm">
+                    Are you sure you want to delete all spots? This action
+                    cannot be undone.
+                </Text>
+            ),
+            labels: { confirm: "Delete Spots", cancel: "Cancel" },
+            onConfirm: clearSpots,
+        });
 
     let timeZone = getShortTimeZoneName(settings.timeMode);
 
@@ -82,14 +108,25 @@ export const SpotTable = ({ spots }) => {
             >
                 <Title order={3}>Spots</Title>
 
-                <Text
-                    size="sm"
-                    c="dimmed"
-                    fw={500}
-                    style={{ fontVariantNumeric: "tabular-nums" }}
-                >
-                    {count} {count === 1 ? "spot" : "spots"}
-                </Text>
+                <Group>
+                    <Text
+                        size="sm"
+                        c="dimmed"
+                        fw={500}
+                        style={{ fontVariantNumeric: "tabular-nums" }}
+                    >
+                        {count} {count === 1 ? "spot" : "spots"}
+                    </Text>
+                    <ActionIcon
+                        variant="subtle"
+                        size="xs"
+                        color="red"
+                        title="Delete all spots."
+                        onClick={onDeleteSpots}
+                    >
+                        <IconTrash />
+                    </ActionIcon>
+                </Group>
             </Group>
             <Table.ScrollContainer
                 minWidth={418}

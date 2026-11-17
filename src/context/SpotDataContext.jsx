@@ -33,6 +33,10 @@ export function SpotDataProvider({ children }) {
 
     const clientRef = useRef(null);
 
+    const clearSpots = () => {
+        setSpots([]);
+    };
+
     const mostRecentContact = useMemo(() => {
         return filteredSpots[0];
     }, [filteredSpots]);
@@ -164,6 +168,7 @@ export function SpotDataProvider({ children }) {
         <SpotDataContext.Provider
             value={{
                 spots,
+                clearSpots,
                 filteredSpots,
                 filter,
                 setFilter,
