@@ -30,7 +30,7 @@ const J2000_MS = Date.UTC(2000, 0, 1, 12, 0, 0);
  * Negative means below the horizon.
  */
 export const TWILIGHT = {
-    HORIZON: 0, // sunrise/sunset line (the grey line)
+    HORIZON: -0.83, // sunrise/sunset line (the grey line)
     CIVIL: -6,
     NAUTICAL: -12,
     ASTRONOMICAL: -18,

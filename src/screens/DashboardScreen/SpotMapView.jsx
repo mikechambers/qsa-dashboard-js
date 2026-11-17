@@ -41,7 +41,11 @@ const DEFAULT_ZOOM = 3;
 const TWILIGHT_REFRESH_MS = 60_000;
 
 //todo: move to settings
-const TWILIGHT_ELEVATIONS = [TWILIGHT.CIVIL, TWILIGHT.NAUTICAL];
+const TWILIGHT_ELEVATIONS = [
+    TWILIGHT.HORIZON,
+    TWILIGHT.CIVIL,
+    TWILIGHT.NAUTICAL,
+];
 
 const TWILIGHT_LINES = "TWILIGHT_LINES";
 const NIGHT_PATH = "NIGHT_PATH";
@@ -53,7 +57,7 @@ const TWILIGHT_PALETTE = {
         fillOpacity: 0, // night shading off in dark mode
         dayFill: "#ffffff",
         dayFillOpacity: 0.08,
-        line: "#555555",
+        line: "#55555555",
         lineWidth: 1.0,
         lineOpacity: [
             "match",
@@ -69,10 +73,10 @@ const TWILIGHT_PALETTE = {
     },
     light: {
         fill: "#000000",
-        fillOpacity: 0.15,
+        fillOpacity: 0.1,
         dayFill: "#ffffff",
         dayFillOpacity: 0, //day off in light mode
-        line: "#AAAAAA",
+        line: "#AAAAAA55",
         lineWidth: 1,
         lineOpacity: [
             "match",
