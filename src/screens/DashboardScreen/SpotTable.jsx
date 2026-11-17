@@ -8,6 +8,7 @@ import { DistanceView } from "./DistanceView";
 import { useSettings } from "../../context/SettingsContext";
 import { getShortTimeZoneName } from "../../utils/date";
 import { useSelectedSpot } from "../../context/SelectedSpotContext";
+import { IconInbox } from "@tabler/icons-react";
 
 export const SpotTable = ({ spots }) => {
     const { selectedSpot, setSelectedSpot } = useSelectedSpot();
@@ -41,7 +42,19 @@ export const SpotTable = ({ spots }) => {
 
     if (!spots || !spots.length) {
         return (
-            <Paper p={0}>
+            <Paper
+                p={0}
+                justify="center"
+                verticalAlign="center"
+                style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    flex: 1,
+                    minHeight: 0,
+                    justifyContent: "center", // vertical, since the direction is column
+                    alignItems: "center", // horizontal
+                }}
+            >
                 <EmptyState
                     icon={<IconInbox size={40} stroke={1.5} />}
                     title="No spots yet"
