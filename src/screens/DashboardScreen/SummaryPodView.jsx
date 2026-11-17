@@ -1,8 +1,13 @@
 import { Paper, Stack, Text, Group } from "@mantine/core";
 
-export const SummaryPodView = ({ value, unit, label }) => {
+export const SummaryPodView = ({ value, unit, label, onClick }) => {
+    const style = { cursor: onClick ? "pointer" : "auto" };
+
+    const c = () => {
+        if (onClick) onClick();
+    };
     return (
-        <Paper>
+        <Paper onClick={() => c()} style={style}>
             <Stack gap={0}>
                 <Group wrap="nowrap" gap={1}>
                     <Text fz={40} fw={500} lh={1}>

@@ -49,7 +49,7 @@ export default function DashboardScreen(props) {
             <DashboardHeaderView callsign={callsign} grid={grid} />
 
             <div id="dashboardScreenMain">
-                <SummaryPodsContainerView />
+                <SummaryPodsContainerView onSpotHighlight={onSpotHighlight} />
 
                 <SpotFilterView />
 

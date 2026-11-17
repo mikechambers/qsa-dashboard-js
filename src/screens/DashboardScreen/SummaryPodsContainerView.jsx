@@ -6,7 +6,7 @@ import { useSettings } from "../../context/SettingsContext";
 import { ElapsedTimePod } from "./ElapsedTimePod";
 import { RecentContactPod } from "./RecentContactPod";
 
-export const SummaryPodsContainerView = () => {
+export const SummaryPodsContainerView = ({ onSpotHighlight }) => {
     const { furthestSpot, uniqueStations, mostRecentContact } = useSpotData();
     const { settings } = useSettings();
 
@@ -14,10 +14,19 @@ export const SummaryPodsContainerView = () => {
         ? convertAndFormatDistance(furthestSpot.distance, settings.unitType)
         : {};
 
+    const onFurthestClick = () => {
+        if (onSpotHighlight) onSpotHighlight(furthestSpot);
+    };
+
     return (
         <div id="summaryPods">
             <SimpleGrid cols={{ base: 2, sm: 4 }}>
-                <SummaryPodView label="Furthest" value={d} unit={unit} />
+                <SummaryPodView
+                    label="Furthest"
+                    value={d}
+                    unit={unit}
+                    onClick={onFurthestClick}
+                />
                 <SummaryPodView
                     label="Unique Stations"
                     value={uniqueStations}
