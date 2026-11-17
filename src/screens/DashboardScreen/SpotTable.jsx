@@ -52,8 +52,21 @@ export const SpotTable = ({ spots }) => {
     }
 
     return (
-        <Paper p={0}>
-            <Group p="sm" gap="sm" justify="space-between">
+        <Paper
+            p={0}
+            style={{
+                display: "flex",
+                flexDirection: "column",
+                flex: 1,
+                minHeight: 0,
+            }}
+        >
+            <Group
+                p="sm"
+                gap="sm"
+                justify="space-between"
+                style={{ flex: "none" }}
+            >
                 <Title order={3}>Spots</Title>
 
                 <Text
@@ -66,8 +79,9 @@ export const SpotTable = ({ spots }) => {
                 </Text>
             </Group>
             <Table.ScrollContainer
-                minWidth={418} //two less than container to preview horizontal scrolling (this is a hack)
-                maxHeight={400}
+                minWidth={418}
+                maxHeight="100%"
+                style={{ flex: 1, minHeight: 0 }}
                 scrollAreaProps={{ viewportRef: setScrollParent }}
             >
                 <Table
