@@ -1,31 +1,15 @@
-import { Box, Group } from "@mantine/core";
-
-const BAR_HEIGHTS = [6, 10, 14];
-const SNR_COLORS = { 3: "green.8", 2: "yellow.8", 1: "red.8" };
-const LABELS = { 3: "Strong", 2: "Fair", 1: "Weak" };
-
-const getLevel = (snr) => (snr >= -10 ? 3 : snr >= -18 ? 2 : 1);
+import { Box } from "@mantine/core";
+import { SignalColor } from "../../enums/SignalColors";
 
 export const SNRBarView = ({ snr }) => {
-    const level = getLevel(snr);
-
+    const name = SignalColor.getNameForSNR(snr);
     return (
-        <Group
-            gap={2}
-            wrap="nowrap"
-            align="flex-end"
+        <Box
+            w={20}
+            h={6}
+            bg={SignalColor.getColor(name)}
+            style={{ borderRadius: 3 }}
             role="img"
-            aria-label={`Signal: ${LABELS[level]}`}
-        >
-            {BAR_HEIGHTS.map((h, i) => (
-                <Box
-                    key={h}
-                    w={4}
-                    h={h}
-                    bg={i < level ? SNR_COLORS[level] : "gray.3"}
-                    style={{ borderRadius: 1 }}
-                />
-            ))}
-        </Group>
+        />
     );
 };

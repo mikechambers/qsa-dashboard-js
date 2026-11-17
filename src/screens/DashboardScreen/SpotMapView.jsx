@@ -103,6 +103,15 @@ export const SpotMapView = ({
     const mapContainer = useRef(null);
     const mapInstance = useRef(null);
 
+    //need these for spot enclosures for selected animations
+    const spotsRef = useRef(spots);
+    const highlightRef = useRef(onSpotHighlight);
+
+    useEffect(() => {
+        spotsRef.current = spots;
+        highlightRef.current = onSpotHighlight;
+    }, [spots, onSpotHighlight]);
+
     //update greyline position once a minute
     useEffect(() => {
         const timer = setInterval(() => {
@@ -332,13 +341,12 @@ export const SpotMapView = ({
             });
 
             map.on("mouseenter", SPOT_PATH, (e) => {
-                const f = e.features[0];
-
-                let s = spots.find((spot) => spot.id === f.properties.spotId);
-
-                onSpotHighlight(s);
+                const id = e.features[0]?.properties.spotId;
+                const s = spotsRef.current.find((spot) => spot.id === id);
+                if (s) highlightRef.current(s);
             });
         });
+
         return () => {
             mapInstance.current?.remove();
             mapInstance.current = null;

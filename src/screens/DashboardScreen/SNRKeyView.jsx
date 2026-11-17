@@ -8,11 +8,14 @@ export const SNRKeyView = () => {
             radius="md"
             p="xs"
             pos="absolute"
-            left={50}
-            bottom={10}
-            w={180}
+            right={20}
+            top={20}
+            w={140}
         >
-            <Group gap={3} w={152} wrap="nowrap">
+            <Text size="xs" fw={600} mb={8}>
+                Signal strength
+            </Text>
+            <Group gap={3} wrap="nowrap">
                 {SignalColor.cases.map((name) => (
                     <Tooltip
                         key={name}
@@ -22,19 +25,10 @@ export const SNRKeyView = () => {
                         <Box
                             h={6}
                             bg={SignalColor.getColor(name)}
-                            style={{ flex: "1 0 24px", borderRadius: 3 }}
+                            style={{ flex: "1 0 20px", borderRadius: 3 }}
                         />
                     </Tooltip>
                 ))}
-            </Group>
-
-            <Group justify="space-between" w={152} mt={6}>
-                <Text size="xs" fw={600}>
-                    Very weak
-                </Text>
-                <Text size="xs" fw={600}>
-                    Strong
-                </Text>
             </Group>
         </Paper>
     );

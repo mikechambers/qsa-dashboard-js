@@ -22,17 +22,14 @@ export const SignalColor = Object.freeze({
     getColor: (name) => VALUES[name].hex,
     getLabel: (name) => VALUES[name].label,
 
-    getColorForSNR: (snr) => {
-        if (snr >= 3) {
-            return SignalColor.getColor(SignalColor.STRONG);
-        } else if (snr >= -4) {
-            return SignalColor.getColor(SignalColor.GOOD);
-        } else if (snr >= -10) {
-            return SignalColor.getColor(SignalColor.FAIR);
-        } else if (snr >= -17) {
-            return SignalColor.getColor(SignalColor.WEAK);
-        } else {
-            return SignalColor.getColor(SignalColor.VERY_WEAK);
-        }
+    getNameForSNR: (snr) => {
+        if (snr >= 3) return SignalColor.STRONG;
+        if (snr >= -4) return SignalColor.GOOD;
+        if (snr >= -10) return SignalColor.FAIR;
+        if (snr >= -17) return SignalColor.WEAK;
+        return SignalColor.VERY_WEAK;
     },
+
+    getColorForSNR: (snr) =>
+        SignalColor.getColor(SignalColor.getNameForSNR(snr)),
 });
