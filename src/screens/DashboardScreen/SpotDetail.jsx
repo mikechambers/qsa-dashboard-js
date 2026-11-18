@@ -74,8 +74,8 @@ export const SpotDetail = ({ spot }) => {
 
                     <StatView label="Distance" value={`${d} ${unit}`} />
                     <StatView
-                        label="Country"
-                        value={spot?.receiverDXCC?.countryCode?.toUpperCase()}
+                        label="Location"
+                        value={spot?.receiverDXCC?.shortName}
                     />
 
                     <StatView
