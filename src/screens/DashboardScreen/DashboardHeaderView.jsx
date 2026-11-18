@@ -18,6 +18,7 @@ import { ClockView } from "./ClockView";
 import { useFullscreenDocument } from "@mantine/hooks";
 
 import { IconArrowsMaximize, IconArrowsMinimize } from "@tabler/icons-react";
+import { TimeMode } from "@/enums/TimeMode";
 
 export const DashboardHeaderView = ({ callsign, grid }) => {
     const { toggle, fullscreen } = useFullscreenDocument();
@@ -37,8 +38,11 @@ export const DashboardHeaderView = ({ callsign, grid }) => {
                         {g}
                     </Text>
                 </Group>
-
-                <ClockView />
+                <Group>
+                    <ClockView timeMode={TimeMode.LOCAL} />
+                    <Text c="dimmed">·</Text>
+                    <ClockView timeMode={TimeMode.UTC} />
+                </Group>
                 <Group wrap="nowrap" gap={32}>
                     <ConnectionStatusView />
                     <ButtonGroup>
