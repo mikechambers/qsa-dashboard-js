@@ -110,7 +110,11 @@ export const DistanceSNRChart = ({ unitType = UnitType.METRIC }) => {
                     tickLine="none"
                     gridAxis="x"
                     strokeDasharray="0"
-                    barProps={{ shape: renderBar, barSize: BAR_WIDTH }}
+                    barProps={{
+                        isAnimationActive: true,
+                        shape: renderBar,
+                        barSize: BAR_WIDTH,
+                    }}
                     yAxisProps={{
                         domain: [0, max],
                         ticks,

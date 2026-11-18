@@ -71,7 +71,7 @@ export const SpotTable = ({ spots }) => {
             <Paper
                 p={0}
                 justify="center"
-                verticalAlign="center"
+                verticalalign="center"
                 style={{
                     display: "flex",
                     flexDirection: "column",
@@ -135,7 +135,7 @@ export const SpotTable = ({ spots }) => {
                 scrollAreaProps={{ viewportRef: setScrollParent }}
             >
                 <Table
-                    styles={{ td: { verticalAlign: "top" } }}
+                    styles={{ td: { verticalalign: "top" } }}
                     stickyHeader
                     highlightOnHover
                     withTableBorder

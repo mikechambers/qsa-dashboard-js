@@ -101,6 +101,7 @@ export const SpotRateChart = ({ unitType = UnitType.METRIC }) => {
                     strokeDasharray="0"
                     withDots={false}
                     areaProps={{
+                        isAnimationActive: true,
                         dot: renderDot,
                         stroke: flat ? COLOR : `url(#${gradId})`,
                     }}

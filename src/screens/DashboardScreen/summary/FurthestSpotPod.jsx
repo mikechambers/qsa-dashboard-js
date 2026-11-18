@@ -11,7 +11,9 @@ export const FurthestSpotPod = ({ furthestSpot }) => {
         ? convertAndFormatDistance(furthestSpot.distance, settings.unitType)
         : {};
 
-    const subvalue = `${furthestSpot.receiverCall} · ${furthestSpot.receiverDXCC.countryCode} · ${furthestSpot.snr} dB`;
+    const subvalue = furthestSpot?.receiverCall
+        ? `${furthestSpot.receiverCall} · ${furthestSpot.receiverDXCC.countryCode.toUpperCase()} · ${furthestSpot.snr} dB`
+        : "";
 
     const onFurthestClick = () => {
         setSelectedSpot(furthestSpot);

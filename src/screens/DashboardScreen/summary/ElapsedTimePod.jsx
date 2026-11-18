@@ -40,7 +40,7 @@ export const ElapsedTimePod = ({ mostRecentSpot }) => {
 
     const subvalue = mostRecentSpot
         ? `last spot ${timeAgo(mostRecentSpot.date)}`
-        : ";";
+        : "";
 
     useEffect(() => {
         interval.start();

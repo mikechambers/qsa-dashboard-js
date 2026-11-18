@@ -85,7 +85,7 @@ export const useSpotIntervalData = (spots) => {
 
         //clean up interval when unmounted
         return () => clearInterval(id);
-    }, []);
+    }, [spots]);
 
     return data;
 };
