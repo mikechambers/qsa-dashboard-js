@@ -8,6 +8,8 @@ const TWILIGHT_LINES = "TWILIGHT_LINES";
 const NIGHT_PATH = "NIGHT_PATH";
 const DAY_PATH = "DAY_PATH";
 
+//settings on how to draw grey line shapes. One for night and one for day.
+//and settings for light / dark modes.
 const TWILIGHT_PALETTE = {
     dark: {
         fill: "#1b2f7a",
@@ -49,13 +51,13 @@ const TWILIGHT_PALETTE = {
     },
 };
 
+//this function initializes layers need to draw greylines graphics
+//they don't actually draw it, just set up the layers
 export function addGreylineLayers(map, settings) {
-    const p =
+    const theme =
         settings.displayMode === DisplayMode.DARK
             ? TWILIGHT_PALETTE.dark
             : TWILIGHT_PALETTE.light;
-
-    const now = new Date();
 
     /******** GREYLINE DAY LAYER ***********/
     map.addSource(DAY_PATH, {
@@ -63,40 +65,36 @@ export function addGreylineLayers(map, settings) {
         data: EMPTY_FEATURE_COLLECTION,
     });
 
-    map.addLayer(
-        {
-            id: DAY_PATH,
-            type: "fill",
-            source: DAY_PATH,
-            paint: {
-                "fill-color": p.dayFill,
-                "fill-opacity": p.dayFillOpacity,
-                "fill-antialias": false,
-            },
+    map.addLayer({
+        id: DAY_PATH,
+        type: "fill",
+        source: DAY_PATH,
+        paint: {
+            "fill-color": theme.dayFill,
+            "fill-opacity": theme.dayFillOpacity,
+            "fill-antialias": false,
         },
-        // beforeId,
-    );
+    });
 
     /******** GREYLINE NIGHT LAYER ***********/
     map.addSource(NIGHT_PATH, {
         type: "geojson",
         data: EMPTY_FEATURE_COLLECTION,
     });
-    map.addLayer(
-        {
-            id: NIGHT_PATH,
-            type: "fill",
-            source: NIGHT_PATH,
-            paint: {
-                "fill-color": p.fill,
-                "fill-opacity": p.fillOpacity,
-                "fill-antialias": false,
-            },
+    map.addLayer({
+        id: NIGHT_PATH,
+        type: "fill",
+        source: NIGHT_PATH,
+        paint: {
+            "fill-color": theme.fill,
+            "fill-opacity": theme.fillOpacity,
+            "fill-antialias": false,
         },
-        //beforeId,
-    );
+    });
 
     /******** GREYLINE LINES LAYER ***********/
+
+    //lines in between the sections
     map.addSource(TWILIGHT_LINES, {
         type: "geojson",
         data: EMPTY_FEATURE_COLLECTION,
@@ -106,25 +104,28 @@ export function addGreylineLayers(map, settings) {
         type: "line",
         source: TWILIGHT_LINES,
         paint: {
-            "line-color": p.line,
+            "line-color": theme.line,
             "line-width": [
                 "match",
                 ["get", "elevation"],
                 0,
-                p.lineWidth + 1,
-                p.lineWidth,
+                theme.lineWidth + 1,
+                theme.lineWidth,
             ],
-            "line-opacity": p.lineOpacity,
+            "line-opacity": theme.lineOpacity,
         },
     });
 }
 
+//clear all graphics (for when they disable greyline viewing)
 export function clearGreyline(map) {
     map.getSource(TWILIGHT_LINES)?.setData(EMPTY_FEATURE_COLLECTION);
     map.getSource(NIGHT_PATH)?.setData(EMPTY_FEATURE_COLLECTION);
     map.getSource(DAY_PATH)?.setData(EMPTY_FEATURE_COLLECTION);
 }
 
+//this is what actually draws the greylines. Dynamically generating
+//base on time of day / where the sun is.
 export function updateGreyline(map, settings) {
     const now = new Date();
 

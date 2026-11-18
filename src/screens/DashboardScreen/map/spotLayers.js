@@ -8,6 +8,8 @@ import {
     CIRCLE_STROKE,
 } from "./config";
 
+//adds the layers to draw the spot graphics on
+//doesn't draw to them yet.
 export function addSpotLayer(map) {
     map.addSource(SPOT_PATH, {
         type: "geojson",
@@ -28,6 +30,7 @@ export function addSpotLayer(map) {
     });
 }
 
+//adds the layer for drawing the conncetion line
 export function addConnectionLineLayer(map) {
     map.addSource(CONNECTION_LINE_PATH, {
         type: "geojson",
@@ -49,6 +52,7 @@ export function addConnectionLineLayer(map) {
     });
 }
 
+//adds the layer for drawing the point on the connection
 export function addConnectionPointLayer(map) {
     map.addSource(CONNECTION_POINT, {
         type: "geojson",

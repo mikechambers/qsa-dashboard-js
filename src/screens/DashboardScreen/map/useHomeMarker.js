@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { Marker } from "maplibre-gl";
 import { LOCATION_COLOR } from "./config";
 
+//hook for creating and setting home marker
 export function useHomeMarker(map, location) {
     useEffect(() => {
         if (!map || !location) return;
@@ -15,8 +16,12 @@ export function useHomeMarker(map, location) {
         el.style.border = "3px solid white";
         el.style.boxShadow =
             "0 0 0 4px rgba(28,126,214,0.3), 0 0 6px rgba(0,0,0,0.4)";
+
+        //defines animation (defined in SpotMapView.css)
         el.className = "home-marker";
 
+        //add to map as HTML element. Will be on top of anything draw into
+        //layers.
         const marker = new Marker({ element: el })
             .setLngLat([location.longitude, location.latitude])
             .addTo(map);

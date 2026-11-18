@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { updateGreyline, TWILIGHT_REFRESH_MS } from "./greylineLayers";
 
+//hook for drawing / updating grayline overlays
 export function useGreyline(map, ready, settings) {
     useEffect(() => {
         if (!map || !ready) return;
@@ -10,7 +11,10 @@ export function useGreyline(map, ready, settings) {
             return;
         }
 
-        updateGreyline(map, settings); // draw now, don't wait a minute
+        //draw greylines
+        updateGreyline(map, settings);
+
+        //redraw once a minute so it stays in correct position
         const timer = setInterval(
             () => updateGreyline(map, settings),
             TWILIGHT_REFRESH_MS,
