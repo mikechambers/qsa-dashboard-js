@@ -1,3 +1,6 @@
+import { useId } from "react";
+
+import { ChartTooltip } from "./ChartTooltip";
 import { useSpotData } from "@/context/SpotDataContext";
 import { SignalColor } from "@/enums/SignalColors";
 import { UnitType } from "@/enums/UnitType";
@@ -5,7 +8,14 @@ import { useSpotIntervalData } from "@/screens/DashboardScreen/summary/useSpotIn
 import { kilometersToMiles } from "@/utils/geo";
 
 import { AreaChart } from "@mantine/charts";
-import { Box, Group, Stack, Text, useComputedColorScheme } from "@mantine/core";
+import {
+    Box,
+    Group,
+    Stack,
+    Text,
+    getThemeColor,
+    useMantineTheme,
+} from "@mantine/core";
 
 const HEIGHT = 54; // height of the plot area in px
 const PAD = 3; // room above the plot so the top gridline isn't clipped
@@ -15,7 +25,7 @@ const SIDE_PAD = 4; // keeps the first and last points off the edge, in px
 const COLOR = "var(--mantine-color-blue-filled)"; // adapts to light and dark
 const HEADROOM = 1.1; // 10% padding above the busiest minute
 const MIN_SCALE = 6; // smallest top-of-scale (multiple of 3 so ticks are whole numbers)
-
+const STROKE_WIDTH = 4;
 // Axis text. Passing our own `tick` replaces Mantine's default, which carries the
 // theme-aware color, so the color has to be set here or it stays gray in dark mode.
 const TICK = { fontSize: 10, fill: "var(--mantine-color-dimmed)" };
@@ -27,7 +37,7 @@ const UNIT_LABEL = {
 
 const fmtSnr = (snr) => `${Math.round(snr)} dB`;
 
-// hollow dot for a minute with no spots (6px across, same as the distance chart)
+//move to shared?
 const renderDot = ({ cx, cy, index, payload }) =>
     payload.spots === 0 ? (
         <circle
@@ -45,17 +55,10 @@ export const SpotRateChart = ({ unitType = UnitType.METRIC }) => {
     const { filteredSpots } = useSpotData();
     const intervals = useSpotIntervalData(filteredSpots);
 
-    // Same colors as Mantine's own <Tooltip> (dark in light mode, light in dark mode),
-    // so this tooltip matches the one on the distance chart.
-    const isDark = useComputedColorScheme("light") === "dark";
-    const tipBg = isDark
-        ? "var(--mantine-color-gray-2)"
-        : "var(--mantine-color-gray-9)";
-    const tipColor = isDark
-        ? "var(--mantine-color-black)"
-        : "var(--mantine-color-white)";
+    const gradId = `snr-${useId().replace(/:/g, "")}`;
 
-    // keep the distance and SNR stats on each point so the tooltip can show them
+    const snrColor = (snr) => SignalColor.getColorForSNR(snr);
+
     const data = intervals.map((d, i) => ({
         minute: i,
         spots: d ? d.count : 0,
@@ -64,6 +67,15 @@ export const SpotRateChart = ({ unitType = UnitType.METRIC }) => {
         avgSnr: d?.avgSnr,
     }));
     const n = data.length;
+
+    // Line color: one gradient stop per minute, colored by that minute's average SNR
+    // (gray for minutes with no spots). A perfectly flat line has no height for the
+    // gradient to paint on, so it falls back to the plain color.
+    const flat = data.every((d) => d.spots === data[0]?.spots);
+    const stops = data.map((d, i) => ({
+        offset: n > 1 ? i / (n - 1) : 0,
+        color: d.spots > 0 ? snrColor(d.avgSnr) : "var(--mantine-color-gray-5)",
+    }));
 
     // Top of the scale: the busiest minute plus headroom, rounded up to a multiple
     // of 3 so the evenly spaced ticks are whole numbers.
@@ -90,15 +102,18 @@ export const SpotRateChart = ({ unitType = UnitType.METRIC }) => {
                     data={data}
                     dataKey="minute"
                     series={[{ name: "spots", color: COLOR }]}
-                    curveType="linear"
-                    strokeWidth={1.5}
-                    fillOpacity={0.12}
+                    curveType="natural"
+                    strokeWidth={STROKE_WIDTH}
+                    fillOpacity={0}
                     withGradient={false}
                     tickLine="none"
                     gridAxis="x"
                     strokeDasharray="0"
                     withDots={false}
-                    areaProps={{ dot: renderDot }}
+                    areaProps={{
+                        dot: renderDot,
+                        stroke: flat ? COLOR : `url(#${gradId})`,
+                    }}
                     yAxisProps={{
                         domain: [0, maxY],
                         ticks,
@@ -121,17 +136,7 @@ export const SpotRateChart = ({ unitType = UnitType.METRIC }) => {
                             const d = payload?.[0]?.payload;
                             if (!d) return null;
                             return (
-                                <Box
-                                    px="xs"
-                                    py={5}
-                                    style={{
-                                        background: tipBg,
-                                        color: tipColor,
-                                        borderRadius:
-                                            "var(--mantine-radius-sm)",
-                                        fontVariantNumeric: "tabular-nums",
-                                    }}
-                                >
+                                <ChartTooltip>
                                     <Stack gap={0}>
                                         <Text size="xs" fw={600} c="inherit">
                                             {whenLabel(d.minute)} · {d.spots}{" "}
@@ -149,9 +154,7 @@ export const SpotRateChart = ({ unitType = UnitType.METRIC }) => {
                                                     <Box
                                                         w={8}
                                                         h={8}
-                                                        bg={SignalColor.getColorForSNR(
-                                                            d.avgSnr,
-                                                        )}
+                                                        bg={snrColor(d.avgSnr)}
                                                         style={{
                                                             borderRadius: "50%",
                                                         }}
@@ -164,11 +167,23 @@ export const SpotRateChart = ({ unitType = UnitType.METRIC }) => {
                                             </>
                                         )}
                                     </Stack>
-                                </Box>
+                                </ChartTooltip>
                             );
                         },
                     }}
-                />
+                >
+                    <defs>
+                        <linearGradient id={gradId} x1="0" y1="0" x2="1" y2="0">
+                            {stops.map((s, i) => (
+                                <stop
+                                    key={i}
+                                    offset={`${s.offset * 100}%`}
+                                    style={{ stopColor: s.color }}
+                                />
+                            ))}
+                        </linearGradient>
+                    </defs>
+                </AreaChart>
             </Box>
         </Group>
     );
