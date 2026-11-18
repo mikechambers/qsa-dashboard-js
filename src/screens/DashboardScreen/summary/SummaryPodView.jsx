@@ -1,4 +1,4 @@
-import { Paper, Stack, Text, Group, Box } from "@mantine/core";
+import { Stack, Text, Group, Box } from "@mantine/core";
 
 export const SummaryPodView = ({
     value,

@@ -1,15 +1,13 @@
-import { Divider, Group, Paper, SimpleGrid } from "@mantine/core";
+import { Divider, Group, Paper } from "@mantine/core";
 import { SummaryPodView } from "./SummaryPodView";
 import { useSpotData } from "../../../context/SpotDataContext";
-import { convertAndFormatDistance } from "../../../utils/view";
+
 import { useSettings } from "../../../context/SettingsContext";
 import { ElapsedTimePod } from "./ElapsedTimePod";
-import { RecentContactPod } from "../RecentContactPod";
-import { useSelectedSpot } from "../../../context/SelectedSpotContext";
+
 import { FurthestSpotPod } from "@/screens/DashboardScreen/summary/FurthestSpotPod";
 import { DistanceSNRChart } from "@/screens/DashboardScreen/summary/DistanceSNRChart";
 import { SpotRateChart } from "@/screens/DashboardScreen/summary/SpotRateChart";
-import { SummaryChartBase } from "@/screens/DashboardScreen/summary/SummaryChartBase";
 
 export const SummaryPodsContainerView = () => {
     const { furthestSpot, uniqueStations, uniqueCountries, mostRecentSpot } =

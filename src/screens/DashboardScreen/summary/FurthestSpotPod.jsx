@@ -4,7 +4,7 @@ import { SummaryPodView } from "@/screens/DashboardScreen/summary/SummaryPodView
 import { convertAndFormatDistance } from "@/utils/view";
 
 export const FurthestSpotPod = ({ furthestSpot }) => {
-    const { selectedSpot, setSelectedSpot } = useSelectedSpot();
+    const { setSelectedSpot } = useSelectedSpot();
     const { settings } = useSettings();
 
     const { d, unit } = furthestSpot
