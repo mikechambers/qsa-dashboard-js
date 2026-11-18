@@ -14,6 +14,7 @@ export const StatView = ({ label, value }) => {
             <Text
                 size="sm"
                 fw={600}
+                truncate="end"
                 style={{
                     fontVariantNumeric: "tabular-nums",
                     whiteSpace: "nowrap",
