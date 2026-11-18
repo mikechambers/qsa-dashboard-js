@@ -5,12 +5,12 @@ export const SummaryChartBase = ({ children, label }) => {
         <Group gap="sm" wrap="wrap" align="center" pos="relative">
             {children}
             <Text
-                fz="xs"
-                lh={0.6}
+                size="xs"
+                tt="uppercase"
+                lts={0.5}
                 pos="absolute"
                 left="50%"
-                bottom={0}
-                tt="uppercase"
+                bottom={-6}
                 c="dimmed"
                 style={{
                     transform: "translateX(-50%)",

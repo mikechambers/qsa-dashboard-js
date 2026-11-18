@@ -37,7 +37,7 @@ export function SpotDataProvider({ children }) {
         setSpots([]);
     };
 
-    const mostRecentContact = useMemo(() => {
+    const mostRecentSpot = useMemo(() => {
         return filteredSpots[0];
     }, [filteredSpots]);
 
@@ -61,6 +61,17 @@ export function SpotDataProvider({ children }) {
         }
         return calls.size;
     }, [filteredSpots, settings?.callsign]);
+
+    const uniqueCountries = useMemo(() => {
+        const calls = new Set();
+
+        for (const s of filteredSpots) {
+            const c = s.receiverDXCC?.countryCode;
+            if (c) calls.add(c);
+        }
+
+        return [...calls];
+    }, [filteredSpots]);
 
     const updateState = () => {
         if (DEBUG) return;
@@ -175,7 +186,8 @@ export function SpotDataProvider({ children }) {
                 status,
                 furthestSpot,
                 uniqueStations,
-                mostRecentContact,
+                uniqueCountries,
+                mostRecentSpot,
             }}
         >
             {children}

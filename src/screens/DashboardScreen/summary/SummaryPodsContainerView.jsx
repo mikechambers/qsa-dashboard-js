@@ -12,8 +12,11 @@ import { SpotRateChart } from "@/screens/DashboardScreen/summary/SpotRateChart";
 import { SummaryChartBase } from "@/screens/DashboardScreen/summary/SummaryChartBase";
 
 export const SummaryPodsContainerView = () => {
-    const { furthestSpot, uniqueStations, mostRecentContact } = useSpotData();
+    const { furthestSpot, uniqueStations, uniqueCountries, mostRecentSpot } =
+        useSpotData();
     const { settings } = useSettings();
+
+    const uniqueStationsSubValue = `in ${uniqueCountries.length} ${uniqueCountries.length === 1 ? "country" : "countries"}`;
 
     return (
         <div id="summary">
@@ -25,11 +28,11 @@ export const SummaryPodsContainerView = () => {
                         <SummaryPodView
                             label="Stations"
                             value={uniqueStations}
-                            subvalue={"subvalue"}
+                            subvalue={uniqueStationsSubValue}
                         />
 
                         <Divider orientation="vertical" />
-                        <ElapsedTimePod />
+                        <ElapsedTimePod mostRecentSpot={mostRecentSpot} />
                     </Group>
                 </Paper>
                 <Paper withBorder radius="md" w={350}>

@@ -3,7 +3,7 @@ import { formatHMS } from "@/utils/view";
 import { useInterval } from "@mantine/hooks";
 import { useEffect, useState } from "react";
 
-export const RecentContactPod = ({ mostRecentContact }) => {
+export const RecentContactPod = ({ mostRecentSpot }) => {
     const [now, setNow] = useState(Date.now());
 
     const interval = useInterval(() => setNow(Date.now()), 1000);
@@ -13,8 +13,8 @@ export const RecentContactPod = ({ mostRecentContact }) => {
         return interval.stop;
     }, []);
 
-    const f = mostRecentContact
-        ? formatHMS((now - mostRecentContact.date.getTime()) / 1000)
+    const f = mostRecentSpot
+        ? formatHMS((now - mostRecentSpot.date.getTime()) / 1000)
         : undefined;
 
     return <SummaryPodView label="Since Last Contact" value={f} />;

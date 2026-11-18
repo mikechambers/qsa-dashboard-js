@@ -31,10 +31,7 @@ export const SummaryPodView = ({
                         </Text>
                     )}
                 </Group>
-                <Text
-                    size="xs"
-                    c="light-dark(var(--mantine-color-blue-9), var(--mantine-color-blue-3))"
-                >
+                <Text size="xs" c="dimmed">
                     {subvalue}
                 </Text>
             </Stack>
