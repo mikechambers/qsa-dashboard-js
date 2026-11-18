@@ -9,6 +9,7 @@ import { useSelectedSpot } from "../../../context/SelectedSpotContext";
 import { FurthestSpotPod } from "@/screens/DashboardScreen/summary/FurthestSpotPod";
 import { DistanceSNRChart } from "@/screens/DashboardScreen/summary/DistanceSNRChart";
 import { SpotRateChart } from "@/screens/DashboardScreen/summary/SpotRateChart";
+import { SummaryChartBase } from "@/screens/DashboardScreen/summary/SummaryChartBase";
 
 export const SummaryPodsContainerView = () => {
     const { furthestSpot, uniqueStations, mostRecentContact } = useSpotData();

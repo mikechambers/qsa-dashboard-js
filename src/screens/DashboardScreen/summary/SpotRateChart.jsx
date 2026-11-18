@@ -8,26 +8,19 @@ import { useSpotIntervalData } from "@/screens/DashboardScreen/summary/useSpotIn
 import { kilometersToMiles } from "@/utils/geo";
 
 import { AreaChart } from "@mantine/charts";
-import {
-    Box,
-    Group,
-    Stack,
-    Text,
-    getThemeColor,
-    useMantineTheme,
-} from "@mantine/core";
+import { Box, Group, Stack, Text } from "@mantine/core";
+import { SummaryChartBase } from "@/screens/DashboardScreen/summary/SummaryChartBase";
 
-const HEIGHT = 54; // height of the plot area in px
-const PAD = 3; // room above the plot so the top gridline isn't clipped
-const X_AXIS = 16; // height of the x axis label row
+const HEIGHT = 54;
+const PAD = 3;
+const X_AXIS = 16;
 const AXIS_WIDTH = 22;
-const SIDE_PAD = 4; // keeps the first and last points off the edge, in px
-const COLOR = "var(--mantine-color-blue-filled)"; // adapts to light and dark
+const SIDE_PAD = 4;
+const COLOR = "var(--mantine-color-blue-filled)";
 const HEADROOM = 1.1; // 10% padding above the busiest minute
-const MIN_SCALE = 6; // smallest top-of-scale (multiple of 3 so ticks are whole numbers)
+const MIN_SCALE = 6;
 const STROKE_WIDTH = 4;
-// Axis text. Passing our own `tick` replaces Mantine's default, which carries the
-// theme-aware color, so the color has to be set here or it stays gray in dark mode.
+
 const TICK = { fontSize: 10, fill: "var(--mantine-color-dimmed)" };
 
 const UNIT_LABEL = {
@@ -68,17 +61,14 @@ export const SpotRateChart = ({ unitType = UnitType.METRIC }) => {
     }));
     const n = data.length;
 
-    // Line color: one gradient stop per minute, colored by that minute's average SNR
-    // (gray for minutes with no spots). A perfectly flat line has no height for the
-    // gradient to paint on, so it falls back to the plain color.
+    // Line color one gradient stop per minute, colored by that minute's average SNR
+    // (gray for minutes with no spots).
     const flat = data.every((d) => d.spots === data[0]?.spots);
     const stops = data.map((d, i) => ({
         offset: n > 1 ? i / (n - 1) : 0,
         color: d.spots > 0 ? snrColor(d.avgSnr) : "var(--mantine-color-gray-5)",
     }));
 
-    // Top of the scale: the busiest minute plus headroom, rounded up to a multiple
-    // of 3 so the evenly spaced ticks are whole numbers.
     const peak = Math.ceil(Math.max(0, ...data.map((d) => d.spots)) * HEADROOM);
     const maxY = Math.max(MIN_SCALE, Math.ceil(peak / 3) * 3);
     const ticks = [0, maxY / 3, (maxY * 2) / 3, maxY];
@@ -92,7 +82,7 @@ export const SpotRateChart = ({ unitType = UnitType.METRIC }) => {
         i === n - 1 ? "this minute" : `${n - 1 - i} min ago`;
 
     return (
-        <Group gap="sm" wrap="wrap" align="center">
+        <SummaryChartBase label="Spots / Minute">
             <Box style={{ flex: "1 1 160px", minWidth: 0 }}>
                 <AreaChart
                     h={PAD + HEIGHT + X_AXIS}
@@ -185,6 +175,6 @@ export const SpotRateChart = ({ unitType = UnitType.METRIC }) => {
                     </defs>
                 </AreaChart>
             </Box>
-        </Group>
+        </SummaryChartBase>
     );
 };
