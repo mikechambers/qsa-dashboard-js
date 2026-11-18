@@ -85,10 +85,10 @@
 }
 
 
-#summaryPods {
+#filter {
     grid-column: 1 / -1; /* span the map and table columns */
 }
 
-#filter {
-    grid-column: 1 / -1; /* span the map and table columns */
+#summary {
+    grid-column: 1 / -1
 }

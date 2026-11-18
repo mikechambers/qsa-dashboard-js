@@ -19,5 +19,12 @@ export const ElapsedTimePod = () => {
 
     const f = formatHMS(seconds);
 
-    return <SummaryPodView label="Elapsed Time" value={f} />;
+    return (
+        <SummaryPodView
+            label="Elapsed"
+            value={f}
+            subvalue={"subvalue"}
+            useMonospace={true}
+        />
+    );
 };

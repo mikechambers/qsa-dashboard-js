@@ -1,4 +1,4 @@
-import { SummaryPodView } from "./SummaryPodView";
+import { SummaryPodView } from "./summary/SummaryPodView";
 import { formatHMS } from "@/utils/view";
 import { useInterval } from "@mantine/hooks";
 import { useEffect, useState } from "react";

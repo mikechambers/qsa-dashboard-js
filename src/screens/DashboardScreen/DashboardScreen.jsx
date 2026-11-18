@@ -10,7 +10,7 @@ import { SpotDetail } from "./SpotDetail";
 import { SpotTable } from "./SpotTable";
 import { DashboardHeaderView } from "./DashboardHeaderView";
 import { gridToLocation } from "@/utils/geo";
-import { SummaryPodsContainerView } from "./SummaryPodsContainerView";
+import { SummaryPodsContainerView } from "./summary/SummaryPodsContainerView";
 import { SpotFilterView } from "./SpotFilterView";
 import { SelectedSpotProvider } from "../../context/SelectedSpotContext";
 import { SelectedSpotDetail } from "./SelectedSpotDetail";
