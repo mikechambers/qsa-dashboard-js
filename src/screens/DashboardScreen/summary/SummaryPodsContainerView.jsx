@@ -35,7 +35,7 @@ export const SummaryPodsContainerView = () => {
                     <DistanceSNRChart unitType={settings.unitType} />
                 </Paper>
                 <Paper withBorder radius="md" w={350}>
-                    <SpotRateChart />
+                    <SpotRateChart unitType={settings.unitType} />
                 </Paper>
             </Group>
         </div>
