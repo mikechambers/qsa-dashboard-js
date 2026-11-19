@@ -12,7 +12,7 @@ import { SpotMap } from "./map/SpotMap";
 import { SpotTable } from "./SpotTable";
 import { DashboardHeaderView } from "./DashboardHeaderView";
 import { gridToLocation } from "@/utils/geo";
-import { SummaryPodsContainerView } from "./summary/SummaryPodsContainerView";
+import { PodContainer } from "./pods/PodContainer";
 import { SpotFilterView } from "./SpotFilterView";
 import { SelectedSpotProvider } from "../../contexts/SelectedSpotContext";
 import { SelectedSpotDetail } from "./SelectedSpotDetail";
@@ -51,7 +51,7 @@ export default function DashboardScreen(props) {
                 <DashboardHeaderView callsign={callsign} grid={grid} />
 
                 <div className={classes.dashboardScreenMain}>
-                    <SummaryPodsContainerView />
+                    <PodContainer />
 
                     <Collapse
                         className={classes.filter}

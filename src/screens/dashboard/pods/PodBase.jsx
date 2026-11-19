@@ -1,6 +1,6 @@
 import { Stack, Text, Group, Box } from "@mantine/core";
 
-export const SummaryPodView = ({
+export const SummaryBase = ({
     value,
     unit,
     label,

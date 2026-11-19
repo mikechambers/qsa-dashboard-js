@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { SummaryPodView } from "./SummaryPodView";
+import { SummaryBase } from "./PodBase";
 import { formatHMS } from "@/utils/view";
 import { useInterval } from "@mantine/hooks";
 
@@ -50,7 +50,7 @@ export const ElapsedTimePod = ({ mostRecentSpot }) => {
     const f = formatHMS(seconds);
 
     return (
-        <SummaryPodView
+        <SummaryBase
             label="Session"
             value={f}
             subvalue={subvalue}

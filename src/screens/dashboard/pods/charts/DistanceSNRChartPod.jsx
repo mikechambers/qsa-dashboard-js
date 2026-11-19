@@ -1,10 +1,10 @@
-import { ChartTooltip } from "./ChartTooltip";
+import { ChartTooltip } from "./ChartToolTip";
 import { useSpotData } from "@/contexts/SpotDataContext";
 import { SignalColor } from "@/enums/SignalColors";
 import { UnitType } from "@/enums/UnitType";
-import { SummaryChartBase } from "@/screens/dashboard/summary/SummaryChartBase";
+import { PodChartBase } from "./PodChartBase";
 
-import { useSpotIntervalData } from "@/screens/dashboard/summary/useSpotIntervalData";
+import { useSpotIntervalData } from "./useSpotIntervalData";
 import { kilometersToMiles } from "@/utils/geo";
 
 import { BarChart } from "@mantine/charts";
@@ -36,7 +36,7 @@ const fmtSnr = (snr) => `${Math.round(snr)} dB`;
 const tickLabel = (v) =>
     v >= 1000 ? `${Math.round(v / 100) / 10}k` : `${Math.round(v)}`;
 
-export const DistanceSNRChart = ({ unitType = UnitType.METRIC }) => {
+export const DistanceSNRChartPod = ({ unitType = UnitType.METRIC }) => {
     const { filteredSpots } = useSpotData();
     const intervals = useSpotIntervalData(filteredSpots);
 
@@ -97,7 +97,7 @@ export const DistanceSNRChart = ({ unitType = UnitType.METRIC }) => {
     };
 
     return (
-        <SummaryChartBase label="Max / Median Distance">
+        <PodChartBase label="Max / Median Distance">
             <Box style={{ flex: "1 1 260px", minWidth: 0 }}>
                 <BarChart
                     h={PAD + HEIGHT + X_AXIS}
@@ -175,6 +175,6 @@ export const DistanceSNRChart = ({ unitType = UnitType.METRIC }) => {
                     }}
                 />
             </Box>
-        </SummaryChartBase>
+        </PodChartBase>
     );
 };

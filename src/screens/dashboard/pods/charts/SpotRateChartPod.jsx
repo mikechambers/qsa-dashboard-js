@@ -1,15 +1,15 @@
 import { useId } from "react";
 
-import { ChartTooltip } from "./ChartTooltip";
+import { ChartTooltip } from "./ChartToolTip";
 import { useSpotData } from "@/contexts/SpotDataContext";
 import { SignalColor } from "@/enums/SignalColors";
 import { UnitType } from "@/enums/UnitType";
-import { useSpotIntervalData } from "@/screens/dashboard/summary/useSpotIntervalData";
+import { useSpotIntervalData } from "./useSpotIntervalData";
 import { kilometersToMiles } from "@/utils/geo";
 
 import { AreaChart } from "@mantine/charts";
 import { Box, Group, Stack, Text } from "@mantine/core";
-import { SummaryChartBase } from "@/screens/dashboard/summary/SummaryChartBase";
+import { PodChartBase } from "./PodChartBase";
 
 const HEIGHT = 54;
 const PAD = 3;
@@ -44,7 +44,7 @@ const renderDot = ({ cx, cy, index, payload }) =>
         />
     ) : null;
 
-export const SpotRateChart = ({ unitType = UnitType.METRIC }) => {
+export const SpotRateChartPod = ({ unitType = UnitType.METRIC }) => {
     const { filteredSpots } = useSpotData();
     const intervals = useSpotIntervalData(filteredSpots);
 
@@ -82,7 +82,7 @@ export const SpotRateChart = ({ unitType = UnitType.METRIC }) => {
         i === n - 1 ? "this minute" : `${n - 1 - i} min ago`;
 
     return (
-        <SummaryChartBase label="Spots / Minute">
+        <PodChartBase label="Spots / Minute">
             <Box style={{ flex: "1 1 160px", minWidth: 0 }}>
                 <AreaChart
                     h={PAD + HEIGHT + X_AXIS}
@@ -176,6 +176,6 @@ export const SpotRateChart = ({ unitType = UnitType.METRIC }) => {
                     </defs>
                 </AreaChart>
             </Box>
-        </SummaryChartBase>
+        </PodChartBase>
     );
 };

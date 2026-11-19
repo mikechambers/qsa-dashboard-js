@@ -1,17 +1,17 @@
 import classes from "../DashboardScreen.module.css";
 
 import { Divider, Group, Paper } from "@mantine/core";
-import { SummaryPodView } from "./SummaryPodView";
-import { useSpotData } from "../../../contexts/SpotDataContext";
+import { SummaryBase } from "./PodBase";
+import { useSpotData } from "@/contexts/SpotDataContext";
 
-import { useSettings } from "../../../contexts/SettingsContext";
+import { useSettings } from "@/contexts/SettingsContext";
 import { ElapsedTimePod } from "./ElapsedTimePod";
 
-import { FurthestSpotPod } from "@/screens/dashboard/summary/FurthestSpotPod";
-import { DistanceSNRChart } from "@/screens/dashboard/summary/DistanceSNRChart";
-import { SpotRateChart } from "@/screens/dashboard/summary/SpotRateChart";
+import { FurthestSpotPod } from "@/screens/dashboard/pods/FurthestSpotPod";
+import { DistanceSNRChartPod } from "./charts/DistanceSNRChartPod";
+import { SpotRateChartPod } from "./charts/SpotRateChartPod";
 
-export const SummaryPodsContainerView = () => {
+export const PodContainer = () => {
     const { furthestSpot, uniqueStations, uniqueCountries, mostRecentSpot } =
         useSpotData();
     const { settings } = useSettings();
@@ -25,7 +25,7 @@ export const SummaryPodsContainerView = () => {
                     <Group gap={20} align="stretch">
                         <FurthestSpotPod furthestSpot={furthestSpot} />
                         <Divider orientation="vertical" />
-                        <SummaryPodView
+                        <SummaryBase
                             label="Stations"
                             value={uniqueStations}
                             subvalue={uniqueStationsSubValue}
@@ -36,10 +36,10 @@ export const SummaryPodsContainerView = () => {
                     </Group>
                 </Paper>
                 <Paper withBorder radius="md" w={350}>
-                    <DistanceSNRChart unitType={settings.unitType} />
+                    <DistanceSNRChartPod unitType={settings.unitType} />
                 </Paper>
                 <Paper withBorder radius="md" w={350}>
-                    <SpotRateChart unitType={settings.unitType} />
+                    <SpotRateChartPod unitType={settings.unitType} />
                 </Paper>
             </Group>
         </div>

@@ -1,6 +1,6 @@
 import { useSelectedSpot } from "@/contexts/SelectedSpotContext";
 import { useSettings } from "@/contexts/SettingsContext";
-import { SummaryPodView } from "@/screens/dashboard/summary/SummaryPodView";
+import { SummaryBase } from "@/screens/dashboard/pods/PodBase";
 import { convertAndFormatDistance } from "@/utils/view";
 
 export const FurthestSpotPod = ({ furthestSpot }) => {
@@ -20,7 +20,7 @@ export const FurthestSpotPod = ({ furthestSpot }) => {
     };
 
     return (
-        <SummaryPodView
+        <SummaryBase
             label="Furthest"
             value={d}
             unit={unit}

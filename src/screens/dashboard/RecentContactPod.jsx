@@ -1,4 +1,4 @@
-import { SummaryPodView } from "./summary/SummaryPodView";
+import { SummaryBase } from "./pods/PodBase";
 import { formatHMS } from "@/utils/view";
 import { useInterval } from "@mantine/hooks";
 import { useEffect, useState } from "react";
@@ -17,5 +17,5 @@ export const RecentContactPod = ({ mostRecentSpot }) => {
         ? formatHMS((now - mostRecentSpot.date.getTime()) / 1000)
         : undefined;
 
-    return <SummaryPodView label="Since Last Contact" value={f} />;
+    return <SummaryBase label="Since Last Contact" value={f} />;
 };

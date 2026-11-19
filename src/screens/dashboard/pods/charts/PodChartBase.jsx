@@ -1,6 +1,6 @@
 import { Group, Text } from "@mantine/core";
 
-export const SummaryChartBase = ({ children, label }) => {
+export const PodChartBase = ({ children, label }) => {
     return (
         <Group gap="sm" wrap="wrap" align="center" pos="relative">
             <Text
