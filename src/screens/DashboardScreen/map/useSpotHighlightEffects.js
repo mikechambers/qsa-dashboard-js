@@ -1,9 +1,10 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import greatCircle from "@turf/great-circle";
+import { getCSSColorForSNR } from "@/utils/view";
 import {
-    SPOT_PATH,
     CONNECTION_LINE_PATH,
     CONNECTION_POINT,
+    SELECTED_SPOT,
     CIRCLE_RADIUS,
     CIRCLE_RADIUS_SELECTED,
     TRANSITION_DURATION_IN,
@@ -14,18 +15,41 @@ import {
 
 //hook that handles / controls spot highlights / animations
 export function useSpotHighlightEffects(map, ready, selectedSpot, location) {
-    //selectedSpot changes
-    useEffect(() => {
-        if (!map || !ready || !selectedSpot) return;
+    //features currently on the selected layer. a spot stays here while it
+    //shrinks back out, so the old and new spots can animate together
+    const featuresRef = useRef([]);
 
-        //find the spot that has already been drawns
+    //draw the selected spot on its own layer, on top of all other spots
+    useEffect(() => {
+        if (!map || !ready || !selectedSpot?.receiverLocation) return;
+
         const feature = {
             id: selectedSpot.id,
-            source: SPOT_PATH,
-            layer: { id: SPOT_PATH },
+            source: SELECTED_SPOT,
+            layer: { id: SELECTED_SPOT },
         };
 
-        //update it to animate its radius to a larger size
+        const syncSource = () =>
+            map.getSource(SELECTED_SPOT)?.setData({
+                type: "FeatureCollection",
+                features: featuresRef.current,
+            });
+
+        featuresRef.current = [
+            ...featuresRef.current.filter((f) => f.id !== selectedSpot.id),
+            {
+                type: "Feature",
+                id: selectedSpot.id,
+                geometry: {
+                    type: "Point",
+                    coordinates: selectedSpot.receiverLocation.coordinates,
+                },
+                properties: { color: getCSSColorForSNR(selectedSpot.snr) },
+            },
+        ];
+        syncSource();
+
+        //animate the radius up to the selected size
         map.transition(feature, {
             duration: TRANSITION_DURATION_IN,
             delay: 0,
@@ -33,13 +57,19 @@ export function useSpotHighlightEffects(map, ready, selectedSpot, location) {
             paint: { "circle-radius": [null, CIRCLE_RADIUS_SELECTED] },
         });
 
-        //when there is a new spot selected, animate the spot to its previous size
+        //shrink back down when deselected, then remove it from the layer
         return () => {
             map.transition(feature, {
                 duration: TRANSITION_DURATION_OUT,
                 ease: EASING_TYPE,
                 paint: { "circle-radius": [null, CIRCLE_RADIUS] },
             });
+            setTimeout(() => {
+                featuresRef.current = featuresRef.current.filter(
+                    (f) => f.id !== selectedSpot.id,
+                );
+                syncSource();
+            }, TRANSITION_DURATION_OUT);
         };
     }, [map, ready, selectedSpot]);
 

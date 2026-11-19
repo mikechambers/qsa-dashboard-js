@@ -8,6 +8,7 @@ export const LOCATION_COLOR = "#1c7ed6";
 export const CONNECTION_LINE_PATH = "CONNECTION_LINE_PATH";
 export const SPOT_PATH = "SPOT_PATH";
 export const CONNECTION_POINT = "CONNECTION_POINT";
+export const SELECTED_SPOT = "SELECTED_SPOT";
 
 export const CIRCLE_RADIUS = 6;
 export const CIRCLE_RADIUS_SELECTED = 18;
