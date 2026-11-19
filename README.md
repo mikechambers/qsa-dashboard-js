@@ -6,6 +6,16 @@ It provides insight into how your signal is propagating, as well as antenna perf
 
 Data is sourced via MQTT feed from [PSKReporter](https://www.mqtt.pskreporter.info/).
 
+**Feature**
+
+- Spot information, including location, distance and strength
+- Plot spots on world map
+- Filter data
+- Light / dark modes
+- Charts and data analysis
+- Open Source
+- Completely client side
+
 **Supported Modes**
 
 - FT8
@@ -33,6 +43,7 @@ Online version.
 #### Requirements
 
 - [NPM](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
+- Online connection
 
 #### Install required modules
 
