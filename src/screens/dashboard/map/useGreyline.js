@@ -1,5 +1,9 @@
 import { useEffect } from "react";
-import { updateGreyline, TWILIGHT_REFRESH_MS } from "./greylineLayers";
+import {
+    updateGreyline,
+    TWILIGHT_REFRESH_MS,
+    clearGreyline,
+} from "./greylineLayers";
 
 //hook for drawing / updating grayline overlays
 export function useGreyline(map, ready, settings) {
