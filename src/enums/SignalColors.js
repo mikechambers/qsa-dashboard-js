@@ -9,9 +9,9 @@ const SignalColors = {
 const VALUES = {
     VERY_WEAK: { hex: "#ED5C48", label: "Very Weak" },
     WEAK: { hex: "#FD843E", label: "Weak" },
-    FAIR: { hex: "#FFAF3E", label: "Fair" },
-    GOOD: { hex: "#E8D347", label: "Good" },
-    STRONG: { hex: "#76D970", label: "Strong" },
+    FAIR: { hex: "#F5C842", label: "Fair" },
+    GOOD: { hex: "#A3D94F", label: "Good" },
+    STRONG: { hex: "#4CC764", label: "Strong" },
 };
 
 export const SignalColor = Object.freeze({
