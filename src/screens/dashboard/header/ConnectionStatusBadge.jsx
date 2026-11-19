@@ -1,14 +1,14 @@
 import { useSpotData } from "@/contexts/SpotDataContext";
 import { Badge, Box } from "@mantine/core";
-import { ConnectionStatus } from "../../../enums/ConnectionStatus";
+import { ConnectionStatus as CS } from "@/enums/ConnectionStatus";
 
 const STATUS_STYLES = {
-    [ConnectionStatus.CONNECTED]: { color: "green", label: "Connected" },
-    [ConnectionStatus.CONNECTING]: { color: "yellow", label: "Connecting" },
-    [ConnectionStatus.DISCONNECTED]: { color: "red", label: "Disconnected" },
+    [CS.CONNECTED]: { color: "green", label: "Connected" },
+    [CS.CONNECTING]: { color: "yellow", label: "Connecting" },
+    [CS.DISCONNECTED]: { color: "red", label: "Disconnected" },
 };
 
-export const ConnectionStatusView = () => {
+export const ConnectionStatusBadge = () => {
     const { status } = useSpotData();
 
     const { color, label } = STATUS_STYLES[status];

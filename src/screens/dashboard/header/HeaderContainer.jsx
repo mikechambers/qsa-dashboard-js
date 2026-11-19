@@ -10,7 +10,7 @@ import {
     Badge,
     Indicator,
 } from "@mantine/core";
-import { ConnectionStatusView } from "./ConnectionStatusView";
+import { ConnectionStatusBadge } from "./ConnectionStatusBadge";
 import {
     IconAdjustmentsHorizontal,
     IconBrandGithub,
@@ -18,7 +18,7 @@ import {
 } from "@tabler/icons-react";
 
 import { normalizeCallsign, normalizeMaidenHeadGrid } from "@/utils/radio";
-import { ClockView } from "./ClockView";
+import { Clock } from "./Clock";
 import { useFullscreenDocument } from "@mantine/hooks";
 
 import { IconArrowsMaximize, IconArrowsMinimize } from "@tabler/icons-react";
@@ -26,7 +26,7 @@ import { TimeMode } from "@/enums/TimeMode";
 import { useSettings } from "@/contexts/SettingsContext";
 import { useSpotData } from "@/contexts/SpotDataContext";
 
-export const DashboardHeaderView = ({ callsign, grid }) => {
+export const HeaderContainer = ({ callsign, grid }) => {
     const { toggle, fullscreen } = useFullscreenDocument();
     const { settings, setShowFilters } = useSettings();
 
@@ -50,12 +50,12 @@ export const DashboardHeaderView = ({ callsign, grid }) => {
                     </Text>
                 </Group>
                 <Group>
-                    <ClockView timeMode={TimeMode.LOCAL} />
+                    <Clock timeMode={TimeMode.LOCAL} />
                     <Text c="dimmed">·</Text>
-                    <ClockView timeMode={TimeMode.UTC} />
+                    <Clock timeMode={TimeMode.UTC} />
                 </Group>
                 <Group wrap="nowrap" gap={32}>
-                    <ConnectionStatusView />
+                    <ConnectionStatusBadge />
                     <ButtonGroup>
                         <Button
                             variant={settings.showFilters ? "light" : "default"}

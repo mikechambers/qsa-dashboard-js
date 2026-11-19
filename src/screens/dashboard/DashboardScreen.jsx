@@ -10,7 +10,7 @@ import { useSpotData } from "@/contexts/SpotDataContext";
 import { SpotMap } from "./map/SpotMap";
 
 import { SpotTable } from "./spots/table/SpotTable";
-import { DashboardHeaderView } from "./header/DashboardHeaderView";
+import { HeaderContainer } from "./header/HeaderContainer";
 import { gridToLocation } from "@/utils/geo";
 import { PodContainer } from "./pods/PodContainer";
 import { SpotFilterView } from "./filters/SpotFilterView";
@@ -49,7 +49,7 @@ export default function DashboardScreen(props) {
             <div
                 className={`${classes.dashboardScreen} ${screenClasses.screen}`}
             >
-                <DashboardHeaderView callsign={callsign} grid={grid} />
+                <HeaderContainer callsign={callsign} grid={grid} />
 
                 <div className={classes.dashboardScreenMain}>
                     <PodContainer />

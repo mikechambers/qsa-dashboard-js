@@ -5,7 +5,7 @@ import { Title, Group } from "@mantine/core";
 import { getShortTimeZoneName } from "../../../utils/date";
 import { useEffect, useState } from "react";
 
-export const ClockView = ({ timeMode, isSecondary }) => {
+export const Clock = ({ timeMode, isSecondary }) => {
     const [now, setNow] = useState(() => new Date());
     const { settings } = useSettings();
     const interval = useInterval(() => setNow(new Date()), 1000);
