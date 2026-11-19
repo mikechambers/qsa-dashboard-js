@@ -5,7 +5,11 @@
     flex-grow: 1;
     display: grid;
     grid-template-columns: 1fr;
-    gap: var(--mantine-spacing-md);          /* 16px */
+
+    /* we handle gap manually with top margin below to handle collapse
+        element so it doesnt take up space when hidden
+    */
+    row-gap:0;
     margin-top: var(--mantine-spacing-md);   /* matches the gap */
     align-content: start;
     min-height: 0;
@@ -96,4 +100,10 @@
 
 #summary {
     grid-column: 1 / -1
+}
+
+#filter,
+#spotMap,
+#spotsContainer {
+    margin-top: var(--mantine-spacing-md);
 }
