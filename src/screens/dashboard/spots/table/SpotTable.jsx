@@ -7,7 +7,7 @@ import {
     EmptyState,
     ActionIcon,
 } from "@mantine/core";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { BandFrequencyView } from "./BandFrequencyCell";
 import { TimeCell } from "./TimeCell";
@@ -22,6 +22,9 @@ import { useSpotData } from "@/contexts/SpotDataContext";
 
 export const SpotTable = ({ spots }) => {
     const sd = useSpotData();
+
+    const hoverSelect = useRef(false);
+
     const clearSpots = sd.clearSpots;
     const totalSpots = sd.spots.length;
 
@@ -48,13 +51,6 @@ export const SpotTable = ({ spots }) => {
 
     let timeZone = getShortTimeZoneName(settings.timeMode);
 
-    useEffect(() => {
-        if (selectedSpot == null) return;
-        document
-            .getElementById(`spot-row-${selectedSpot.id}`)
-            ?.scrollIntoView({ block: "nearest", behavior: "smooth" });
-    }, [selectedSpot]);
-
     const virtualizer = useVirtualizer({
         count: spots.length,
         getScrollElement: () => scrollParent,
@@ -65,7 +61,30 @@ export const SpotTable = ({ spots }) => {
         getItemKey: (index) => spots[index].sequence,
     });
 
+    useEffect(() => {
+        if (selectedSpot == null) return;
+        if (hoverSelect.current) {
+            hoverSelect.current = false;
+            return;
+        }
+
+        const index = spots.findIndex(
+            (s) => s.sequence === selectedSpot.sequence,
+        );
+        if (index < 0) return;
+
+        const range = virtualizer.range;
+        const visible =
+            range && index >= range.startIndex && index <= range.endIndex;
+        if (!visible) virtualizer.scrollToIndex(index, { align: "start" });
+    }, [selectedSpot, spots, virtualizer, virtualizer?.range]);
+
     const virtualItems = virtualizer.getVirtualItems();
+
+    const paddingTop = virtualItems.length ? virtualItems[0].start : 0;
+    const paddingBottom = virtualItems.length
+        ? virtualizer.getTotalSize() - virtualItems[virtualItems.length - 1].end
+        : 0;
 
     const count = spots ? spots.length : 0;
 
@@ -160,10 +179,24 @@ export const SpotTable = ({ spots }) => {
                         </Table.Tr>
                     </Table.Thead>
                     <Table.Tbody>
+                        {paddingTop > 0 && (
+                            <Table.Tr>
+                                <Table.Td
+                                    colSpan={5}
+                                    style={{
+                                        height: paddingTop,
+                                        padding: 0,
+                                        border: 0,
+                                    }}
+                                />
+                            </Table.Tr>
+                        )}
                         {virtualItems.map((virtualRow) => {
                             const spot = spots[virtualRow.index];
                             return (
                                 <Table.Tr
+                                    ref={virtualizer.measureElement}
+                                    data-index={virtualRow.index}
                                     bg={
                                         selectedSpot === spot
                                             ? "var(--mantine-color-blue-light)"
@@ -172,7 +205,10 @@ export const SpotTable = ({ spots }) => {
                                     style={{ scrollMarginTop: 40 }}
                                     id={`spot-row-${spot.id}`}
                                     key={spot.sequence}
-                                    onMouseEnter={() => setSelectedSpot(spot)}
+                                    onMouseEnter={() => {
+                                        hoverSelect.current = true;
+                                        setSelectedSpot(spot);
+                                    }}
                                 >
                                     <Table.Td w={20}>
                                         <TimeCell date={spot.date} />
@@ -201,6 +237,18 @@ export const SpotTable = ({ spots }) => {
                                 </Table.Tr>
                             );
                         })}
+                        {paddingBottom > 0 && (
+                            <Table.Tr>
+                                <Table.Td
+                                    colSpan={5}
+                                    style={{
+                                        height: paddingBottom,
+                                        padding: 0,
+                                        border: 0,
+                                    }}
+                                />
+                            </Table.Tr>
+                        )}
                     </Table.Tbody>
                 </Table>
             </Table.ScrollContainer>
