@@ -1,6 +1,8 @@
 import { useParams, Navigate } from "react-router";
 import { useState } from "react";
 
+import screenClasses from "../screens.module.css";
+
 import { useSettings } from "@/contexts/SettingsContext";
 import { isValidCallsign, normalizeCallsign } from "@/utils/radio";
 import { useSpotData } from "@/contexts/SpotDataContext";
@@ -43,7 +45,7 @@ export default function DashboardScreen(props) {
 
     return (
         <SelectedSpotProvider>
-            <div id="dashboardScreen" className="screen">
+            <div id="dashboardScreen" className={screenClasses.screen}>
                 <DashboardHeaderView callsign={callsign} grid={grid} />
 
                 <div id="dashboardScreenMain">

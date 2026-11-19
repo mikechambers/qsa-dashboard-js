@@ -21,12 +21,3 @@ body,
   min-height: 0; 
   padding: 8px;
 }
-
-/* take up all the space */
-.screen {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    flex-grow: 1;
-    min-height: 0;
-}

@@ -2,8 +2,8 @@ import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Route, Routes, Navigate } from "react-router";
 import App from "./App";
-import ConfigScreen from "./screens/ConfigScreen/ConfigScreen";
-import DashboardScreen from "./screens/DashboardScreen/DashboardScreen";
+import ConfigScreen from "@/screens/config/ConfigScreen";
+import DashboardScreen from "@/screens/DashboardScreen/DashboardScreen";
 
 const root = document.getElementById("root");
 

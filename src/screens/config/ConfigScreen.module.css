@@ -1,12 +1,12 @@
 
 
-#configScreen {
+.configScreen {
     justify-content: flex-start;
     align-items: center; 
 }
 
 /* todo: make this a class */
-form {
+.configForm {
     display: flex;
     flex-direction: column;
     gap: 8px;

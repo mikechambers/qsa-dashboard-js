@@ -18,7 +18,8 @@ import { useSettings } from "@/contexts/SettingsContext";
 import { useNavigate } from "react-router";
 import { isValidCallsign, isValidMaidenHeadGrid } from "@/utils/radio";
 
-import "./ConfigScreen.css";
+import classes from "./ConfigScreen.module.css";
+import screenClasses from "../screens.module.css";
 import { UnitType } from "@/enums/UnitType";
 import { TimeMode } from "@/enums/TimeMode";
 import { DisplayMode } from "@/enums/DisplayMode";
@@ -47,7 +48,7 @@ const greylineLayers = [
     },
 ];
 
-export default function ConfigScreen(props) {
+export default function ConfigScreen() {
     const navigate = useNavigate();
 
     const {
@@ -105,8 +106,11 @@ export default function ConfigScreen(props) {
     };
 
     return (
-        <div id="configScreen" className="screen">
-            <form onSubmit={form.onSubmit(onUpdateClick)}>
+        <div className={`${classes.configScreen} ${screenClasses.screen}`}>
+            <form
+                className={classes.configForm}
+                onSubmit={form.onSubmit(onUpdateClick)}
+            >
                 <Stack gap="lg">
                     {settings.callsign && (
                         <Group>
