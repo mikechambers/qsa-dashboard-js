@@ -7,15 +7,14 @@ import {
     Button,
     ButtonGroup,
     Toggle,
+    Badge,
+    Indicator,
 } from "@mantine/core";
 import { ConnectionStatusView } from "./ConnectionStatusView";
 import {
     IconAdjustmentsHorizontal,
     IconBrandGithub,
     IconFilter2,
-    IconFilter2Search,
-    IconFilter2X,
-    IconListSearch,
 } from "@tabler/icons-react";
 
 import { normalizeCallsign, normalizeMaidenHeadGrid } from "@/utils/radio";
@@ -25,14 +24,19 @@ import { useFullscreenDocument } from "@mantine/hooks";
 import { IconArrowsMaximize, IconArrowsMinimize } from "@tabler/icons-react";
 import { TimeMode } from "@/enums/TimeMode";
 import { useSettings } from "@/context/SettingsContext";
+import { useSpotData } from "@/context/SpotDataContext";
 
 export const DashboardHeaderView = ({ callsign, grid }) => {
     const { toggle, fullscreen } = useFullscreenDocument();
     const { settings, setShowFilters } = useSettings();
 
+    const { spots, filteredSpots } = useSpotData();
+
     //todo: maybe normalize when we save?
     const cs = normalizeCallsign(callsign);
     const g = normalizeMaidenHeadGrid(grid);
+
+    const hasActiveFilters = spots.length !== filteredSpots.length;
 
     return (
         <Paper>
@@ -59,19 +63,40 @@ export const DashboardHeaderView = ({ callsign, grid }) => {
                                 setShowFilters(!settings.showFilters)
                             }
                             aria-pressed={settings.showFilters}
-                            leftSection={<IconFilter2 size={16} />}
+                            aria-label={
+                                settings.showFilters
+                                    ? "Close Filters"
+                                    : "Show Filters"
+                            }
+                            title={
+                                settings.showFilters
+                                    ? "Close Filters"
+                                    : "Show Filters"
+                            }
+                            leftSection={
+                                <Indicator
+                                    disabled={!hasActiveFilters}
+                                    size={7}
+                                    offset={1}
+                                    color="orange"
+                                    processing
+                                >
+                                    <IconFilter2 size={16} />
+                                </Indicator>
+                            }
                         >
                             Filters
                         </Button>
                         <Button
                             variant="default"
                             component="a"
+                            title="Open Settings"
                             href="/"
                             leftSection={
                                 <IconAdjustmentsHorizontal size={16} />
                             }
                         >
-                            Config
+                            Settings
                         </Button>
 
                         <Button

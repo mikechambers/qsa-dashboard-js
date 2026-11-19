@@ -21,7 +21,10 @@ import { modals } from "@mantine/modals";
 import { useSpotData } from "@/context/SpotDataContext";
 
 export const SpotTable = ({ spots }) => {
-    const { clearSpots } = useSpotData();
+    const sd = useSpotData();
+    const clearSpots = sd.clearSpots;
+    const totalSpots = sd.spots.length;
+
     const { selectedSpot, setSelectedSpot } = useSelectedSpot();
 
     const [scrollParent, setScrollParent] = useState(null);
@@ -115,7 +118,8 @@ export const SpotTable = ({ spots }) => {
                         fw={500}
                         style={{ fontVariantNumeric: "tabular-nums" }}
                     >
-                        {count} {count === 1 ? "spot" : "spots"}
+                        {count} of {totalSpots}{" "}
+                        {totalSpots === 1 ? "spot" : "spots"}
                     </Text>
                     <ActionIcon
                         variant="subtle"
