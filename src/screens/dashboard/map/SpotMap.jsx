@@ -7,7 +7,7 @@ import { IconCurrentLocation } from "@tabler/icons-react";
 import { ActionIcon } from "@mantine/core";
 import { useSettings } from "@/contexts/SettingsContext";
 import { DisplayMode } from "@/enums/DisplayMode";
-import { SNRKeyView } from "./SNRKeyView";
+import { SNRLegend } from "./SNRKey";
 
 import { DEFAULT_ZOOM } from "./config";
 
@@ -27,12 +27,10 @@ import {
 import { useSelectedSpot } from "../../../contexts/SelectedSpotContext";
 import { useSpotHighlightEffects } from "./useSpotHighlightEffects";
 
-import "./SpotMapView.css";
-
 //setup work for map library to do stuff on another threads
 setWorkerUrl(workerUrl);
 
-export const SpotMapView = ({ spots, location }) => {
+export const SpotMap = ({ spots, location }) => {
     const { settings } = useSettings();
     const { selectedSpot, setSelectedSpot } = useSelectedSpot();
 
@@ -101,7 +99,7 @@ export const SpotMapView = ({ spots, location }) => {
             >
                 <IconCurrentLocation size={18} />
             </ActionIcon>
-            <SNRKeyView
+            <SNRLegend
                 style={{
                     position: "absolute",
                     top: 10,

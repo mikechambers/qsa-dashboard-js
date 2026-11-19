@@ -2,6 +2,8 @@ import { useEffect } from "react";
 import { Marker } from "maplibre-gl";
 import { LOCATION_COLOR } from "./config";
 
+import classes from "./useHomeMarker.module.css";
+
 //hook for creating and setting home marker
 export function useHomeMarker(map, location) {
     useEffect(() => {
@@ -17,8 +19,8 @@ export function useHomeMarker(map, location) {
         el.style.boxShadow =
             "0 0 0 4px rgba(28,126,214,0.3), 0 0 6px rgba(0,0,0,0.4)";
 
-        //defines animation (defined in SpotMapView.css)
-        el.className = "home-marker";
+        //defines animation (defined in SpotMap.css)
+        el.className = classes.homeMarker;
 
         //add to map as HTML element. Will be on top of anything draw into
         //layers.

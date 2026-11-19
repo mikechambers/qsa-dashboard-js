@@ -7,7 +7,7 @@ import { useSettings } from "@/contexts/SettingsContext";
 import { isValidCallsign, normalizeCallsign } from "@/utils/radio";
 import { useSpotData } from "@/contexts/SpotDataContext";
 
-import { SpotMapView } from "./map/SpotMapView";
+import { SpotMap } from "./map/SpotMap";
 
 import { SpotTable } from "./SpotTable";
 import { DashboardHeaderView } from "./DashboardHeaderView";
@@ -61,10 +61,7 @@ export default function DashboardScreen(props) {
                     </Collapse>
 
                     <div className={classes.spotMap}>
-                        <SpotMapView
-                            location={location}
-                            spots={filteredSpots}
-                        />
+                        <SpotMap location={location} spots={filteredSpots} />
                     </div>
                     <div className={classes.spotsContainer}>
                         <SelectedSpotDetail />

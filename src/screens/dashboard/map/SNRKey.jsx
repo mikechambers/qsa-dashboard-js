@@ -1,7 +1,7 @@
 import { Text, Group, Box, Paper, Tooltip } from "@mantine/core";
 import { SignalColor } from "@/enums/SignalColors";
 
-export const SNRKeyView = () => {
+export const SNRLegend = () => {
     return (
         <Paper
             withBorder
