@@ -1,16 +1,19 @@
-# React + Vite
+# QSA Dashboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+QSA Dashboard is a web based dashboard for tracking radio signal propogation for specified individual callsigns.
 
-Currently, two official plugins are available:
+## Installation
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Usage
 
-## React Compiler
+## Questions, Feature Requests, Feedback
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+If you have any questions, feature requests, need help, or just want to chat, join the [dcli / DARCI Discord server](https://discord.gg/2Y8bV2Mq3p).
 
-## Expanding the Oxlint configuration
+If you have any questions, feature requests, issues or need help please post on the [issues page](https://github.com/mikechambers/qsa-dashboard-js/issues).
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+## License
+
+Project released under a [MIT License](LICENSE.md).
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-orange.svg)](LICENSE.md)
