@@ -10,6 +10,7 @@
         element so it doesnt take up space when hidden
     */
     row-gap:0;
+    column-gap:var(--mantine-spacing-md);
     margin-top: var(--mantine-spacing-md);   /* matches the gap */
     align-content: start;
     min-height: 0;
