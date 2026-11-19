@@ -1,6 +1,6 @@
 import { useId } from "react";
 
-import { ChartTooltip } from "./ChartToolTip";
+import { ChartTooltip } from "./ChartTooltip";
 import { useSpotData } from "@/contexts/SpotDataContext";
 import { SignalColor } from "@/enums/SignalColors";
 import { UnitType } from "@/enums/UnitType";
