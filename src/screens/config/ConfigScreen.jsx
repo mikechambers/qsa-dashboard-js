@@ -23,7 +23,7 @@ import screenClasses from "../screens.module.css";
 import { UnitType } from "@/enums/UnitType";
 import { TimeMode } from "@/enums/TimeMode";
 import { DisplayMode } from "@/enums/DisplayMode";
-import { ElevationValue } from "@/twilight";
+import { ElevationValue } from "@/lib/twilight";
 
 const greylineLayers = [
     {
