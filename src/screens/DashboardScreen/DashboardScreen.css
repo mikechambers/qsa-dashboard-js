@@ -14,9 +14,14 @@
 /* 768px matches mantine sm */
 @media (min-width: 48em) {
     #dashboardScreenMain {
-        grid-template-columns: 1fr 420px; /* this has to match minWidth in SpotTable */
-        grid-template-rows: auto auto 1fr; 
+        grid-template-columns: 1fr 420px;
+        grid-template-rows: auto auto 1fr;
     }
+
+    #summary         { grid-row: 1; }
+    #filter          { grid-row: 2; }
+    #spotMap         { grid-row: 3; }
+    #spotsContainer  { grid-row: 3; }
 }
 
 #spotMap {
