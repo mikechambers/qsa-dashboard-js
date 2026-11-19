@@ -7,17 +7,17 @@ import {
     Center,
 } from "@mantine/core";
 import { IconArrowRight } from "@tabler/icons-react";
-import { StatView } from "./StatView";
-import { CallsignDetailView } from "./CallsignDetailView";
-import { BandView } from "./BandView";
-import { ModeView } from "./ModeView";
+import { SpotField } from "./SpotField";
+import { CallsignField } from "./CallsignField";
+import { BandBadge } from "../BandBadge";
+import { ModeField } from "../ModeBadge";
 import {
     convertAndFormatDistance,
     formatFrequency,
     formatTime,
 } from "@/utils/view";
-import { useSettings } from "../../contexts/SettingsContext";
-import { getShortTimeZoneName } from "../../utils/date";
+import { useSettings } from "../../../../contexts/SettingsContext";
+import { getShortTimeZoneName } from "../../../../utils/date";
 
 export const SpotDetail = ({ spot }) => {
     let { settings } = useSettings();
@@ -52,37 +52,37 @@ export const SpotDetail = ({ spot }) => {
                 {/* Row 1: header */}
                 <Group gap="sm" wrap="nowrap" justify="space-between">
                     <Group>
-                        <CallsignDetailView callsign={spot.senderCall} />
+                        <CallsignField callsign={spot.senderCall} />
                         <IconArrowRight
                             size={16}
                             color="var(--mantine-color-dimmed)"
                         />
-                        <CallsignDetailView callsign={spot.receiverCall} />
+                        <CallsignField callsign={spot.receiverCall} />
                     </Group>
                     <Group gap="xs" wrap="nowrap">
-                        <BandView band={spot.band} />
-                        <ModeView mode={spot.mode} />
+                        <BandBadge band={spot.band} />
+                        <ModeField mode={spot.mode} />
                     </Group>
                 </Group>
 
                 {/* Row 2: stats */}
                 <SimpleGrid cols={4} spacing="md" verticalSpacing="sm">
-                    <StatView label={timeZone} value={time} />
-                    <StatView label="SNR" value={snr} />
-                    <StatView label="Frequency" value={frequency} />
+                    <SpotField label={timeZone} value={time} />
+                    <SpotField label="SNR" value={snr} />
+                    <SpotField label="Frequency" value={frequency} />
                     <Group></Group>
 
-                    <StatView label="Distance" value={`${d} ${unit}`} />
-                    <StatView
+                    <SpotField label="Distance" value={`${d} ${unit}`} />
+                    <SpotField
                         label="Location"
                         value={spot?.receiverDXCC?.shortName}
                     />
 
-                    <StatView
+                    <SpotField
                         label="ITU zone"
                         value={spot?.receiverDXCC?.ituZone}
                     />
-                    <StatView
+                    <SpotField
                         label="CQ zone"
                         value={spot?.receiverDXCC?.cqZone}
                     />

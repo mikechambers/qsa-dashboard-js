@@ -3,7 +3,7 @@ import { useSettings } from "@/contexts/SettingsContext";
 import { Text, Group } from "@mantine/core";
 import { convertAndFormatDistance } from "@/utils/view";
 
-export const DistanceView = ({ distance }) => {
+export const DistanceCell = ({ distance }) => {
     let { settings } = useSettings();
 
     let { d, unit } = convertAndFormatDistance(distance, settings.unitType);

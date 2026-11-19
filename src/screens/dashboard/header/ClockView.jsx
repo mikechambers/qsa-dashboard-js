@@ -1,8 +1,8 @@
 import { useSettings } from "@/contexts/SettingsContext";
 import { useInterval } from "@mantine/hooks";
-import { formatTime } from "../../utils/view";
+import { formatTime } from "../../../utils/view";
 import { Title, Group } from "@mantine/core";
-import { getShortTimeZoneName } from "../../utils/date";
+import { getShortTimeZoneName } from "../../../utils/date";
 import { useEffect, useState } from "react";
 
 export const ClockView = ({ timeMode, isSecondary }) => {

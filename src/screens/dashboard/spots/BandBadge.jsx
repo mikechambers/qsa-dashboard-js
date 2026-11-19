@@ -48,7 +48,7 @@ export const getColorForBand = (band) => {
     }
 };
 
-export const BandView = ({ band }) => {
+export const BandBadge = ({ band }) => {
     return (
         <Badge
             variant="dot"

@@ -1,8 +1,8 @@
 import { Text } from "@mantine/core";
 import { formatTime } from "@/utils/view";
-import { useSettings } from "../../contexts/SettingsContext";
+import { useSettings } from "@/contexts/SettingsContext";
 
-export const TimeView = ({ date }) => {
+export const TimeCell = ({ date }) => {
     const { settings } = useSettings();
 
     let time = formatTime(date, settings.timeMode);

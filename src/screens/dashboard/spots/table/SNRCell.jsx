@@ -1,10 +1,10 @@
 import { Text, Group } from "@mantine/core";
-import { SNRBarView } from "./SNRBarView";
+import { SNRBar } from "../SNRBar";
 
-export const SNRView = ({ snr }) => {
+export const SNRCell = ({ snr }) => {
     return (
         <Group gap={4} justify="flex-end" wrap="nowrap" p={0}>
-            <SNRBarView snr={snr} />
+            <SNRBar snr={snr} />
             <Text
                 size="sm"
                 ta="right"

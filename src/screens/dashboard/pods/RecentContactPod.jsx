@@ -1,4 +1,4 @@
-import { SummaryBase } from "./pods/PodBase";
+import { SummaryBase } from "./PodBase";
 import { formatHMS } from "@/utils/view";
 import { useInterval } from "@mantine/hooks";
 import { useEffect, useState } from "react";

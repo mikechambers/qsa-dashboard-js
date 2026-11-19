@@ -1,6 +1,6 @@
 import { Stack, Text } from "@mantine/core";
 
-export const StatView = ({ label, value }) => {
+export const SpotField = ({ label, value }) => {
     return (
         <Stack gap={2}>
             <Text

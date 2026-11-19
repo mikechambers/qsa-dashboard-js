@@ -1,7 +1,8 @@
 import classes from "./DashboardScreen.module.css";
 import { SpotTable } from "./SpotTable";
 
-export const SpotsView = ({ spots, onSpotHighlight }) => {
+export const SpotTableContainer = ({ spots, onSpotHighlight }) => {
+    //todo: do we need these two divs?
     return (
         <div className={classes.spotsView}>
             <div className={classes.spotsViewTable}>

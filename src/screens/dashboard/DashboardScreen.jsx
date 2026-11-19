@@ -9,14 +9,15 @@ import { useSpotData } from "@/contexts/SpotDataContext";
 
 import { SpotMap } from "./map/SpotMap";
 
-import { SpotTable } from "./SpotTable";
-import { DashboardHeaderView } from "./DashboardHeaderView";
+import { SpotTable } from "./spots/table/SpotTable";
+import { DashboardHeaderView } from "./header/DashboardHeaderView";
 import { gridToLocation } from "@/utils/geo";
 import { PodContainer } from "./pods/PodContainer";
-import { SpotFilterView } from "./SpotFilterView";
-import { SelectedSpotProvider } from "../../contexts/SelectedSpotContext";
-import { SelectedSpotDetail } from "./SelectedSpotDetail";
+import { SpotFilterView } from "./filters/SpotFilterView";
+import { SelectedSpotProvider } from "@/contexts/SelectedSpotContext";
+import { SelectedSpotDetail } from "./spots/detail/SelectedSpotDetail";
 import { Collapse } from "@mantine/core";
+import { SpotsContainer } from "./spots/SpotsContainer";
 
 export default function DashboardScreen(props) {
     let params = useParams();
@@ -63,10 +64,8 @@ export default function DashboardScreen(props) {
                     <div className={classes.spotMap}>
                         <SpotMap location={location} spots={filteredSpots} />
                     </div>
-                    <div className={classes.spotsContainer}>
-                        <SelectedSpotDetail />
-                        <SpotTable spots={filteredSpots} />
-                    </div>
+
+                    <SpotsContainer spots={filteredSpots} />
                 </div>
             </div>
         </SelectedSpotProvider>

@@ -12,13 +12,13 @@ import {
     Badge,
 } from "@mantine/core";
 import { useState } from "react";
-import { SpotFilter } from "../../models/SpotFilter";
-import { useSpotData } from "../../contexts/SpotDataContext";
-import { Band } from "../../enums/Band";
-import { ALL_CASES } from "../../consts";
-import { Mode } from "../../enums/Mode";
-import { useSettings } from "../../contexts/SettingsContext";
-import { UnitType } from "../../enums/UnitType";
+import { SpotFilter } from "../../../models/SpotFilter";
+import { useSpotData } from "../../../contexts/SpotDataContext";
+import { Band } from "../../../enums/Band";
+import { ALL_CASES } from "../../../consts";
+import { Mode } from "../../../enums/Mode";
+import { useSettings } from "../../../contexts/SettingsContext";
+import { UnitType } from "../../../enums/UnitType";
 import { useDisclosure } from "@mantine/hooks";
 import {
     IconFilter2,

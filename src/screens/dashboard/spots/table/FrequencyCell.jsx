@@ -1,7 +1,7 @@
 import { Text } from "@mantine/core";
 import { formatFrequency } from "@/utils/view";
 
-export const FrequencyView = ({ frequency }) => {
+export const FrequencyCell = ({ frequency }) => {
     let f = formatFrequency(frequency);
 
     return (

@@ -9,13 +9,13 @@ import {
 } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { BandFrequencyView } from "./BandFrequencyView";
-import { TimeView } from "./TimeView";
-import { SNRView } from "./SNRView";
-import { DistanceView } from "./DistanceView";
-import { useSettings } from "../../contexts/SettingsContext";
-import { getShortTimeZoneName } from "../../utils/date";
-import { useSelectedSpot } from "../../contexts/SelectedSpotContext";
+import { BandFrequencyView } from "./BandFrequencyCell";
+import { TimeCell } from "./TimeCell";
+import { SNRCell } from "./SNRCell";
+import { DistanceCell } from "./DistanceCell";
+import { useSettings } from "@/contexts/SettingsContext";
+import { getShortTimeZoneName } from "@/utils/date";
+import { useSelectedSpot } from "@/contexts/SelectedSpotContext";
 import { IconInbox, IconTrash } from "@tabler/icons-react";
 import { modals } from "@mantine/modals";
 import { useSpotData } from "@/contexts/SpotDataContext";
@@ -175,7 +175,7 @@ export const SpotTable = ({ spots }) => {
                                     onMouseEnter={() => setSelectedSpot(spot)}
                                 >
                                     <Table.Td w={20}>
-                                        <TimeView date={spot.date} />
+                                        <TimeCell date={spot.date} />
                                     </Table.Td>
                                     <Table.Td ta="left">
                                         <Text size="sm">
@@ -183,13 +183,13 @@ export const SpotTable = ({ spots }) => {
                                         </Text>
                                     </Table.Td>
                                     <Table.Td ta="right">
-                                        <DistanceView
+                                        <DistanceCell
                                             distance={spot.distance}
                                         />
                                     </Table.Td>
 
                                     <Table.Td ta="right">
-                                        <SNRView snr={spot.snr} />
+                                        <SNRCell snr={spot.snr} />
                                     </Table.Td>
 
                                     <Table.Td ta="center">

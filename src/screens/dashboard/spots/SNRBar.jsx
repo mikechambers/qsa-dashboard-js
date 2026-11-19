@@ -1,7 +1,7 @@
 import { Box } from "@mantine/core";
-import { SignalColor } from "../../enums/SignalColors";
+import { SignalColor } from "@/enums/SignalColors";
 
-export const SNRBarView = ({ snr }) => {
+export const SNRBar = ({ snr }) => {
     const name = SignalColor.getNameForSNR(snr);
     return (
         <Box
