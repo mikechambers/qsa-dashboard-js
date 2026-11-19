@@ -71,7 +71,7 @@ export function useSpotHighlightEffects(map, ready, selectedSpot, location) {
                 syncSource();
             }, TRANSITION_DURATION_OUT);
         };
-    }, [map, ready, selectedSpot]);
+    }, [map, ready, selectedSpot?.id]);
 
     //draws line from home to the selected spot
     useEffect(() => {
@@ -101,5 +101,5 @@ export function useSpotHighlightEffects(map, ready, selectedSpot, location) {
             );
             map.getSource(CONNECTION_POINT)?.setData(EMPTY_FEATURE_COLLECTION);
         };
-    }, [map, ready, selectedSpot, location]);
+    }, [map, ready, selectedSpot?.id, location?.id]);
 }

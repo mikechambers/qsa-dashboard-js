@@ -9,6 +9,10 @@ export default class Location {
         this.grid = grid;
     }
 
+    get id() {
+        return `${this.latitude},${this.longitude}`;
+    }
+
     //return in format for maplibre
     get coordinates() {
         return [this.longitude, this.latitude];
