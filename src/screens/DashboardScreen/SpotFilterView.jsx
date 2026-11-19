@@ -50,6 +50,7 @@ export const SpotFilterView = () => {
             <Paper withBorder p="md">
                 <Group align="flex-end" gap="xl">
                     <TextInput
+                        size="xs"
                         label="Callsign"
                         placeholder="callsign"
                         value={filter.callsign}
@@ -64,6 +65,7 @@ export const SpotFilterView = () => {
                     />
                     <Select
                         label="Band"
+                        size="xs"
                         placeholder="All"
                         data={bandValues}
                         w={140}
@@ -73,6 +75,7 @@ export const SpotFilterView = () => {
 
                     <Select
                         label="Mode"
+                        size="xs"
                         placeholder="All"
                         data={modeValues}
                         w={140}
@@ -84,6 +87,7 @@ export const SpotFilterView = () => {
                         <Slider
                             defaultValue={-24}
                             min={-24}
+                            size="xs"
                             max={10}
                             step={1}
                             onChange={(v) => setFilter(filter.with({ snr: v }))}
@@ -106,6 +110,7 @@ export const SpotFilterView = () => {
                             defaultValue={0}
                             marks={distanceValues}
                             min={0}
+                            size="xs"
                             max={distanceValues.at(-1).value}
                             step={100}
                             onChange={(v) =>
@@ -122,6 +127,7 @@ export const SpotFilterView = () => {
                         </Text>
                         <Button
                             variant="default"
+                            size="xs"
                             onClick={() => setFilter(new SpotFilter())}
                         >
                             Reset
