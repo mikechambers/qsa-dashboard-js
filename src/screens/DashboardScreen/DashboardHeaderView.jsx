@@ -23,8 +23,8 @@ import { useFullscreenDocument } from "@mantine/hooks";
 
 import { IconArrowsMaximize, IconArrowsMinimize } from "@tabler/icons-react";
 import { TimeMode } from "@/enums/TimeMode";
-import { useSettings } from "@/context/SettingsContext";
-import { useSpotData } from "@/context/SpotDataContext";
+import { useSettings } from "@/contexts/SettingsContext";
+import { useSpotData } from "@/contexts/SpotDataContext";
 
 export const DashboardHeaderView = ({ callsign, grid }) => {
     const { toggle, fullscreen } = useFullscreenDocument();

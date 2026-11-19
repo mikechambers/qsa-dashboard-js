@@ -1,9 +1,9 @@
 import { useParams, Navigate } from "react-router";
 import { useState } from "react";
 
-import { useSettings } from "@/context/SettingsContext";
+import { useSettings } from "@/contexts/SettingsContext";
 import { isValidCallsign, normalizeCallsign } from "@/utils/radio";
-import { useSpotData } from "@/context/SpotDataContext";
+import { useSpotData } from "@/contexts/SpotDataContext";
 import "./DashboardScreen.css";
 import { SpotMapView } from "./map/SpotMapView";
 import { SpotDetail } from "./SpotDetail";
@@ -12,7 +12,7 @@ import { DashboardHeaderView } from "./DashboardHeaderView";
 import { gridToLocation } from "@/utils/geo";
 import { SummaryPodsContainerView } from "./summary/SummaryPodsContainerView";
 import { SpotFilterView } from "./SpotFilterView";
-import { SelectedSpotProvider } from "../../context/SelectedSpotContext";
+import { SelectedSpotProvider } from "../../contexts/SelectedSpotContext";
 import { SelectedSpotDetail } from "./SelectedSpotDetail";
 import { Collapse } from "@mantine/core";
 

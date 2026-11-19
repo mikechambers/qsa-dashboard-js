@@ -1,5 +1,5 @@
-import { useSelectedSpot } from "@/context/SelectedSpotContext";
-import { useSettings } from "@/context/SettingsContext";
+import { useSelectedSpot } from "@/contexts/SelectedSpotContext";
+import { useSettings } from "@/contexts/SettingsContext";
 import { SummaryPodView } from "@/screens/DashboardScreen/summary/SummaryPodView";
 import { convertAndFormatDistance } from "@/utils/view";
 

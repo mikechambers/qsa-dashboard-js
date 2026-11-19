@@ -13,12 +13,12 @@ import { BandFrequencyView } from "./BandFrequencyView";
 import { TimeView } from "./TimeView";
 import { SNRView } from "./SNRView";
 import { DistanceView } from "./DistanceView";
-import { useSettings } from "../../context/SettingsContext";
+import { useSettings } from "../../contexts/SettingsContext";
 import { getShortTimeZoneName } from "../../utils/date";
-import { useSelectedSpot } from "../../context/SelectedSpotContext";
+import { useSelectedSpot } from "../../contexts/SelectedSpotContext";
 import { IconInbox, IconTrash } from "@tabler/icons-react";
 import { modals } from "@mantine/modals";
-import { useSpotData } from "@/context/SpotDataContext";
+import { useSpotData } from "@/contexts/SpotDataContext";
 
 export const SpotTable = ({ spots }) => {
     const sd = useSpotData();

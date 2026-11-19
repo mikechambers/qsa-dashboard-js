@@ -16,7 +16,7 @@ import {
     formatFrequency,
     formatTime,
 } from "@/utils/view";
-import { useSettings } from "../../context/SettingsContext";
+import { useSettings } from "../../contexts/SettingsContext";
 import { getShortTimeZoneName } from "../../utils/date";
 
 export const SpotDetail = ({ spot }) => {

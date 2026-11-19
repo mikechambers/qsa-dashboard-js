@@ -6,8 +6,8 @@ import "./App.css";
 import { MantineProvider, createTheme } from "@mantine/core";
 
 import { Outlet } from "react-router";
-import { SettingsProvider, useSettings } from "./context/SettingsContext";
-import { SpotDataProvider } from "./context/SpotDataContext";
+import { SettingsProvider, useSettings } from "./contexts/SettingsContext";
+import { SpotDataProvider } from "./contexts/SpotDataContext";
 
 //const App = (props) => {
 

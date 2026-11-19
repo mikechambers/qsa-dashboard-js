@@ -1,6 +1,6 @@
 import { Text } from "@mantine/core";
 import { formatTime } from "@/utils/view";
-import { useSettings } from "../../context/SettingsContext";
+import { useSettings } from "../../contexts/SettingsContext";
 
 export const TimeView = ({ date }) => {
     const { settings } = useSettings();

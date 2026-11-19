@@ -5,7 +5,7 @@ import "maplibre-gl/dist/maplibre-gl.css";
 
 import { IconCurrentLocation } from "@tabler/icons-react";
 import { ActionIcon } from "@mantine/core";
-import { useSettings } from "@/context/SettingsContext";
+import { useSettings } from "@/contexts/SettingsContext";
 import { DisplayMode } from "@/enums/DisplayMode";
 import { SNRKeyView } from "./SNRKeyView";
 
@@ -24,7 +24,7 @@ import {
     addSpotLayer,
 } from "./spotLayers";
 
-import { useSelectedSpot } from "../../../context/SelectedSpotContext";
+import { useSelectedSpot } from "../../../contexts/SelectedSpotContext";
 import { useSpotHighlightEffects } from "./useSpotHighlightEffects";
 
 import "./SpotMapView.css";

@@ -1,4 +1,4 @@
-import { useSettings } from "@/context/SettingsContext";
+import { useSettings } from "@/contexts/SettingsContext";
 
 import { Text, Group } from "@mantine/core";
 import { convertAndFormatDistance } from "@/utils/view";

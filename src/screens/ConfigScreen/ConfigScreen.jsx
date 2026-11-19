@@ -13,7 +13,7 @@ import {
 } from "@mantine/core";
 
 import { useForm } from "@mantine/form";
-import { useSettings } from "@/context/SettingsContext";
+import { useSettings } from "@/contexts/SettingsContext";
 
 import { useNavigate } from "react-router";
 import { isValidCallsign, isValidMaidenHeadGrid } from "@/utils/radio";

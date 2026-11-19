@@ -1,4 +1,4 @@
-import { useSpotData } from "@/context/SpotDataContext";
+import { useSpotData } from "@/contexts/SpotDataContext";
 import { Badge, Box } from "@mantine/core";
 import { ConnectionStatus } from "../../enums/ConnectionStatus";
 

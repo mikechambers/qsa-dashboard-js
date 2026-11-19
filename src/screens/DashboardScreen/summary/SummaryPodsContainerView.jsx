@@ -1,8 +1,8 @@
 import { Divider, Group, Paper } from "@mantine/core";
 import { SummaryPodView } from "./SummaryPodView";
-import { useSpotData } from "../../../context/SpotDataContext";
+import { useSpotData } from "../../../contexts/SpotDataContext";
 
-import { useSettings } from "../../../context/SettingsContext";
+import { useSettings } from "../../../contexts/SettingsContext";
 import { ElapsedTimePod } from "./ElapsedTimePod";
 
 import { FurthestSpotPod } from "@/screens/DashboardScreen/summary/FurthestSpotPod";

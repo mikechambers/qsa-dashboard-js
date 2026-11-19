@@ -13,11 +13,11 @@ import {
 } from "@mantine/core";
 import { useState } from "react";
 import { SpotFilter } from "../../models/SpotFilter";
-import { useSpotData } from "../../context/SpotDataContext";
+import { useSpotData } from "../../contexts/SpotDataContext";
 import { Band } from "../../enums/Band";
 import { ALL_CASES } from "../../consts";
 import { Mode } from "../../enums/Mode";
-import { useSettings } from "../../context/SettingsContext";
+import { useSettings } from "../../contexts/SettingsContext";
 import { UnitType } from "../../enums/UnitType";
 import { useDisclosure } from "@mantine/hooks";
 import {

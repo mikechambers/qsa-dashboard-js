@@ -1,4 +1,4 @@
-import { useSettings } from "@/context/SettingsContext";
+import { useSettings } from "@/contexts/SettingsContext";
 import { useInterval } from "@mantine/hooks";
 import { formatTime } from "../../utils/view";
 import { Title, Group } from "@mantine/core";

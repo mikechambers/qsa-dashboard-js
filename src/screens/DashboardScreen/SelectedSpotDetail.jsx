@@ -1,4 +1,4 @@
-import { useSelectedSpot } from "../../context/SelectedSpotContext";
+import { useSelectedSpot } from "../../contexts/SelectedSpotContext";
 import { SpotDetail } from "./SpotDetail";
 
 export const SelectedSpotDetail = ({}) => {

@@ -1,5 +1,5 @@
 import { ChartTooltip } from "./ChartTooltip";
-import { useSpotData } from "@/context/SpotDataContext";
+import { useSpotData } from "@/contexts/SpotDataContext";
 import { SignalColor } from "@/enums/SignalColors";
 import { UnitType } from "@/enums/UnitType";
 import { SummaryChartBase } from "@/screens/DashboardScreen/summary/SummaryChartBase";
