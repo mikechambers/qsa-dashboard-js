@@ -215,7 +215,7 @@ export const SpotTable = ({ spots }) => {
                                     </Table.Td>
                                     <Table.Td ta="left">
                                         <Text size="sm">
-                                            {spot.senderDXCC?.countryCode?.toUpperCase()}
+                                            {spot.receiverDXCC?.countryCode?.toUpperCase()}
                                         </Text>
                                     </Table.Td>
                                     <Table.Td ta="right">
