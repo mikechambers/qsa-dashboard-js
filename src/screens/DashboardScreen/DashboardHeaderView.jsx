@@ -6,11 +6,16 @@ import {
     Title,
     Button,
     ButtonGroup,
+    Toggle,
 } from "@mantine/core";
 import { ConnectionStatusView } from "./ConnectionStatusView";
 import {
     IconAdjustmentsHorizontal,
     IconBrandGithub,
+    IconFilter2,
+    IconFilter2Search,
+    IconFilter2X,
+    IconListSearch,
 } from "@tabler/icons-react";
 
 import { normalizeCallsign, normalizeMaidenHeadGrid } from "@/utils/radio";
@@ -19,9 +24,11 @@ import { useFullscreenDocument } from "@mantine/hooks";
 
 import { IconArrowsMaximize, IconArrowsMinimize } from "@tabler/icons-react";
 import { TimeMode } from "@/enums/TimeMode";
+import { useSettings } from "@/context/SettingsContext";
 
 export const DashboardHeaderView = ({ callsign, grid }) => {
     const { toggle, fullscreen } = useFullscreenDocument();
+    const { settings, setShowFilters } = useSettings();
 
     //todo: maybe normalize when we save?
     const cs = normalizeCallsign(callsign);
@@ -46,6 +53,16 @@ export const DashboardHeaderView = ({ callsign, grid }) => {
                 <Group wrap="nowrap" gap={32}>
                     <ConnectionStatusView />
                     <ButtonGroup>
+                        <Button
+                            variant={settings.showFilters ? "light" : "default"}
+                            onClick={() =>
+                                setShowFilters(!settings.showFilters)
+                            }
+                            aria-pressed={settings.showFilters}
+                            leftSection={<IconFilter2 size={16} />}
+                        >
+                            Filters
+                        </Button>
                         <Button
                             variant="default"
                             component="a"

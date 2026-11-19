@@ -14,12 +14,13 @@ import { SummaryPodsContainerView } from "./summary/SummaryPodsContainerView";
 import { SpotFilterView } from "./SpotFilterView";
 import { SelectedSpotProvider } from "../../context/SelectedSpotContext";
 import { SelectedSpotDetail } from "./SelectedSpotDetail";
+import { Collapse } from "@mantine/core";
 
 export default function DashboardScreen(props) {
     let params = useParams();
     let { settings } = useSettings();
 
-    const { spots, filteredSpots, status } = useSpotData();
+    const { filteredSpots } = useSpotData();
 
     let callsign = params.callsign;
     let grid = params.grid;
@@ -48,7 +49,9 @@ export default function DashboardScreen(props) {
                 <div id="dashboardScreenMain">
                     <SummaryPodsContainerView />
 
-                    <SpotFilterView />
+                    <Collapse id="filter" expanded={settings.showFilters}>
+                        <SpotFilterView />
+                    </Collapse>
 
                     <div id="spotMap">
                         <SpotMapView

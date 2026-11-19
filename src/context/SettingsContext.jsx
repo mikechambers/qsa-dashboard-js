@@ -45,6 +45,12 @@ export function SettingsProvider({ children }) {
         getInitialValueInEffect: false,
     });
 
+    const [showFilters, setShowFilters] = useLocalStorage({
+        key: "showFilters",
+        defaultValue: true,
+        getInitialValueInEffect: false,
+    });
+
     const [elevationValues, setElevationValues] = useLocalStorage({
         key: "elevationValues",
         defaultValue: [
@@ -63,6 +69,7 @@ export function SettingsProvider({ children }) {
         displayMode,
         showGreyline,
         elevationValues,
+        showFilters,
     };
 
     return (
@@ -76,6 +83,7 @@ export function SettingsProvider({ children }) {
                 setDisplayMode,
                 setShowGreyline,
                 setElevationValues,
+                setShowFilters,
             }}
         >
             {children}
