@@ -1,3 +1,5 @@
+import classes from "../DashboardScreen.module.css";
+
 import { Divider, Group, Paper } from "@mantine/core";
 import { SummaryPodView } from "./SummaryPodView";
 import { useSpotData } from "../../../contexts/SpotDataContext";
@@ -5,9 +7,9 @@ import { useSpotData } from "../../../contexts/SpotDataContext";
 import { useSettings } from "../../../contexts/SettingsContext";
 import { ElapsedTimePod } from "./ElapsedTimePod";
 
-import { FurthestSpotPod } from "@/screens/DashboardScreen/summary/FurthestSpotPod";
-import { DistanceSNRChart } from "@/screens/DashboardScreen/summary/DistanceSNRChart";
-import { SpotRateChart } from "@/screens/DashboardScreen/summary/SpotRateChart";
+import { FurthestSpotPod } from "@/screens/dashboard/summary/FurthestSpotPod";
+import { DistanceSNRChart } from "@/screens/dashboard/summary/DistanceSNRChart";
+import { SpotRateChart } from "@/screens/dashboard/summary/SpotRateChart";
 
 export const SummaryPodsContainerView = () => {
     const { furthestSpot, uniqueStations, uniqueCountries, mostRecentSpot } =
@@ -17,7 +19,7 @@ export const SummaryPodsContainerView = () => {
     const uniqueStationsSubValue = `in ${uniqueCountries.length} ${uniqueCountries.length === 1 ? "country" : "countries"}`;
 
     return (
-        <div id="summary">
+        <div className={classes.summary}>
             <Group gap="md">
                 <Paper withBorder radius="md">
                     <Group gap={20} align="stretch">

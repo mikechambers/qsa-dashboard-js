@@ -1,6 +1,6 @@
 import { useSelectedSpot } from "@/contexts/SelectedSpotContext";
 import { useSettings } from "@/contexts/SettingsContext";
-import { SummaryPodView } from "@/screens/DashboardScreen/summary/SummaryPodView";
+import { SummaryPodView } from "@/screens/dashboard/summary/SummaryPodView";
 import { convertAndFormatDistance } from "@/utils/view";
 
 export const FurthestSpotPod = ({ furthestSpot }) => {

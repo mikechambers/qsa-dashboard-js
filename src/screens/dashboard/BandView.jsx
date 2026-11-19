@@ -62,5 +62,3 @@ export const BandView = ({ band }) => {
         </Badge>
     );
 };
-
-// <div className="bandContainer" style={{background: getColorForBand(band)}}>{band}</div>

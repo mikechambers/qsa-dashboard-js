@@ -1,14 +1,14 @@
 import { useParams, Navigate } from "react-router";
-import { useState } from "react";
 
+import classes from "./DashboardScreen.module.css";
 import screenClasses from "../screens.module.css";
 
 import { useSettings } from "@/contexts/SettingsContext";
 import { isValidCallsign, normalizeCallsign } from "@/utils/radio";
 import { useSpotData } from "@/contexts/SpotDataContext";
-import "./DashboardScreen.css";
+
 import { SpotMapView } from "./map/SpotMapView";
-import { SpotDetail } from "./SpotDetail";
+
 import { SpotTable } from "./SpotTable";
 import { DashboardHeaderView } from "./DashboardHeaderView";
 import { gridToLocation } from "@/utils/geo";
@@ -45,23 +45,28 @@ export default function DashboardScreen(props) {
 
     return (
         <SelectedSpotProvider>
-            <div id="dashboardScreen" className={screenClasses.screen}>
+            <div
+                className={`${classes.dashboardScreen} ${screenClasses.screen}`}
+            >
                 <DashboardHeaderView callsign={callsign} grid={grid} />
 
-                <div id="dashboardScreenMain">
+                <div className={classes.dashboardScreenMain}>
                     <SummaryPodsContainerView />
 
-                    <Collapse id="filter" expanded={settings.showFilters}>
+                    <Collapse
+                        className={classes.filter}
+                        expanded={settings.showFilters}
+                    >
                         <SpotFilterView />
                     </Collapse>
 
-                    <div id="spotMap">
+                    <div className={classes.spotMap}>
                         <SpotMapView
                             location={location}
                             spots={filteredSpots}
                         />
                     </div>
-                    <div id="spotsContainer">
+                    <div className={classes.spotsContainer}>
                         <SelectedSpotDetail />
                         <SpotTable spots={filteredSpots} />
                     </div>

@@ -4,12 +4,12 @@ import { ChartTooltip } from "./ChartTooltip";
 import { useSpotData } from "@/contexts/SpotDataContext";
 import { SignalColor } from "@/enums/SignalColors";
 import { UnitType } from "@/enums/UnitType";
-import { useSpotIntervalData } from "@/screens/DashboardScreen/summary/useSpotIntervalData";
+import { useSpotIntervalData } from "@/screens/dashboard/summary/useSpotIntervalData";
 import { kilometersToMiles } from "@/utils/geo";
 
 import { AreaChart } from "@mantine/charts";
 import { Box, Group, Stack, Text } from "@mantine/core";
-import { SummaryChartBase } from "@/screens/DashboardScreen/summary/SummaryChartBase";
+import { SummaryChartBase } from "@/screens/dashboard/summary/SummaryChartBase";
 
 const HEIGHT = 54;
 const PAD = 3;
