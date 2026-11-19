@@ -149,7 +149,7 @@ export default function ConfigScreen() {
                         <Stack gap="md">
                             <Stack gap={4}>
                                 <Text size="sm" fw={600}>
-                                    Display
+                                    Theme
                                 </Text>
                                 <SegmentedControl
                                     fullWidth
@@ -191,7 +191,7 @@ export default function ConfigScreen() {
 
                             <Stack gap={4}>
                                 <Text size="sm" fw={600}>
-                                    Time Mode
+                                    Time Zone
                                 </Text>
                                 <SegmentedControl
                                     fullWidth
