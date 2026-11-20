@@ -23,10 +23,12 @@ import { IconArrowsMaximize, IconArrowsMinimize } from "@tabler/icons-react";
 import { TimeMode } from "@/enums/TimeMode";
 import { useSettings } from "@/contexts/SettingsContext";
 import { useSpotData } from "@/contexts/SpotDataContext";
+import { useNavigate } from "react-router";
 
 export const HeaderContainer = ({ callsign, grid }) => {
     const { toggle, fullscreen } = useFullscreenDocument();
     const { settings, setShowFilters } = useSettings();
+    const navigate = useNavigate();
 
     const { spots, filteredSpots } = useSpotData();
 
@@ -87,9 +89,8 @@ export const HeaderContainer = ({ callsign, grid }) => {
                         </Button>
                         <Button
                             variant="default"
-                            component="a"
                             title="Open Settings"
-                            href="/"
+                            onClick={() => navigate("/")}
                             leftSection={
                                 <IconAdjustmentsHorizontal size={16} />
                             }

@@ -114,7 +114,6 @@ export const SpotFilterView = () => {
                 <Stack gap={4} w={200}>
                     <Input.Label size="xs">Min SNR (dB)</Input.Label>
                     <Slider
-                        defaultValue={-24}
                         min={-24}
                         size="xs"
                         max={10}
@@ -135,7 +134,6 @@ export const SpotFilterView = () => {
                         Min Distance ({distanceAbbreviation})
                     </Input.Label>
                     <Slider
-                        defaultValue={0}
                         marks={distanceValues}
                         value={sliderDistance}
                         min={0}
