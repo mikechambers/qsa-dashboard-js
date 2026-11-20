@@ -62,6 +62,11 @@ export const SpotFilterView = () => {
         setFilter(filter.with({ distance: v }));
     };
 
+    const sliderDistance =
+        settings.unitType == UnitType.METRIC
+            ? filter.distance
+            : Math.round(kilometersToMiles(filter.distance));
+
     return (
         <Paper withBorder>
             <Group align="flex-end" gap="xl">
@@ -132,7 +137,7 @@ export const SpotFilterView = () => {
                     <Slider
                         defaultValue={0}
                         marks={distanceValues}
-                        value={filter.distance}
+                        value={sliderDistance}
                         min={0}
                         size="xs"
                         max={distanceValues.at(-1).value}
