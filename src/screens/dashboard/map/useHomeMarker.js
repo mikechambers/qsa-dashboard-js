@@ -29,5 +29,5 @@ export function useHomeMarker(map, location) {
             .addTo(map);
 
         return () => marker.remove();
-    }, [map, location]);
+    }, [map, location?.id]);
 }
