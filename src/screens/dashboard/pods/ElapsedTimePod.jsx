@@ -27,6 +27,8 @@ function timeAgo(date) {
             return rtf.format(-count, interval.label);
         }
     }
+
+    return rtf.format(0, "second");
 }
 
 export const ElapsedTimePod = ({ mostRecentSpot }) => {
