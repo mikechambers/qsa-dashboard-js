@@ -39,12 +39,40 @@ export const isUSCallsign = (callsign) => {
     return /^(?:A[A-L]|[KNW])/i.test(callsign)
 }
 
-export const isValidCallsign = (callsign) => {
+const PORTABLE_SUFFIXES = new Set(["P", "M", "MM", "AM", "QRP", "A", "B"])
+
+const isValidPlainCallsign = (callsign) => {
     if(isUSCallsign(callsign)) {
         return isValidUSCallsign(callsign)
     } else {
         return isValidGlobalCallsign(callsign)
     }
+}
+
+//accepts plain callsigns (W1AW) and portable forms with a prefix and / or
+//suffix: DL/W1AW, W1AW/P, W1AW/7, DL/W1AW/P. Exactly one part must be a
+//valid plain callsign. The other parts must look like a prefix or a suffix.
+export const isValidCallsign = (callsign) => {
+    if(typeof callsign !== "string") {
+        return false
+    }
+
+    const parts = callsign.trim().toUpperCase().split("/")
+
+    if(parts.length > 3 || parts.some((p) => p === "")) {
+        return false
+    }
+
+    if(parts.filter(isValidPlainCallsign).length !== 1) {
+        return false
+    }
+
+    return parts.every((p) =>
+        isValidPlainCallsign(p) ||
+        /^[0-9]$/.test(p) ||
+        PORTABLE_SUFFIXES.has(p) ||
+        /^[A-Z0-9]{1,4}$/.test(p)
+    )
 }
 
 export const isValidUSCallsign = (callsign) => {

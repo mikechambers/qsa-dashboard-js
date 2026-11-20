@@ -88,10 +88,34 @@ describe('input handling', () => {
   })
 })
 
+describe('isValidCallsign: portable', () => {
+  it.each([
+    'W1AW/P', 'W1AW/M', 'W1AW/MM', 'W1AW/QRP', // suffix
+    'W1AW/7', 'W6MSH/1',                        // numeric region suffix
+    'DL/W1AW', 'VE3/W6MSH', 'KH6/W1AW',         // prefix
+    'DL/W1AW/P', 'EA8/DL1ABC/M',                // prefix and suffix
+    'w1aw/p', ' W1AW/P ',                       // case and whitespace
+  ])('accepts %s', (call) => {
+    expect(isValidCallsign(call)).toBe(true)
+  })
+
+  it.each([
+    'W1AW/',        // empty suffix
+    '/P',           // no base call
+    '/W1AW',        // empty prefix
+    'W1AW//P',      // empty part
+    'ABC/DEF',      // no valid base call
+    'P/QRP',        // no valid base call
+    'W1AW/K1ABC',   // two base calls
+    'DL/W1AW/P/M',  // too many parts
+    'W1AW/TOOLONG', // not a prefix or suffix
+    'W1AW/P!',      // punctuation
+  ])('rejects "%s"', (call) => {
+    expect(isValidCallsign(call)).toBe(false)
+  })
+})
+
 describe('known gaps (not implemented yet)', () => {
-  it.todo('accepts portable suffix: W1AW/P')
-  it.todo('accepts numeric region suffix: W1AW/7')
-  it.todo('accepts prefix-style portable: DL/W1AW')
   it.todo('rejects 1x1 special-event calls like W1A if you decide to')
 })
 

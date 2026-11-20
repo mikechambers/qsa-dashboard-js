@@ -48,13 +48,13 @@ Online version.
 #### Install required modules
 
 ```
-npm install
+$ npm install
 ```
 
 #### Run
 
 ```
-npm run dev
+$ npm run dev
 ```
 
 Then point your browser to the dev url (printed out in terminal when you run it).
@@ -62,7 +62,7 @@ Then point your browser to the dev url (printed out in terminal when you run it)
 If you want to play around without transmitting, you can run in debug mode:
 
 ```
-npm run debug
+$ npm run debug
 ```
 
 which will prepopulate the app with mock spots.
@@ -125,6 +125,14 @@ PSKReporter clears this every 5 minutes.
 ## Known Issues
 
 - chart, flurry of spots on first transmission
+
+## Development
+
+There are a couple of tests included (mostly for callsign and grid validation), which you can run with:
+
+```
+$ npm test
+```
 
 ## Questions, Feature Requests, Feedback
 
