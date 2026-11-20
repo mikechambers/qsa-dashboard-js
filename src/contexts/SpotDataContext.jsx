@@ -13,6 +13,7 @@ import { ConnectionStatus } from "../enums/ConnectionStatus";
 import { DEBUG, MOCK_SPOTS } from "@/debug/";
 import Spot from "../models/Spot";
 import { SpotFilter } from "../models/SpotFilter";
+import { SPOT_LIMIT } from "@/consts";
 
 const SpotDataContext = createContext(null);
 
@@ -108,8 +109,20 @@ export function SpotDataProvider({ children }) {
         client.on("end", updateState);
 
         client.on("message", (topic, message) => {
-            const spot = Spot.fromData(JSON.parse(message.toString()));
-            setSpots((prev) => [...prev, spot].sort((a, b) => b.date - a.date));
+            let spot;
+            try {
+                spot = Spot.fromData(JSON.parse(message.toString()));
+            } catch (e) {
+                console.error("Error parsing Spot JSON. Skipping.", e);
+                return;
+            }
+
+            setSpots((prev) => {
+                const next = [spot, ...prev].sort((a, b) => b.date - a.date);
+                return next.length > SPOT_LIMIT
+                    ? next.slice(0, SPOT_LIMIT)
+                    : next;
+            });
         });
 
         const errHandler = (err) => {
