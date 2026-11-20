@@ -58,7 +58,6 @@
     flex-direction: column;
     min-width: 0;
     overflow: auto;
-    height: 100%;
     gap:8px;
     min-height: 0; 
 }
