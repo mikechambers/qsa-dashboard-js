@@ -25,6 +25,7 @@ import {
     IconFilter2Search,
     IconListSearch,
 } from "@tabler/icons-react";
+import { kilometersToMiles, milesToKilometers } from "@/utils/geo";
 
 const bandValues = [ALL_CASES, ...Band.cases];
 const modeValues = [ALL_CASES, ...Mode.cases];
@@ -49,6 +50,17 @@ export const SpotFilterView = () => {
                   { value: 9000, label: "9k" },
                   { value: 12000, label: "12k" },
               ];
+
+    const distanceAbbreviation =
+        settings.unitType == UnitType.METRIC ? "km" : "mi";
+
+    const setDistanceFilter = (value) => {
+        let v =
+            settings.unitType == UnitType.METRIC
+                ? value
+                : milesToKilometers(value);
+        setFilter(filter.with({ distance: v }));
+    };
 
     return (
         <Paper withBorder>
@@ -112,8 +124,7 @@ export const SpotFilterView = () => {
                 </Stack>
                 <Stack gap={4} w={200}>
                     <Input.Label size="xs">
-                        Min Distance (
-                        {settings.unitType == UnitType.METRIC ? "km" : "mi"})
+                        Min Distance ({distanceAbbreviation})
                     </Input.Label>
                     <Slider
                         defaultValue={0}
@@ -122,10 +133,10 @@ export const SpotFilterView = () => {
                         size="xs"
                         max={distanceValues.at(-1).value}
                         step={100}
-                        onChange={(v) =>
-                            setFilter(filter.with({ distance: v }))
+                        onChange={(v) => setDistanceFilter(v)}
+                        label={(v) =>
+                            `${v.toLocaleString()} ${distanceAbbreviation}`
                         }
-                        label={(v) => `${v.toLocaleString()} km`}
                         mb="md"
                     />
                 </Stack>

@@ -1,6 +1,5 @@
 import { UnitType } from "@/enums/UnitType";
 import { kilometersToMiles } from "@/utils/geo";
-import { clamp } from "@/utils/math";
 import { TimeMode } from "../enums/TimeMode";
 import { SignalColor } from "../enums/SignalColors";
 

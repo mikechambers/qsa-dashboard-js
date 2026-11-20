@@ -22,3 +22,11 @@ export const kilometersToMiles = function (kilometers) {
 
     return kilometers * 0.621371;
 };
+
+export const milesToKilometers = function (miles) {
+    if (!miles) {
+        return 0;
+    }
+
+    return miles * 1.60934;
+};
