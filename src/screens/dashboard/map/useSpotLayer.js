@@ -62,7 +62,7 @@ export function useSpotLayer(map, ready, spots, onSpotHighlight) {
 
         return () => {
             map.off("mouseenter", SPOT_PATH, onEnter);
-            map.off("click", SPOT_PATH, onClick);
+            map.off("click", onClick);
         };
     }, [map, ready]);
 }
