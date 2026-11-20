@@ -157,7 +157,7 @@ export const SpotTable = ({ spots }) => {
                 scrollAreaProps={{ viewportRef: setScrollParent }}
             >
                 <Table
-                    styles={{ td: { "vertical-align": "top" } }}
+                    styles={{ td: { verticalAlign: "top" } }}
                     stickyHeader
                     highlightOnHover
                     withTableBorder
