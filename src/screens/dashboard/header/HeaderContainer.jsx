@@ -6,8 +6,6 @@ import {
     Title,
     Button,
     ButtonGroup,
-    Toggle,
-    Badge,
     Indicator,
 } from "@mantine/core";
 import { ConnectionStatusBadge } from "./ConnectionStatusBadge";
