@@ -90,6 +90,7 @@ export const SpotFilterView = () => {
                     size="xs"
                     placeholder="All"
                     data={bandValues}
+                    value={filter.band}
                     w={140}
                     onChange={(v) => setFilter(filter.with({ band: v }))}
                     allowDeselect={false}
@@ -100,6 +101,7 @@ export const SpotFilterView = () => {
                     size="xs"
                     placeholder="All"
                     data={modeValues}
+                    value={filter.mode}
                     w={140}
                     onChange={(v) => setFilter(filter.with({ mode: v }))}
                     allowDeselect={false}
@@ -111,6 +113,7 @@ export const SpotFilterView = () => {
                         min={-24}
                         size="xs"
                         max={10}
+                        value={filter.snr}
                         step={1}
                         onChange={(v) => setFilter(filter.with({ snr: v }))}
                         marks={[
@@ -129,6 +132,7 @@ export const SpotFilterView = () => {
                     <Slider
                         defaultValue={0}
                         marks={distanceValues}
+                        value={filter.distance}
                         min={0}
                         size="xs"
                         max={distanceValues.at(-1).value}
@@ -151,15 +155,6 @@ export const SpotFilterView = () => {
                     >
                         Reset
                     </Button>
-                    {/*
-                            <Button
-                                variant="default"
-                                size="xs"
-                                onClick={toggle}
-                            >
-                                Hide Filters
-                            </Button>
-                             */}
                 </Group>
             </Group>
         </Paper>
