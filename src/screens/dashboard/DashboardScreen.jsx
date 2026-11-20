@@ -4,7 +4,12 @@ import classes from "./DashboardScreen.module.css";
 import screenClasses from "../screens.module.css";
 
 import { useSettings } from "@/contexts/SettingsContext";
-import { isValidCallsign, normalizeCallsign } from "@/utils/radio";
+import {
+    isValidCallsign,
+    isValidMaidenHeadGrid,
+    normalizeCallsign,
+    normalizeMaidenHeadGrid,
+} from "@/utils/radio";
 import { useSpotData } from "@/contexts/SpotDataContext";
 
 import { SpotMap } from "./map/SpotMap";
@@ -34,8 +39,11 @@ export default function DashboardScreen(props) {
     }
 
     let location;
-    if (grid) {
+    if (grid && isValidMaidenHeadGrid(grid)) {
+        grid = normalizeMaidenHeadGrid(grid);
         location = gridToLocation(grid);
+    } else {
+        grid = "";
     }
 
     if (typeof callsign === "string" && isValidCallsign(callsign.trim())) {
