@@ -12,7 +12,7 @@ export const FurthestSpotPod = ({ furthestSpot }) => {
         : {};
 
     const subvalue = furthestSpot?.receiverCall
-        ? `${furthestSpot.receiverCall} · ${furthestSpot.receiverDXCC.countryCode.toUpperCase()} · ${furthestSpot.snr} dB`
+        ? `${furthestSpot?.receiverCall} · ${furthestSpot?.receiverDXCC?.countryCode?.toUpperCase()} · ${furthestSpot.snr} dB`
         : "";
 
     const onFurthestClick = () => {
