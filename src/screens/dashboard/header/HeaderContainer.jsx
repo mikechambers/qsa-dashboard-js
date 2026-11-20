@@ -30,13 +30,11 @@ export const HeaderContainer = ({ callsign, grid }) => {
     const { settings, setShowFilters } = useSettings();
     const navigate = useNavigate();
 
-    const { spots, filteredSpots } = useSpotData();
+    const { filter } = useSpotData();
 
     //todo: maybe normalize when we save?
     const cs = normalizeCallsign(callsign);
     const g = normalizeMaidenHeadGrid(grid);
-
-    const hasActiveFilters = spots.length !== filteredSpots.length;
 
     return (
         <Paper>
@@ -75,7 +73,7 @@ export const HeaderContainer = ({ callsign, grid }) => {
                             }
                             leftSection={
                                 <Indicator
-                                    disabled={!hasActiveFilters}
+                                    disabled={!filter.hasFilter()}
                                     size={7}
                                     offset={1}
                                     color="orange"

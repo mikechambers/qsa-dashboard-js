@@ -12,7 +12,7 @@ import {
     Badge,
 } from "@mantine/core";
 import { useState } from "react";
-import { SpotFilter } from "../../../models/SpotFilter";
+import { SpotFilter, SpotFilterDefaults } from "../../../models/SpotFilter";
 import { useSpotData } from "../../../contexts/SpotDataContext";
 import { Band } from "../../../enums/Band";
 import { ALL_CASES } from "../../../consts";
