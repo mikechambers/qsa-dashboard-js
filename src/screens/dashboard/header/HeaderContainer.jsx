@@ -23,6 +23,7 @@ import { IconArrowsMaximize, IconArrowsMinimize } from "@tabler/icons-react";
 import { TimeMode } from "@/enums/TimeMode";
 import { useSettings } from "@/contexts/SettingsContext";
 import { useSpotData } from "@/contexts/SpotDataContext";
+import { SETTINGS_PATH } from "@/consts/config";
 import { useNavigate } from "react-router";
 
 export const HeaderContainer = ({ callsign, grid }) => {
@@ -88,7 +89,7 @@ export const HeaderContainer = ({ callsign, grid }) => {
                         <Button
                             variant="default"
                             title="Open Settings"
-                            onClick={() => navigate("/")}
+                            onClick={() => navigate(SETTINGS_PATH)}
                             leftSection={
                                 <IconAdjustmentsHorizontal size={16} />
                             }

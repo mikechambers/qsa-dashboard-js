@@ -17,6 +17,7 @@ import { useSettings } from "@/contexts/SettingsContext";
 
 import { useNavigate } from "react-router";
 import { isValidCallsign, isValidMaidenHeadGrid } from "@/utils/radio";
+import { dashboardPath } from "@/utils/routes";
 
 import classes from "./ConfigScreen.module.css";
 import screenClasses from "../screens.module.css";
@@ -94,15 +95,11 @@ export default function ConfigScreen() {
         setCallsign(c);
         setGrid(g);
 
-        navigate(
-            `/dashboard/${encodeURIComponent(c)}/${encodeURIComponent(g)}/`,
-        );
+        navigate(dashboardPath(c, g));
     };
 
     const onBackClick = () => {
-        navigate(
-            `/dashboard/${encodeURIComponent(settings.callsign)}/${encodeURIComponent(settings.grid)}/`,
-        );
+        navigate(dashboardPath(settings.callsign, settings.grid));
     };
 
     return (

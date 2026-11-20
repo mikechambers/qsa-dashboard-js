@@ -7,23 +7,18 @@ import {
     useMemo,
 } from "react";
 import mqtt from "mqtt";
-import { useSettings } from "./SettingsContext";
 import { ConnectionStatus } from "../enums/ConnectionStatus";
 
 import { DEBUG, MOCK_SPOTS } from "@/debug/";
 import Spot from "../models/Spot";
 import { SpotFilter } from "../models/SpotFilter";
-import { SPOT_LIMIT } from "@/consts";
+import { SPOT_LIMIT } from "@/consts/config";
 
 const SpotDataContext = createContext(null);
 
 export function SpotDataProvider({ children }) {
-    const { settings } = useSettings();
-
-    //const { stations, setStations } = useState(new Map());
-
     const [spots, setSpots] = useState(DEBUG ? MOCK_SPOTS : []);
-    //const [furthestSpot, setFurthestSpot] = useState(undefined);
+
     const [status, setStatus] = useState(
         DEBUG ? ConnectionStatus.CONNECTED : ConnectionStatus.DISCONNECTED,
     );
@@ -33,6 +28,9 @@ export function SpotDataProvider({ children }) {
     const filteredSpots = useMemo(() => filter.filter(spots), [filter, spots]);
 
     const clientRef = useRef(null);
+
+    const [activeCallsign, setActiveCallsign] = useState("");
+    const prevCallsignRef = useRef("");
 
     const clearSpots = () => {
         setSpots([]);
@@ -51,9 +49,8 @@ export function SpotDataProvider({ children }) {
     }, [filteredSpots]);
 
     const uniqueStations = useMemo(() => {
-        const me = settings?.callsign?.toUpperCase();
+        const me = activeCallsign.toUpperCase();
 
-        //sets only store unique values
         const calls = new Set();
         for (const s of filteredSpots) {
             if (s.receiverCall && s.receiverCall !== me)
@@ -61,7 +58,7 @@ export function SpotDataProvider({ children }) {
             if (s.senderCall && s.senderCall !== me) calls.add(s.senderCall);
         }
         return calls.size;
-    }, [filteredSpots, settings?.callsign]);
+    }, [filteredSpots, activeCallsign]);
 
     const uniqueCountries = useMemo(() => {
         const calls = new Set();
@@ -146,17 +143,23 @@ export function SpotDataProvider({ children }) {
         };
     }, []);
 
-    //re-run when settings.callsign changes
+    //re-run when the active callsign changes
     useEffect(() => {
-        //todo: check for valid callsign
-
         const client = clientRef.current;
 
-        let callsign = settings?.callsign;
+        const callsign = activeCallsign;
 
         if (!client || !callsign) return;
 
-        //let topic = `pskr/filter/v2/+/+/${callsign}/#`;
+        //switching to a different callsign: the old spots no longer apply
+        if (
+            !DEBUG &&
+            prevCallsignRef.current &&
+            prevCallsignRef.current !== callsign
+        ) {
+            setSpots([]);
+        }
+        prevCallsignRef.current = callsign;
 
         //https://groups.io/g/pskr-mqtt/topic/122136550
         const c = callsign.toUpperCase().replace(/\//g, ".");
@@ -182,11 +185,9 @@ export function SpotDataProvider({ children }) {
 
             if (client.connected) {
                 client.unsubscribe(topic);
-
-                //reset spots
             }
         };
-    }, [settings.callsign]);
+    }, [activeCallsign]);
 
     return (
         <SpotDataContext.Provider
@@ -201,6 +202,8 @@ export function SpotDataProvider({ children }) {
                 uniqueStations,
                 uniqueCountries,
                 mostRecentSpot,
+                activeCallsign,
+                setActiveCallsign,
             }}
         >
             {children}

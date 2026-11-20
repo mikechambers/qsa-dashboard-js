@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useParams, Navigate } from "react-router";
 
 import classes from "./DashboardScreen.module.css";
@@ -11,29 +12,33 @@ import {
     normalizeMaidenHeadGrid,
 } from "@/utils/radio";
 import { useSpotData } from "@/contexts/SpotDataContext";
+import { dashboardPath } from "@/utils/routes";
 
 import { SpotMap } from "./map/SpotMap";
 
-import { SpotTable } from "./spots/table/SpotTable";
 import { HeaderContainer } from "./header/HeaderContainer";
 import { gridToLocation } from "@/utils/geo";
 import { PodContainer } from "./pods/PodContainer";
 import { SpotFilterView } from "./filters/SpotFilterView";
 import { SelectedSpotProvider } from "@/contexts/SelectedSpotContext";
-import { SelectedSpotDetail } from "./spots/detail/SelectedSpotDetail";
 import { Collapse } from "@mantine/core";
 import { SpotsContainer } from "./spots/SpotsContainer";
+import { SETTINGS_PATH } from "@/consts/config";
 
-export default function DashboardScreen(props) {
+export default function DashboardScreen() {
     let params = useParams();
     let { settings } = useSettings();
 
-    const { filteredSpots } = useSpotData();
+    const { filteredSpots, setActiveCallsign } = useSpotData();
 
     let callsign = params.callsign;
     let grid = params.grid;
 
-    if (!("callsign" in params)) {
+    //no callsign in the url (/dashboard/): fall back to the saved settings,
+    //and redirect below so the url shows the station being displayed
+    const usingSettings = !params.callsign;
+
+    if (usingSettings) {
         callsign = settings.callsign;
         grid = settings.grid;
     }
@@ -46,10 +51,25 @@ export default function DashboardScreen(props) {
         grid = "";
     }
 
-    if (typeof callsign === "string" && isValidCallsign(callsign.trim())) {
+    const callsignIsValid =
+        typeof callsign === "string" && isValidCallsign(callsign.trim());
+
+    if (callsignIsValid) {
         callsign = normalizeCallsign(callsign);
-    } else {
-        return <Navigate to="/" replace />;
+    }
+
+    //tell the spot data which callsign to subscribe to. This must be above
+    //the early return below, since hooks can't be called conditionally.
+    useEffect(() => {
+        if (callsignIsValid && !usingSettings) setActiveCallsign(callsign);
+    }, [callsignIsValid, usingSettings, callsign, setActiveCallsign]);
+
+    if (!callsignIsValid) {
+        return <Navigate to={SETTINGS_PATH} replace />;
+    }
+
+    if (usingSettings) {
+        return <Navigate to={dashboardPath(callsign, grid)} replace />;
     }
 
     return (

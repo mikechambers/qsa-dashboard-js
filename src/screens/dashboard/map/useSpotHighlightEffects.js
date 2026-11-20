@@ -13,6 +13,8 @@ import {
     EMPTY_FEATURE_COLLECTION,
 } from "./config";
 
+export const isMapAlive = (map) => !!map && !!map.style;
+
 //hook that handles / controls spot highlights / animations
 export function useSpotHighlightEffects(map, ready, selectedSpot, location) {
     //features currently on the selected layer. a spot stays here while it
@@ -29,11 +31,14 @@ export function useSpotHighlightEffects(map, ready, selectedSpot, location) {
             layer: { id: SELECTED_SPOT },
         };
 
-        const syncSource = () =>
+        const syncSource = () => {
+            if (!isMapAlive(map)) return;
+
             map.getSource(SELECTED_SPOT)?.setData({
                 type: "FeatureCollection",
                 features: featuresRef.current,
             });
+        };
 
         featuresRef.current = [
             ...featuresRef.current.filter((f) => f.id !== selectedSpot.id),
@@ -59,6 +64,9 @@ export function useSpotHighlightEffects(map, ready, selectedSpot, location) {
 
         //shrink back down when deselected, then remove it from the layer
         return () => {
+            //the map is already gone if the dashboard is unmounting
+            if (!isMapAlive(map)) return;
+
             map.transition(feature, {
                 duration: TRANSITION_DURATION_OUT,
                 ease: EASING_TYPE,
@@ -96,6 +104,8 @@ export function useSpotHighlightEffects(map, ready, selectedSpot, location) {
 
         //clear everything when unselected
         return () => {
+            if (!isMapAlive(map)) return;
+
             map.getSource(CONNECTION_LINE_PATH)?.setData(
                 EMPTY_FEATURE_COLLECTION,
             );
