@@ -10,49 +10,49 @@ const SettingsContext = createContext(null);
 export function SettingsProvider({ children }) {
     //todo: should namespace this? or save as a json obj
     const [callsign, setCallsign] = useLocalStorage({
-        key: "callsign",
+        key: "qsa.setting.callsign",
         defaultValue: "",
         getInitialValueInEffect: false,
     });
 
     const [grid, setGrid] = useLocalStorage({
-        key: "grid",
+        key: "qsa.setting.grid",
         defaultValue: "",
         getInitialValueInEffect: false,
     });
 
     const [unitType, setUnitType] = useLocalStorage({
-        key: "unitType",
+        key: "qsa.setting.unitType",
         defaultValue: UnitType.METRIC,
         getInitialValueInEffect: false,
     });
 
     const [timeMode, setTimeMode] = useLocalStorage({
-        key: "timeMode",
+        key: "qsa.setting.timeMode",
         defaultValue: TimeMode.UTC,
         getInitialValueInEffect: false,
     });
 
     const [displayMode, setDisplayMode] = useLocalStorage({
-        key: "displayMode",
+        key: "qsa.setting.displayMode",
         defaultValue: DisplayMode.LIGHT,
         getInitialValueInEffect: false,
     });
 
     const [showGreyline, setShowGreyline] = useLocalStorage({
-        key: "showGreyline",
+        key: "qsa.setting.showGreyline",
         defaultValue: true,
         getInitialValueInEffect: false,
     });
 
     const [showFilters, setShowFilters] = useLocalStorage({
-        key: "showFilters",
+        key: "qsa.setting.showFilters",
         defaultValue: true,
         getInitialValueInEffect: false,
     });
 
     const [elevationValues, setElevationValues] = useLocalStorage({
-        key: "elevationValues",
+        key: "qsa.setting.elevationValues",
         defaultValue: [
             ElevationValue.HORIZON,
             ElevationValue.CIVIL,
