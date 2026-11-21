@@ -49,6 +49,13 @@ const greylineLayers = [
     },
 ];
 
+const SwatchLabel = ({ text, color }) => (
+    <Group gap="xs" wrap="nowrap" justify="space-between">
+        <span>{text}</span>
+        <Box w={24} h={4} bg={color} style={{ borderRadius: 2 }} />
+    </Group>
+);
+
 export default function ConfigScreen() {
     const navigate = useNavigate();
 
@@ -60,6 +67,9 @@ export default function ConfigScreen() {
         setTimeMode,
         setDisplayMode,
         setShowGreyline,
+        setShowDistanceOverlay,
+        setShowDistanceRings,
+        setShowMaxDistance,
         setElevationValues,
     } = useSettings();
 
@@ -259,6 +269,76 @@ export default function ConfigScreen() {
                                     ))}
                                 </Stack>
                             </Checkbox.Group>
+
+                            <Divider />
+
+                            <Switch
+                                label="Distance rings"
+                                description="Draw distance rings around your station"
+                                labelPosition="left"
+                                disabled={
+                                    !settings.showDistanceRings &&
+                                    !settings.showMaxDistance
+                                }
+                                checked={settings.showDistanceOverlay}
+                                onChange={(e) =>
+                                    setShowDistanceOverlay(
+                                        e.currentTarget.checked,
+                                    )
+                                }
+                                styles={{
+                                    body: { justifyContent: "space-between" },
+                                }}
+                            />
+
+                            <Divider />
+
+                            <Stack gap="md">
+                                <Checkbox
+                                    disabled={!settings.showDistanceOverlay}
+                                    checked={settings.showDistanceRings}
+                                    onChange={(e) =>
+                                        setShowDistanceRings(
+                                            e.currentTarget.checked,
+                                        )
+                                    }
+                                    label={
+                                        <SwatchLabel
+                                            text="Distance"
+                                            color="gray.6"
+                                        />
+                                    }
+                                    styles={{
+                                        label: { width: "100%" },
+                                        labelWrapper: { flex: 1 },
+                                    }}
+                                />
+                                <Checkbox
+                                    disabled={!settings.showDistanceOverlay}
+                                    checked={settings.showMaxDistance}
+                                    onChange={(e) =>
+                                        setShowMaxDistance(
+                                            e.currentTarget.checked,
+                                        )
+                                    }
+                                    label={
+                                        <SwatchLabel
+                                            text="Max distance"
+                                            color="teal.6"
+                                        />
+                                    }
+                                    styles={{
+                                        label: { width: "100%" },
+                                        labelWrapper: { flex: 1 },
+                                    }}
+                                />
+                            </Stack>
+
+                            <Text size="xs" c="dimmed">
+                                Note: Larger distance rings may look distorted
+                                due to how the map projection stretches the
+                                world.
+                            </Text>
                         </Stack>
                     </Fieldset>
                 </Stack>

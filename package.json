@@ -22,6 +22,7 @@
     "@mantine/modals": "^9.8.1",
     "@tabler/icons-react": "^3.52.0",
     "@tanstack/react-virtual": "^3.14.26",
+    "@turf/circle": "^7.4.0",
     "@turf/great-circle": "^7.4.0",
     "maplibre-gl": "^6.18.0",
     "maplibre-transition": "^3.0.0",

@@ -26,6 +26,8 @@ import {
 
 import { useSelectedSpot } from "../../../contexts/SelectedSpotContext";
 import { useSpotHighlightEffects } from "./useSpotHighlightEffects";
+import { useDistanceBands } from "./useDistanceBands";
+import { useSpotData } from "@/contexts/SpotDataContext";
 
 //setup work for map library to do stuff on another threads
 setWorkerUrl(workerUrl);
@@ -33,6 +35,7 @@ setWorkerUrl(workerUrl);
 export const SpotMap = ({ spots, location }) => {
     const { settings } = useSettings();
     const { selectedSpot, setSelectedSpot } = useSelectedSpot();
+    const { furthestSpot } = useSpotData();
 
     const mapContainer = useRef(null);
 
@@ -61,6 +64,18 @@ export const SpotMap = ({ spots, location }) => {
         addConnectionLineLayer(map);
         addConnectionPointLayer(map);
     }, [ready]);
+
+    //todo: refactor others to combine initialization
+    useDistanceBands(
+        map,
+        ready,
+        location,
+        furthestSpot?.distance,
+        settings.displayMode,
+        settings.unitType,
+        settings.showDistanceOverlay && settings.showDistanceRings,
+        settings.showDistanceOverlay && settings.showMaxDistance,
+    );
 
     //draw items
     useGreyline(map, ready, settings);

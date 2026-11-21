@@ -4,55 +4,78 @@ import { UnitType } from "../enums/UnitType";
 import { TimeMode } from "../enums/TimeMode";
 import { DisplayMode } from "../enums/DisplayMode";
 import { ElevationValue } from "@/lib/twilight";
+import { SETTINGS_NAMESPACE } from "@/consts/config";
 
 const SettingsContext = createContext(null);
 
+const getSettingKey = (name) => {
+    return `${SETTINGS_NAMESPACE}.${name}`;
+};
+
 export function SettingsProvider({ children }) {
-    //todo: should namespace this? or save as a json obj
     const [callsign, setCallsign] = useLocalStorage({
-        key: "qsa.setting.callsign",
+        key: getSettingKey("callsign"),
         defaultValue: "",
         getInitialValueInEffect: false,
     });
 
     const [grid, setGrid] = useLocalStorage({
-        key: "qsa.setting.grid",
+        key: getSettingKey("grid"),
         defaultValue: "",
         getInitialValueInEffect: false,
     });
 
     const [unitType, setUnitType] = useLocalStorage({
-        key: "qsa.setting.unitType",
+        key: getSettingKey("unitType"),
         defaultValue: UnitType.METRIC,
         getInitialValueInEffect: false,
     });
 
     const [timeMode, setTimeMode] = useLocalStorage({
-        key: "qsa.setting.timeMode",
+        key: getSettingKey("timeMode"),
         defaultValue: TimeMode.UTC,
         getInitialValueInEffect: false,
     });
 
     const [displayMode, setDisplayMode] = useLocalStorage({
-        key: "qsa.setting.displayMode",
+        key: getSettingKey("displayMode"),
         defaultValue: DisplayMode.LIGHT,
         getInitialValueInEffect: false,
     });
 
     const [showGreyline, setShowGreyline] = useLocalStorage({
-        key: "qsa.setting.showGreyline",
+        key: getSettingKey("showGreyline"),
+        defaultValue: true,
+        getInitialValueInEffect: false,
+    });
+
+    //master switch for the distance rings, plus one for each kind of ring
+    const [showDistanceOverlay, setShowDistanceOverlay] = useLocalStorage({
+        key: getSettingKey("showDistanceOverlay"),
+        defaultValue: true,
+        getInitialValueInEffect: false,
+    });
+
+    const [showDistanceRings, setShowDistanceRings] = useLocalStorage({
+        key: getSettingKey("showDistanceRings"),
+        defaultValue: true,
+        getInitialValueInEffect: false,
+    });
+
+    const [showMaxDistance, setShowMaxDistance] = useLocalStorage({
+        key: getSettingKey("showMaxDistance"),
         defaultValue: true,
         getInitialValueInEffect: false,
     });
 
     const [showFilters, setShowFilters] = useLocalStorage({
-        key: "qsa.setting.showFilters",
+        key: getSettingKey("showFilters"),
         defaultValue: true,
         getInitialValueInEffect: false,
     });
 
     const [elevationValues, setElevationValues] = useLocalStorage({
-        key: "qsa.setting.elevationValues",
+        key: getSettingKey("elevationValues"),
         defaultValue: [
             ElevationValue.HORIZON,
             ElevationValue.CIVIL,
@@ -68,6 +91,9 @@ export function SettingsProvider({ children }) {
         unitType,
         displayMode,
         showGreyline,
+        showDistanceOverlay,
+        showDistanceRings,
+        showMaxDistance,
         elevationValues,
         showFilters,
     };
@@ -82,6 +108,9 @@ export function SettingsProvider({ children }) {
                 setTimeMode,
                 setDisplayMode,
                 setShowGreyline,
+                setShowDistanceOverlay,
+                setShowDistanceRings,
+                setShowMaxDistance,
                 setElevationValues,
                 setShowFilters,
             }}

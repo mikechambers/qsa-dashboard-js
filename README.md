@@ -13,8 +13,6 @@ Data is sourced via MQTT feed from [PSKReporter](https://www.mqtt.pskreporter.in
 - Filter data
 - Light / dark modes
 - Charts and data analysis
-- Open Source
-- Completely client side
 
 **Supported Modes**
 
@@ -70,11 +68,11 @@ which will prepopulate the app with mock spots.
 On first launch, you will be prompted to enter your station details.
 
 - _Callsign_ **(required)** : Your amateur radio call sign, or the callsign that you plan to track.
-- _Grid Location_ Your maidenhead grid location (4 - 6 chars), used to show your location on the map and display propagation routes. It is optional, but without it there is no home marker or path line.
+- _Grid Location_ Your maidenhead grid location (4 - 6 chars), used to show your location on the map and display propagation routes. It is optional, but without it there is no home marker, path line or distance rings.
 
 Once you have entered your station details, click "Update station" to load the dashboard.
 
-The dashboard URL includes your callsign and grid (for example `/dashboard/W1AW/FN31`), so you can bookmark or share it.
+The dashboard URL includes your callsign and grid (for example `/dashboard/W6MSH/FN31`), so you can bookmark or share it.
 
 ### Begin transmitting on supported digital modes
 
@@ -82,19 +80,19 @@ Data is obtained from a live feed of propagation submissions to [PSKReporter](ht
 
 You do not need any particular app to transmit, as long as you are transmitting a supported digital mode.
 
-All that is required is that the receiver is using an app that reports viewed transmissions to PSKReporter (and they have the feature enabled).
+All that is required is that the receiver is using an app that reports viewed transmissions to PSKReporter (and the app has the reporting enabled).
 
 ### Interact with and filter data
 
-Data is only retained per session. If you close the page, or reload it, data will be wiped. Only the most recent 3,000 spots are kept, older ones drop off.
+Data is retained per session, with a maximum of 3,000 spots (older ones drop off).
 
-Hover over a spot in the table or on the map to select it. Its details are shown, and the path from your location to the receiver is drawn on the map.
+You can hover over a spot in the table or on the map to select it, and its details will be displayed.
 
 You can filter the data views via the filter bar. These filters are applied in real time, and affect the table, map and charts:
 
 - _Callsign_ : only show spots from receivers whose callsign starts with this
-- _Band_
-- _Mode_
+- _Band_ : only show spots from specified band
+- _Mode_ : only show spots from specified mode
 - _Min SNR_ : hide spots weaker than this
 - _Min Distance_ : hide spots closer than this
 
@@ -114,7 +112,7 @@ This displays the spots per minute, for each of the previous 30 minutes, color c
 
 Note, due to the way that PSKReporter and apps handle duplicate / repeat spots, the initial minute will often be much higher than subsequent minutes, which omit repeated spots.
 
-PSKReporter clears this every 5 minutes.
+PSKReporter will resend duplicates, resetting every 5 minutes.
 
 ## Settings
 
@@ -127,10 +125,16 @@ PSKReporter clears this every 5 minutes.
 | Time Zone      | The time zone to display time in. Options are UTC or Local (uses system time zone.)                                          |
 | Grey Line      | Whether to display a greyline overlay, showing the transition between day and night. Can be useful for timing band openings. |
 | Twilight Bands | Which lines the greyline overlay draws: horizon, civil, nautical and astronomical twilight.                                  |
+| Distance Rings | Master switch for the distance rings on the map. Needs a location grid. Disabled when both options below are off.            |
+| Distance       | Draw rings at fixed distances around your location, in your selected units.                                                  |
+| Max Distance   | Draw a ring at the distance of the furthest spot currently shown.                                                            |
+
+Settings are saved in your browser's local storage.
 
 ## Known Issues
 
 - The first minute in the charts is often much higher than the minutes after it (see the note under Spots / Minute)
+- Distance rings (especially large ones) can look distorted on the map due to how the map is projected
 
 ## Development
 
@@ -142,15 +146,13 @@ $ npm test
 
 ## Questions, Feature Requests, Feedback
 
-If you have any questions, feature requests, need help, or just want to chat, join the [dcli / DARCI Discord server](https://discord.gg/2Y8bV2Mq3p).
-
 If you have any questions, feature requests, issues or need help please post on the [issues page](https://github.com/mikechambers/qsa-dashboard-js/issues).
 
 ## Acknowledgements
 
 Data is obtained from a live feed of propagation submissions to [mqtt.pskreporter.info](https://www.mqtt.pskreporter.info/), from data submitted to [PSKReporter](https://pskreporter.info).
 
-Built with [React](https://react.dev), [Mantine](https://mantine.dev), [MapLibre GL JS](https://maplibre.org), and the [ham2k](https://github.com/ham2k) libraries for DXCC and grid / distance calculations. Map styles are from [maptoolkit](https://www.maptoolkit.com), using [OpenStreetMap](https://www.openstreetmap.org/copyright) data.
+Built with [React](https://react.dev), [Mantine](https://mantine.dev), [MapLibre GL JS](https://maplibre.org), [Turf.js](https://turfjs.org) for the distance rings and path lines, and the [ham2k](https://github.com/ham2k) libraries for DXCC and grid / distance calculations. Map styles are from [maptoolkit](https://www.maptoolkit.com), using [OpenStreetMap](https://www.openstreetmap.org/copyright) data.
 
 ## License
 
