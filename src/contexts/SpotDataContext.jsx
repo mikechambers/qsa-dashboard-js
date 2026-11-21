@@ -9,18 +9,24 @@ import {
 import mqtt from "mqtt";
 import { ConnectionStatus } from "../enums/ConnectionStatus";
 
-import { DEBUG, MOCK_SPOTS } from "@/debug/";
 import Spot from "../models/Spot";
 import { SpotFilter } from "../models/SpotFilter";
 import { SPOT_LIMIT } from "@/consts/config";
+import { useSettings } from "./SettingsContext";
+import { MOCK_SPOTS } from "@/debug";
 
 const SpotDataContext = createContext(null);
 
 export function SpotDataProvider({ children }) {
-    const [spots, setSpots] = useState(DEBUG ? MOCK_SPOTS : []);
+    const { settings } = useSettings();
+
+    console.log("SpotDataProvider");
+    const [spots, setSpots] = useState(settings.demoMode ? MOCK_SPOTS : []);
 
     const [status, setStatus] = useState(
-        DEBUG ? ConnectionStatus.CONNECTED : ConnectionStatus.DISCONNECTED,
+        settings.demoMode
+            ? ConnectionStatus.CONNECTED
+            : ConnectionStatus.DISCONNECTED,
     );
 
     const [filter, setFilter] = useState(new SpotFilter());
@@ -72,7 +78,7 @@ export function SpotDataProvider({ children }) {
     }, [filteredSpots]);
 
     const updateState = () => {
-        if (DEBUG) return;
+        if (settings.demoMode) return;
 
         const client = clientRef.current;
 
@@ -154,7 +160,7 @@ export function SpotDataProvider({ children }) {
 
         //switching to a different callsign: the old spots no longer apply
         if (
-            !DEBUG &&
+            !settings.demoMode &&
             prevCallsignRef.current &&
             prevCallsignRef.current !== callsign
         ) {

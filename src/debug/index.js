@@ -3,6 +3,7 @@ import Location from "@/models/Location";
 import { MIN_SNR } from "@/consts/config";
 
 export const DEBUG = import.meta.env.VITE_DEBUG === "true";
+
 // Mock spots for the dashboard.
 //
 // Keep your existing imports for Spot and Location at the top of this file.

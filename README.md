@@ -53,11 +53,7 @@ $ npm run dev
 
 Then point your browser to the dev url (printed out in terminal when you run it).
 
-If you want to play around without transmitting, you can run in debug mode:
-
-```
-$ npm run debug
-```
+If you want to play around without transmitting, enable the Demo Mode setting in the app's setting screen.
 
 which will prepopulate the app with mock spots.
 
@@ -128,6 +124,7 @@ PSKReporter will resend duplicates, resetting every 5 minutes.
 | Distance Rings | Master switch for the distance rings on the map. Needs a location grid. Disabled when both options below are off.            |
 | Distance       | Draw rings at fixed distances around your location, in your selected units.                                                  |
 | Max Distance   | Draw a ring at the distance of the furthest spot currently shown.                                                            |
+| Demo Mode      | Populates the map with demo data. Requires a page refresh when changing settings.                                            |
 
 Settings are saved in your browser's local storage.
 

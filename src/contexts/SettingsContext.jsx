@@ -49,6 +49,12 @@ export function SettingsProvider({ children }) {
         getInitialValueInEffect: false,
     });
 
+    const [demoMode, setDemoMode] = useLocalStorage({
+        key: getSettingKey("demoMode"),
+        defaultValue: false,
+        getInitialValueInEffect: false,
+    });
+
     //master switch for the distance rings, plus one for each kind of ring
     const [showDistanceOverlay, setShowDistanceOverlay] = useLocalStorage({
         key: getSettingKey("showDistanceOverlay"),
@@ -93,6 +99,7 @@ export function SettingsProvider({ children }) {
         showGreyline,
         showDistanceOverlay,
         showDistanceRings,
+        demoMode,
         showMaxDistance,
         elevationValues,
         showFilters,
@@ -113,6 +120,7 @@ export function SettingsProvider({ children }) {
                 setShowMaxDistance,
                 setElevationValues,
                 setShowFilters,
+                setDemoMode,
             }}
         >
             {children}
