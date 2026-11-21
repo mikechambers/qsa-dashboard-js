@@ -26,6 +26,6 @@ export const Mode = Object.freeze({
         }
 
         const upper = v.toUpperCase();
-        return Object.values(Modes).find((v) => v === upper);
+        return Object.values(Modes).find((m) => m === upper) ?? Modes.UNKNOWN;
     },
 });
