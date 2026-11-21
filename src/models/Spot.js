@@ -60,7 +60,7 @@ export default class Spot {
     }
 
     get date() {
-        return this.transmissionDate ?? this.receptionDate;
+        return this.receptionDate ?? this.transmissionDate;
     }
 
     get id() {
