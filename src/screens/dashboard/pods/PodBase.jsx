@@ -1,10 +1,11 @@
-import { Stack, Text, Group, Box } from "@mantine/core";
+import { Stack, Text, Group, Box, ColorSwatch } from "@mantine/core";
 
 export const SummaryBase = ({
     value,
     unit,
     label,
     subvalue,
+    swatchColor,
     onClick,
     useMonospace,
 }) => {
@@ -22,6 +23,14 @@ export const SummaryBase = ({
                     {label}
                 </Text>
                 <Group gap={4} wrap="nowrap" align="baseline">
+                    {swatchColor && (
+                        <ColorSwatch
+                            color={swatchColor}
+                            size={8}
+                            style={{ transform: "translateY(-3px)" }}
+                        />
+                    )}
+
                     <Text fz={26} fw={600} lh={1.1} ff={ff}>
                         {value ?? "-"}
                     </Text>

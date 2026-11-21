@@ -8,10 +8,10 @@ import {
     DISTANCE_LABEL_PATH,
     DISTANCE_LABEL_SIZE,
     DISTANCE_RANGE_PATH,
-    DISTANCE_RING_PALETTE,
     FURTHEST_RANGE_PATH,
     EMPTY_FEATURE_COLLECTION,
 } from "./config";
+import { MAP_DISTANCE_RING_PALETTE } from "@/consts/config";
 
 //ring distances to draw depending on user unit setting
 const RING_DISTANCES = {
@@ -112,10 +112,9 @@ const ringFeature = (center, distance, units, properties = {}) => {
     };
 };
 
-const paletteFor = (displayMode) =>
-    displayMode === DisplayMode.DARK
-        ? DISTANCE_RING_PALETTE.DARK
-        : DISTANCE_RING_PALETTE.LIGHT;
+const paletteFor = (displayMode) => {
+    return MAP_DISTANCE_RING_PALETTE[displayMode];
+};
 
 export const useDistanceBands = (
     map,
@@ -166,8 +165,7 @@ export const useDistanceBands = (
             paint: {
                 "line-color": theme.furthest,
                 "line-opacity": theme.furthestOpacity,
-                "line-width": 1.5,
-                "line-dasharray": [2, 2],
+                "line-width": 3,
             },
         });
 
