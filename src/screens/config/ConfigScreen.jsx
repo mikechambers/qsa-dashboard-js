@@ -339,31 +339,33 @@ export default function ConfigScreen() {
                                 </Text>
                             </Stack>
                             <Divider />
-                            <Stack gap="md">
-                                <Checkbox
-                                    checked={settings.demoMode}
-                                    onChange={(e) =>
-                                        setDemoMode(e.currentTarget.checked)
-                                    }
-                                    label="Demo Mode"
-                                    styles={{
-                                        label: { width: "100%" },
-                                        labelWrapper: { flex: 1 },
-                                    }}
-                                />
-                                <Text size="xs" c="dimmed">
-                                    Change requires{" "}
-                                    <Anchor
-                                        component="button"
-                                        type="button"
-                                        inherit
-                                        onClick={() => window.location.reload()}
-                                    >
-                                        page refresh
-                                    </Anchor>{" "}
-                                    to take effect.
-                                </Text>
-                            </Stack>
+                        </Stack>
+                    </Fieldset>
+                    <Fieldset legend="Demo">
+                        <Stack gap="md">
+                            <Checkbox
+                                checked={settings.demoMode}
+                                onChange={(e) =>
+                                    setDemoMode(e.currentTarget.checked)
+                                }
+                                label="Add Mock Spots"
+                                styles={{
+                                    label: { width: "100%" },
+                                    labelWrapper: { flex: 1 },
+                                }}
+                            />
+                            <Text size="xs" c="dimmed">
+                                Adds generated spot data. Change requires{" "}
+                                <Anchor
+                                    component="button"
+                                    type="button"
+                                    inherit
+                                    onClick={() => window.location.reload()}
+                                >
+                                    page refresh
+                                </Anchor>{" "}
+                                to take effect.
+                            </Text>
                         </Stack>
                     </Fieldset>
                 </Stack>
