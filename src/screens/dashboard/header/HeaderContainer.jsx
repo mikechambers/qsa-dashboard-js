@@ -16,19 +16,24 @@ import {
 } from "@tabler/icons-react";
 
 import { normalizeCallsign, normalizeMaidenHeadGrid } from "@/utils/radio";
-import { Clock } from "./Clock";
+
 import { useFullscreenDocument } from "@mantine/hooks";
 
 import { IconArrowsMaximize, IconArrowsMinimize } from "@tabler/icons-react";
-import { TimeMode } from "@/enums/TimeMode";
+
 import { useSettings } from "@/contexts/SettingsContext";
 import { useSpotData } from "@/contexts/SpotDataContext";
 import { SETTINGS_PATH } from "@/consts/config";
 import { useNavigate } from "react-router";
 
+import { useBreakpoint } from "@/hooks/useBreakpoint";
+
+import { ClockContainer } from "./ClockContainer";
+
 export const HeaderContainer = ({ callsign, grid }) => {
     const { toggle, fullscreen } = useFullscreenDocument();
     const { settings, setShowFilters } = useSettings();
+    const breakpoint = useBreakpoint();
     const navigate = useNavigate();
 
     const { filter } = useSpotData();
@@ -48,13 +53,10 @@ export const HeaderContainer = ({ callsign, grid }) => {
                         {g}
                     </Text>
                 </Group>
-                <Group>
-                    <Clock timeMode={TimeMode.LOCAL} />
-                    <Text c="dimmed">·</Text>
-                    <Clock timeMode={TimeMode.UTC} />
-                </Group>
+
+                <ClockContainer breakpoint={breakpoint} />
                 <Group wrap="nowrap" gap={32}>
-                    <ConnectionStatusBadge />
+                    <ConnectionStatusBadge breakpoint={breakpoint} />
                     <ButtonGroup>
                         <Button
                             variant={settings.showFilters ? "light" : "default"}
