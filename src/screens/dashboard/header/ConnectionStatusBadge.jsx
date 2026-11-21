@@ -1,10 +1,8 @@
 import { useSpotData } from "@/contexts/SpotDataContext";
-import { Badge, Box, ThemeIcon } from "@mantine/core";
 import { ConnectionStatus as CS } from "@/enums/ConnectionStatus";
 import {
     IconCloudCheck,
     IconCloudExclamation,
-    IconCloudOff,
     IconCloudX,
 } from "@tabler/icons-react";
 

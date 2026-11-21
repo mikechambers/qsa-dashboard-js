@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { SummaryBase } from "./PodBase";
 import { formatHMS } from "@/utils/view";
 import { useInterval } from "@mantine/hooks";
@@ -31,14 +31,16 @@ function timeAgo(date) {
     return rtf.format(0, "second");
 }
 
+let sessionStart = null;
+
+const elapsedSeconds = () => {
+    sessionStart ??= Date.now();
+    return Math.floor((Date.now() - sessionStart) / 1000);
+};
+
 export const ElapsedTimePod = ({ mostRecentSpot }) => {
-    const [seconds, setSeconds] = useState(0);
-
-    const updateTime = () => {
-        setSeconds(seconds + 1);
-    };
-
-    const interval = useInterval(() => updateTime(), 1000);
+    const [seconds, setSeconds] = useState(elapsedSeconds);
+    const interval = useInterval(() => setSeconds(elapsedSeconds()), 1000);
 
     const subvalue = mostRecentSpot
         ? `last spot ${timeAgo(mostRecentSpot.date)}`
