@@ -1,5 +1,5 @@
 import { MIN_SNR } from "@/consts/config";
-import { ALL_CASES } from "../consts";
+import { ALL_CASES } from "@/consts";
 
 export const SpotFilterDefaults = {
     CALLSIGN: "",

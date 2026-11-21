@@ -20,13 +20,12 @@ import { IconInbox, IconTrash } from "@tabler/icons-react";
 import { modals } from "@mantine/modals";
 import { useSpotData } from "@/contexts/SpotDataContext";
 
-export const SpotTable = ({ spots }) => {
-    const sd = useSpotData();
+export const SpotTable = () => {
+    const { filteredSpots, filter, clearSpots } = useSpotData();
 
+    const spots = filteredSpots;
+    const totalSpots = spots.length;
     const hoverSelect = useRef(false);
-
-    const clearSpots = sd.clearSpots;
-    const totalSpots = sd.spots.length;
 
     const { selectedSpot, setSelectedSpot } = useSelectedSpot();
 
@@ -104,8 +103,16 @@ export const SpotTable = ({ spots }) => {
             >
                 <EmptyState
                     icon={<IconInbox size={40} stroke={1.5} />}
-                    title="No spots yet"
-                    description="Spots will appear here as they come in."
+                    title={
+                        filter.hasFilter()
+                            ? "No Spots Match Filter"
+                            : "No spots yet"
+                    }
+                    description={
+                        filter.hasFilter()
+                            ? ""
+                            : "Spots will appear here as they arrive."
+                    }
                 />
             </Paper>
         );

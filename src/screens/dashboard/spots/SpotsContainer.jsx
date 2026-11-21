@@ -3,11 +3,11 @@ import { SpotTable } from "./table/SpotTable";
 
 import classes from "../DashboardScreen.module.css";
 
-export const SpotsContainer = ({ spots }) => {
+export const SpotsContainer = () => {
     return (
         <div className={classes.spotsContainer}>
             <SelectedSpotDetail />
-            <SpotTable spots={spots} />
+            <SpotTable />
         </div>
     );
 };

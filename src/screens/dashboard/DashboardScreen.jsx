@@ -93,7 +93,7 @@ export default function DashboardScreen() {
                         <SpotMap location={location} spots={filteredSpots} />
                     </div>
 
-                    <SpotsContainer spots={filteredSpots} />
+                    <SpotsContainer />
                 </div>
             </div>
         </SelectedSpotProvider>
