@@ -115,6 +115,7 @@ export function SpotDataProvider({ children }) {
             }
 
             setSpots((prev) => {
+                //this will fail if a date is ever null
                 const next = [spot, ...prev].sort((a, b) => b.date - a.date);
                 return next.length > SPOT_LIMIT
                     ? next.slice(0, SPOT_LIMIT)
