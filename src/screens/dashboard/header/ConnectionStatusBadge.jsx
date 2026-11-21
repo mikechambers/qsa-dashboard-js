@@ -5,6 +5,7 @@ import {
     IconCloudCheck,
     IconCloudExclamation,
     IconCloudOff,
+    IconCloudX,
 } from "@tabler/icons-react";
 
 const STATUS_STYLES = {
@@ -21,7 +22,7 @@ const STATUS_STYLES = {
     [CS.DISCONNECTED]: {
         color: "red",
         label: "Disconnected",
-        icon: IconCloudOff,
+        icon: IconCloudX,
     },
 };
 
@@ -30,5 +31,5 @@ export const ConnectionStatusBadge = () => {
 
     const { color, icon: Icon } = STATUS_STYLES[status];
 
-    return <Icon size={20} color={`var(--mantine-color-${color}-6)`} />;
+    return <Icon size={28} color={`var(--mantine-color-${color}-6)`} />;
 };

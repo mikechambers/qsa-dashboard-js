@@ -29,9 +29,10 @@ import { useNavigate } from "react-router";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 
 import { ClockContainer } from "./ClockContainer";
+import { ControlContainer } from "./ControlContainer";
+import { Breakpoint } from "@/enums/Breakpoint";
 
 export const HeaderContainer = ({ callsign, grid }) => {
-    const { toggle, fullscreen } = useFullscreenDocument();
     const { settings, setShowFilters } = useSettings();
     const breakpoint = useBreakpoint();
     const navigate = useNavigate();
@@ -55,67 +56,11 @@ export const HeaderContainer = ({ callsign, grid }) => {
                 </Group>
 
                 <ClockContainer breakpoint={breakpoint} />
-                <Group wrap="nowrap" gap={32}>
+                <Group wrap="nowrap" gap={16}>
                     <ConnectionStatusBadge breakpoint={breakpoint} />
-                    <ButtonGroup>
-                        <Button
-                            variant={settings.showFilters ? "light" : "default"}
-                            onClick={() =>
-                                setShowFilters(!settings.showFilters)
-                            }
-                            aria-pressed={settings.showFilters}
-                            aria-label={
-                                settings.showFilters
-                                    ? "Close Filters"
-                                    : "Show Filters"
-                            }
-                            title={
-                                settings.showFilters
-                                    ? "Close Filters"
-                                    : "Show Filters"
-                            }
-                            leftSection={
-                                <Indicator
-                                    disabled={!filter.hasFilter()}
-                                    size={7}
-                                    offset={1}
-                                    color="orange"
-                                    processing
-                                >
-                                    <IconFilter2 size={16} />
-                                </Indicator>
-                            }
-                        >
-                            Filters
-                        </Button>
-                        <Button
-                            variant="default"
-                            title="Open Settings"
-                            onClick={() => navigate(SETTINGS_PATH)}
-                            leftSection={
-                                <IconAdjustmentsHorizontal size={16} />
-                            }
-                        >
-                            Settings
-                        </Button>
-
-                        <Button
-                            variant="default"
-                            onClick={toggle}
-                            px="xs"
-                            aria-label={
-                                fullscreen
-                                    ? "Exit fullscreen"
-                                    : "Enter fullscreen"
-                            }
-                        >
-                            {fullscreen ? (
-                                <IconArrowsMinimize size={18} />
-                            ) : (
-                                <IconArrowsMaximize size={18} />
-                            )}
-                        </Button>
-                    </ButtonGroup>
+                    <ControlContainer
+                        compact={breakpoint === Breakpoint.COMPACT}
+                    />
                     <ActionIcon
                         variant="subtle"
                         color="gray"
