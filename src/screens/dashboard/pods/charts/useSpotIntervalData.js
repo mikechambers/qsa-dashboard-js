@@ -47,7 +47,7 @@ const buildBuckets = (spots, now) => {
         }
     }
 
-    // convert all the data into final form, keeping null slots
+    // convert all the data into final form, keeping null slots (for each minute_)
     return buckets.map(
         (b) =>
             b && {

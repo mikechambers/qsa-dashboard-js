@@ -1,10 +1,11 @@
+import { MIN_SNR } from "@/consts/config";
 import { ALL_CASES } from "../consts";
 
 export const SpotFilterDefaults = {
     CALLSIGN: "",
     BAND: ALL_CASES,
     MODE: ALL_CASES,
-    SNR: -24,
+    SNR: MIN_SNR,
     DISTANCE: 0,
 };
 

@@ -1,5 +1,6 @@
 import Spot from "@/models/Spot";
 import Location from "@/models/Location";
+import { MIN_SNR } from "@/consts/config";
 
 export const DEBUG = import.meta.env.VITE_DEBUG === "true";
 // Mock spots for the dashboard.
@@ -325,7 +326,7 @@ const buildOlder = () => {
             const rx = RECEIVERS[Math.min(idx, reach)];
 
             const snr = Math.max(
-                -24,
+                MIN_SNR,
                 Math.min(
                     12,
                     Math.round(

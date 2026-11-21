@@ -26,6 +26,7 @@ import {
     IconListSearch,
 } from "@tabler/icons-react";
 import { kilometersToMiles, milesToKilometers } from "@/utils/geo";
+import { MIN_SNR } from "@/consts/config";
 
 const bandValues = [ALL_CASES, ...Band.cases];
 const modeValues = [ALL_CASES, ...Mode.cases];
@@ -114,14 +115,15 @@ export const SpotFilterView = () => {
                 <Stack gap={4} w={200}>
                     <Input.Label size="xs">Min SNR (dB)</Input.Label>
                     <Slider
-                        min={-24}
+                        min={MIN_SNR}
                         size="xs"
                         max={10}
                         value={filter.snr}
                         step={1}
                         onChange={(v) => setFilter(filter.with({ snr: v }))}
                         marks={[
-                            { value: -24, label: "-24" },
+                            { value: MIN_SNR, label: `${MIN_SNR}` },
+                            { value: -20, label: "-20" },
                             { value: -10, label: "-10" },
                             { value: 0, label: "0" },
                             { value: 10, label: "10" },
