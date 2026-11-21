@@ -1,5 +1,5 @@
 import { Band } from "@/enums/Band";
-import { Badge } from "@mantine/core";
+import { Badge, Text } from "@mantine/core";
 
 //need to add custom colors within mantine
 //https://mantine.dev/theming/colors/
@@ -58,7 +58,7 @@ export const BandBadge = ({ band }) => {
             fw={600}
             tt="none"
         >
-            {band}
+            {band.toLowerCase()}
         </Badge>
     );
 };

@@ -19,15 +19,26 @@ export const convertAndFormatDistance = (km, unitType) => {
     return { d, unit: miles ? "mi" : "km" };
 };
 
-export const formatFrequency = (frequency) => {
-    let f = "";
-    if (frequency) {
-        f = new Intl.NumberFormat("de-DE", {
-            maximumFractionDigits: 0,
-        }).format(frequency / 1000);
+export const formatFrequency = (frequencyHz) => {
+    if (
+        typeof frequencyHz !== "number" ||
+        Number.isNaN(frequencyHz) ||
+        frequencyHz <= 0
+    ) {
+        return "";
     }
 
-    return f;
+    const mhz = frequencyHz / 1_000_000;
+
+    const decimals = 3;
+
+    const formatted = new Intl.NumberFormat("en-US", {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals,
+        useGrouping: false,
+    }).format(mhz);
+
+    return formatted;
 };
 
 export const formatTime = (date, timeMode, showSeconds = false) => {
