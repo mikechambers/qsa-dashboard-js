@@ -34,32 +34,27 @@ export class SpotFilter {
             if (this.callsign) {
                 const c = this.callsign.toUpperCase();
                 if (!spot.receiverCall.toUpperCase().startsWith(c)) {
-                    console.log(this, spot);
                     return false;
                 }
             }
 
             if (!this.band || this.band !== ALL_CASES) {
                 if (this.band !== spot.band) {
-                    console.log(this, spot);
                     return false;
                 }
             }
 
             if (!this.mode || this.mode !== ALL_CASES) {
                 if (this.mode !== spot.mode) {
-                    console.log(this, spot);
                     return false;
                 }
             }
 
             if (spot.snr < this.snr) {
-                console.log(this, spot);
                 return false;
             }
 
             if (spot.distance < this.distance) {
-                console.log(this, spot);
                 return false;
             }
 

@@ -10,6 +10,7 @@ const Modes = {
     RTTY: "RTTY",
     SSB: "SSB",
     OLIVIA: "OLIVIA",
+    UNKNOWN: "UNKNOWN",
 };
 
 export const Mode = Object.freeze({
@@ -21,7 +22,7 @@ export const Mode = Object.freeze({
 
     fromData: (v) => {
         if (!v) {
-            return undefined;
+            return Modes.UNKNOWN;
         }
 
         const upper = v.toUpperCase();
