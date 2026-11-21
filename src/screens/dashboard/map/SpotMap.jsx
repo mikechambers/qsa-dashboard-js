@@ -36,12 +36,14 @@ export const SpotMap = ({ spots, location }) => {
 
     const mapContainer = useRef(null);
 
+    const startCoordinates = location?.coordinates ?? [-122.38, 37.58];
+
     //initialize map. Switching style based on light / dark mode
     const { map, ready } = useMapInstance(mapContainer, {
         style: `https://styles.maptoolkit.org/${
             settings.displayMode === DisplayMode.DARK ? "dark" : "light"
         }.json`,
-        center: [-122.38, 37.58],
+        center: startCoordinates,
         zoom: DEFAULT_ZOOM,
     });
 
