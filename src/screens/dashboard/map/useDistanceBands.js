@@ -10,6 +10,7 @@ import {
     DISTANCE_RANGE_PATH,
     FURTHEST_RANGE_PATH,
     EMPTY_FEATURE_COLLECTION,
+    SPOT_PATH,
 } from "./config";
 import { MAP_DISTANCE_RING_PALETTE } from "@/consts/config";
 
@@ -135,22 +136,27 @@ export const useDistanceBands = (
 
         const theme = paletteFor(displayMode);
 
+        const beforeId = map.getLayer(SPOT_PATH) ? SPOT_PATH : undefined;
+
         map.addSource(DISTANCE_RANGE_PATH, {
             type: "geojson",
             data: EMPTY_FEATURE_COLLECTION,
         });
 
-        map.addLayer({
-            id: DISTANCE_RANGE_PATH,
-            source: DISTANCE_RANGE_PATH,
-            type: "line",
-            paint: {
-                "line-color": theme.ring,
-                "line-opacity": theme.ringOpacity,
-                "line-width": 1.5,
-                "line-dasharray": [2, 2],
+        map.addLayer(
+            {
+                id: DISTANCE_RANGE_PATH,
+                source: DISTANCE_RANGE_PATH,
+                type: "line",
+                paint: {
+                    "line-color": theme.ring,
+                    "line-opacity": theme.ringOpacity,
+                    "line-width": 1.5,
+                    "line-dasharray": [2, 2],
+                },
             },
-        });
+            beforeId,
+        );
 
         //ring that always matches the furthest spot
         map.addSource(FURTHEST_RANGE_PATH, {
@@ -158,16 +164,19 @@ export const useDistanceBands = (
             data: EMPTY_FEATURE_COLLECTION,
         });
 
-        map.addLayer({
-            id: FURTHEST_RANGE_PATH,
-            source: FURTHEST_RANGE_PATH,
-            type: "line",
-            paint: {
-                "line-color": theme.furthest,
-                "line-opacity": theme.furthestOpacity,
-                "line-width": 3,
+        map.addLayer(
+            {
+                id: FURTHEST_RANGE_PATH,
+                source: FURTHEST_RANGE_PATH,
+                type: "line",
+                paint: {
+                    "line-color": theme.furthest,
+                    "line-opacity": theme.furthestOpacity,
+                    "line-width": 3,
+                },
             },
-        });
+            beforeId,
+        );
 
         //distance labels for rings
         map.addSource(DISTANCE_LABEL_PATH, {
@@ -175,22 +184,31 @@ export const useDistanceBands = (
             data: EMPTY_FEATURE_COLLECTION,
         });
 
-        map.addLayer({
-            id: DISTANCE_LABEL_PATH,
-            source: DISTANCE_LABEL_PATH,
-            type: "symbol",
-            layout: {
-                "text-field": ["get", "label"],
-                "text-font": ["Noto Sans Bold"],
-                "text-size": DISTANCE_LABEL_SIZE,
-                "text-allow-overlap": true,
-                //furthest label wins if two sit close together
-                "symbol-sort-key": ["match", ["get", "kind"], "furthest", 0, 1],
+        map.addLayer(
+            {
+                id: DISTANCE_LABEL_PATH,
+                source: DISTANCE_LABEL_PATH,
+                type: "symbol",
+                layout: {
+                    "text-field": ["get", "label"],
+                    "text-font": ["Noto Sans Bold"],
+                    "text-size": DISTANCE_LABEL_SIZE,
+                    "text-allow-overlap": true,
+                    //furthest label wins if two sit close together
+                    "symbol-sort-key": [
+                        "match",
+                        ["get", "kind"],
+                        "furthest",
+                        0,
+                        1,
+                    ],
+                },
+                paint: {
+                    ...labelPaint(theme),
+                },
             },
-            paint: {
-                ...labelPaint(theme),
-            },
-        });
+            beforeId,
+        );
 
         return () => {
             [
