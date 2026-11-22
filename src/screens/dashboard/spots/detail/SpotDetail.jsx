@@ -5,6 +5,7 @@ import {
     SimpleGrid,
     EmptyState,
     Center,
+    Box,
 } from "@mantine/core";
 import { IconArrowRight } from "@tabler/icons-react";
 import { SpotField } from "./SpotField";
@@ -15,6 +16,7 @@ import {
     convertAndFormatDistance,
     formatFrequency,
     formatTime,
+    getCSSColorForSNR,
 } from "@/utils/view";
 import { useSettings } from "../../../../contexts/SettingsContext";
 import { getShortTimeZoneName } from "../../../../utils/date";
@@ -48,46 +50,56 @@ export const SpotDetail = ({ spot }) => {
 
     return (
         <Paper h={150}>
-            <Stack gap="sm">
-                {/* Row 1: header */}
-                <Group gap="sm" wrap="nowrap" justify="space-between">
-                    <Group>
-                        <CallsignField callsign={spot.senderCall} />
-                        <IconArrowRight
-                            size={16}
-                            color="var(--mantine-color-dimmed)"
+            <Group h="100%" align="stretch" wrap="nowrap" gap="sm">
+                <Box
+                    mt={8}
+                    w={4}
+                    style={{
+                        background: getCSSColorForSNR(spot.snr),
+                        borderRadius: 2,
+                    }}
+                />
+                <Stack gap="sm">
+                    {/* Row 1: header */}
+                    <Group gap="sm" wrap="nowrap" justify="space-between">
+                        <Group>
+                            <CallsignField callsign={spot.senderCall} />
+                            <IconArrowRight
+                                size={16}
+                                color="var(--mantine-color-dimmed)"
+                            />
+                            <CallsignField callsign={spot.receiverCall} />
+                        </Group>
+                        <Group gap="xs" wrap="nowrap">
+                            <BandBadge band={spot.band} />
+                            <ModeField mode={spot.mode} />
+                        </Group>
+                    </Group>
+
+                    {/* Row 2: stats */}
+                    <SimpleGrid cols={4} spacing="md" verticalSpacing="sm">
+                        <SpotField label={timeZone} value={time} />
+                        <SpotField label="SNR" value={snr} />
+                        <SpotField label="Frequency" value={frequency} />
+                        <Group></Group>
+
+                        <SpotField label="Distance" value={`${d} ${unit}`} />
+                        <SpotField
+                            label="Location"
+                            value={spot?.receiverDXCC?.shortName}
                         />
-                        <CallsignField callsign={spot.receiverCall} />
-                    </Group>
-                    <Group gap="xs" wrap="nowrap">
-                        <BandBadge band={spot.band} />
-                        <ModeField mode={spot.mode} />
-                    </Group>
-                </Group>
 
-                {/* Row 2: stats */}
-                <SimpleGrid cols={4} spacing="md" verticalSpacing="sm">
-                    <SpotField label={timeZone} value={time} />
-                    <SpotField label="SNR" value={snr} />
-                    <SpotField label="Frequency" value={frequency} />
-                    <Group></Group>
-
-                    <SpotField label="Distance" value={`${d} ${unit}`} />
-                    <SpotField
-                        label="Location"
-                        value={spot?.receiverDXCC?.shortName}
-                    />
-
-                    <SpotField
-                        label="ITU zone"
-                        value={spot?.receiverDXCC?.ituZone}
-                    />
-                    <SpotField
-                        label="CQ zone"
-                        value={spot?.receiverDXCC?.cqZone}
-                    />
-                </SimpleGrid>
-            </Stack>
+                        <SpotField
+                            label="ITU zone"
+                            value={spot?.receiverDXCC?.ituZone}
+                        />
+                        <SpotField
+                            label="CQ zone"
+                            value={spot?.receiverDXCC?.cqZone}
+                        />
+                    </SimpleGrid>
+                </Stack>
+            </Group>
         </Paper>
     );
 };
