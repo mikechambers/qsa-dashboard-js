@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { Map } from "maplibre-gl";
-import MaplibreTransition from "maplibre-transition";
 
 //initialize map instance, and set ready property once it has loaded.
 export function useMapInstance(containerRef, { style, center, zoom }) {
@@ -14,7 +13,6 @@ export function useMapInstance(containerRef, { style, center, zoom }) {
             center,
             zoom,
         });
-        MaplibreTransition.init(m);
         m.on("load", () => setReady(true));
         setMap(m);
 

@@ -25,7 +25,6 @@
     "@turf/circle": "^7.4.0",
     "@turf/great-circle": "^7.4.0",
     "maplibre-gl": "^6.18.0",
-    "maplibre-transition": "^3.0.0",
     "mqtt": "^5.16.1",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
