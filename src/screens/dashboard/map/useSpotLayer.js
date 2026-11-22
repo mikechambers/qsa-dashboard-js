@@ -48,29 +48,30 @@ export function useSpotLayer(map, ready, spots, onSpotHighlight) {
     useEffect(() => {
         if (!map || !ready) return;
 
-        //figure out if the user has moused over a spot. if so, make it selected.
-        const onEnter = (e) => {
+        //select a spot on hover (mouse) or click / tap (mouse and touch)
+        const onSelect = (e) => {
             const id = e.features[0]?.properties.spotId;
             const s = spotsRef.current.find((spot) => spot.id === id);
             if (s) highlightRef.current(s);
         };
 
-        map.on("mouseenter", SPOT_PATH, onEnter);
+        map.on("mouseenter", SPOT_PATH, onSelect);
+        map.on("click", SPOT_PATH, onSelect);
 
-        //listen for when users clicks on the map, not on a spot.
-        //if they do, clear selectedSpot
+        //click / tap on empty map: clear selectedSpot
         const onClick = (e) => {
             const hits = map.queryRenderedFeatures(e.point, {
                 layers: [SPOT_PATH],
             });
             if (hits.length === 0) {
-                onSpotHighlight(undefined);
+                highlightRef.current(undefined);
             }
         };
         map.on("click", onClick);
 
         return () => {
-            map.off("mouseenter", SPOT_PATH, onEnter);
+            map.off("mouseenter", SPOT_PATH, onSelect);
+            map.off("click", SPOT_PATH, onSelect);
             map.off("click", onClick);
         };
     }, [map, ready]);
