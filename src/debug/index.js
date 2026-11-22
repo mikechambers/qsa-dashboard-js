@@ -1,12 +1,14 @@
 import Spot from "@/models/Spot";
-import Location from "@/models/Location";
 import { MIN_SNR } from "@/consts/config";
 
 export const DEBUG = import.meta.env.VITE_DEBUG === "true";
 
 // Mock spots for the dashboard.
 //
-// Keep your existing imports for Spot and Location at the top of this file.
+// Every spot is first written as a raw message in the same shape PSK Reporter
+// sends (sq, t, f, rp, sc, rc, sl, rl, sa, ra, b, md), then run through
+// Spot.fromData, so mock spots take the same path as live ones (grids turn
+// into locations, DXCC lookups, distance).
 //
 // All dates are relative to when this module loads, so the data always looks
 // "live": your 15 hand-written spots are the newest ones (the last is 20 s old),
@@ -26,8 +28,44 @@ const at = (iso) => new Date(NOW - 20 * SECOND - (REF_LAST - Date.parse(iso)));
 
 // ---- generated older spots --------------------------------------------------
 
-const SENDER_LOCATION = { latitude: 37.58, longitude: -122.37, grid: "CM87TN" };
-const SENDER_DXCC = { countryCode: "US", ituZone: 5, cqZone: 7 };
+const SENDER_CALL = "N0CALL";
+const SENDER_GRID = "CM87TN";
+
+// DXCC entity numbers, which is what PSK Reporter sends for sa / ra
+const DXCC = {
+    US: 291,
+    CA: 1,
+    MX: 50,
+    JP: 339,
+    KR: 137,
+    AU: 150,
+    NZ: 170,
+    BR: 108,
+    DE: 230,
+    GB: 223,
+    IT: 248,
+};
+const SENDER_DXCC = DXCC.US;
+
+// a raw PSK Reporter style message, ready for Spot.fromData
+const toData = ({ sequence, date, mode, band, frequency, snr, call, grid, dxcc }) => {
+    const epoch = Math.floor(date.getTime() / 1000);
+    return {
+        sq: sequence,
+        t: epoch,
+        t_tx: epoch,
+        f: frequency,
+        rp: snr,
+        md: mode,
+        b: band,
+        sc: SENDER_CALL,
+        rc: call,
+        sl: SENDER_GRID,
+        rl: grid,
+        sa: SENDER_DXCC,
+        ra: dxcc,
+    };
+};
 
 // Receivers. km is the distance from the sender, band is where they usually hear you.
 const RECEIVERS = [
@@ -350,384 +388,56 @@ const buildOlder = () => {
 
     raw.sort((a, b) => b.ago - a.ago); // oldest first
 
-    return raw.map(
-        (r, i) =>
-            new Spot({
-                sequence: i + 1,
-                transmissionDate: new Date(NOW - Math.round(r.ago) * SECOND),
-                mode: r.mode,
-                band: r.rx.band,
-                frequency: r.frequency,
-                senderCall: "N0CALL",
-                receiverCall: r.rx.call,
-                distance: r.rx.km,
-                snr: r.snr,
-                senderDXCC: SENDER_DXCC,
-                receiverDXCC: {
-                    countryCode: r.rx.cc,
-                    ituZone: r.rx.itu,
-                    cqZone: r.rx.cq,
-                },
-                senderLocation: new Location(SENDER_LOCATION),
-                receiverLocation: new Location({
-                    latitude: r.rx.lat,
-                    longitude: r.rx.lon,
-                    grid: r.rx.grid,
-                }),
-            }),
+    return raw.map((r, i) =>
+        toData({
+            sequence: i + 1,
+            date: new Date(NOW - Math.round(r.ago) * SECOND),
+            mode: r.mode,
+            band: r.rx.band,
+            frequency: r.frequency,
+            snr: r.snr,
+            call: r.rx.call,
+            grid: r.rx.grid,
+            dxcc: DXCC[r.rx.cc],
+        }),
     );
 };
 
 const OLDER = buildOlder();
 
 // ---- your spots (dates and sequence numbers now relative) -------------------
+// [time, mode, band, frequency, receiver call, snr, receiver grid, receiver dxcc]
 
 const HAND_SPOTS = [
-    new Spot({
-        sequence: OLDER.length + 1,
-        transmissionDate: at("2026-11-12T18:42:15Z"),
-        mode: "FT8",
-        band: "23CM",
-        frequency: 1296065000,
-        senderCall: "N0CALL",
-        receiverCall: "VE7DLX",
-        distance: 1310,
-        snr: 8,
-        senderDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
-        receiverDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
-        senderLocation: new Location({
-            latitude: 37.58,
-            longitude: -122.37,
-            grid: "CM87TN",
-        }),
-        receiverLocation: new Location({
-            latitude: 49.28,
-            longitude: -123.12,
-            grid: "CN89KG",
-        }),
+    ["2026-11-12T18:42:15Z", "FT8", "23CM", 1296065000, "VE7DLX", 8, "CN89KG", DXCC.CA],
+    ["2026-11-12T18:42:30Z", "FT8", "20M", 14076810, "W7GJ", -3, "CN87UO", DXCC.US],
+    ["2026-11-12T18:42:45Z", "FT8", "20M", 14074960, "KH6BZF", 0, "BL11BH", 110],
+    ["2026-11-12T18:43:00Z", "FT8", "20M", 14077350, "W5QY", -15, "EM12OS", DXCC.US],
+    ["2026-11-12T18:43:07Z", "FT4", "15M", 21141800, "VK3DEF", -5, "QF22LE", DXCC.AU],
+    ["2026-11-12T18:43:15Z", "FT8", "20M", 14075870, "N1ABC", -19, "FN42LI", DXCC.US],
+    ["2026-11-12T18:43:30Z", "FT8", "17M", 18101640, "JH1GEN", -21, "PM95UQ", DXCC.JP],
+    ["2026-11-12T18:43:45Z", "FT8", "15M", 21076100, "ZL2BCD", -16, "RF73JD", DXCC.NZ],
+    ["2026-11-12T18:44:00Z", "FT8", "20M", 14075500, "DL1ABC", -22, "JO40IC", DXCC.DE],
+    ["2026-11-12T18:44:15Z", "FT8", "10M", 28076240, "XE2YY", -9, "DL95UQ", DXCC.MX],
+    ["2026-11-12T18:44:22Z", "FT4", "17M", 18105200, "PY2ABC", -14, "GG66QK", DXCC.BR],
+    ["2026-11-12T18:44:30Z", "FT8", "20M", 14078200, "G4ABC", -23, "IO91WM", DXCC.GB],
+    ["2026-11-12T18:44:45Z", "FT8", "20M", 14074680, "KL7ABC", -6, "BP51BF", 6],
+    ["2026-11-12T18:45:00Z", "FT8", "20M", 14076020, "AC0DEN", 2, "DM79MR", DXCC.US],
+    ["2026-11-12T18:45:07Z", "FT4", "20M", 14080900, "W6DEF", 8, "CM98GN", DXCC.US],
+].map(([iso, mode, band, frequency, call, snr, grid, dxcc], i) =>
+    toData({
+        sequence: OLDER.length + i + 1,
+        date: at(iso),
+        mode,
+        band,
+        frequency,
+        snr,
+        call,
+        grid,
+        dxcc,
     }),
-    new Spot({
-        sequence: OLDER.length + 2,
-        transmissionDate: at("2026-11-12T18:42:30Z"),
-        mode: "FT8",
-        band: "20M",
-        frequency: 14076810,
-        senderCall: "N0CALL",
-        receiverCall: "W7GJ",
-        distance: 1130,
-        snr: -3,
-        senderDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
-        receiverDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
-        senderLocation: new Location({
-            latitude: 37.58,
-            longitude: -122.37,
-            grid: "CM87TN",
-        }),
-        receiverLocation: new Location({
-            latitude: 47.61,
-            longitude: -122.33,
-            grid: "CN87UO",
-        }),
-    }),
-    new Spot({
-        sequence: OLDER.length + 3,
-        transmissionDate: at("2026-11-12T18:42:45Z"),
-        mode: "FT8",
-        band: "20M",
-        frequency: 14074960,
-        senderCall: "N0CALL",
-        receiverCall: "KH6BZF",
-        distance: 3900,
-        snr: 0,
-        senderDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
-        receiverDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
-        senderLocation: new Location({
-            latitude: 37.58,
-            longitude: -122.37,
-            grid: "CM87TN",
-        }),
-        receiverLocation: new Location({
-            latitude: 21.31,
-            longitude: -157.86,
-            grid: "BL11BH",
-        }),
-    }),
-    new Spot({
-        sequence: OLDER.length + 4,
-        transmissionDate: at("2026-11-12T18:43:00Z"),
-        mode: "FT8",
-        band: "20M",
-        frequency: 14077350,
-        senderCall: "N0CALL",
-        receiverCall: "W5QY",
-        distance: 2400,
-        snr: -15,
-        senderDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
-        receiverDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
-        senderLocation: new Location({
-            latitude: 37.58,
-            longitude: -122.37,
-            grid: "CM87TN",
-        }),
-        receiverLocation: new Location({
-            latitude: 32.78,
-            longitude: -96.8,
-            grid: "EM12OS",
-        }),
-    }),
-    new Spot({
-        sequence: OLDER.length + 5,
-        transmissionDate: at("2026-11-12T18:43:07Z"),
-        mode: "FT4",
-        band: "15M",
-        frequency: 21141800,
-        senderCall: "N0CALL",
-        receiverCall: "VK3DEF",
-        distance: 12700,
-        snr: -5,
-        senderDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
-        receiverDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
-        senderLocation: new Location({
-            latitude: 37.58,
-            longitude: -122.37,
-            grid: "CM87TN",
-        }),
-        receiverLocation: new Location({
-            latitude: -37.81,
-            longitude: 144.96,
-            grid: "QF22LE",
-        }),
-    }),
-    new Spot({
-        sequence: OLDER.length + 6,
-        transmissionDate: at("2026-11-12T18:43:15Z"),
-        mode: "FT8",
-        band: "20M",
-        frequency: 14075870,
-        senderCall: "N0CALL",
-        receiverCall: "N1ABC",
-        distance: 4300,
-        snr: -19,
-        senderDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
-        receiverDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
-        senderLocation: new Location({
-            latitude: 37.58,
-            longitude: -122.37,
-            grid: "CM87TN",
-        }),
-        receiverLocation: new Location({
-            latitude: 42.36,
-            longitude: -71.06,
-            grid: "FN42LI",
-        }),
-    }),
-    new Spot({
-        sequence: OLDER.length + 7,
-        transmissionDate: at("2026-11-12T18:43:30Z"),
-        mode: "FT8",
-        band: "17M",
-        frequency: 18101640,
-        senderCall: "N0CALL",
-        receiverCall: "JH1GEN",
-        distance: 8300,
-        snr: -21,
-        senderDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
-        receiverDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
-        senderLocation: new Location({
-            latitude: 37.58,
-            longitude: -122.37,
-            grid: "CM87TN",
-        }),
-        receiverLocation: new Location({
-            latitude: 35.68,
-            longitude: 139.69,
-            grid: "PM95UQ",
-        }),
-    }),
-    new Spot({
-        sequence: OLDER.length + 8,
-        transmissionDate: at("2026-11-12T18:43:45Z"),
-        mode: "FT8",
-        band: "15M",
-        frequency: 21076100,
-        senderCall: "N0CALL",
-        receiverCall: "ZL2BCD",
-        distance: 10500,
-        snr: -16,
-        senderDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
-        receiverDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
-        senderLocation: new Location({
-            latitude: 37.58,
-            longitude: -122.37,
-            grid: "CM87TN",
-        }),
-        receiverLocation: new Location({
-            latitude: -36.85,
-            longitude: 174.76,
-            grid: "RF73JD",
-        }),
-    }),
-    new Spot({
-        sequence: OLDER.length + 9,
-        transmissionDate: at("2026-11-12T18:44:00Z"),
-        mode: "FT8",
-        band: "20M",
-        frequency: 14075500,
-        senderCall: "N0CALL",
-        receiverCall: "DL1ABC",
-        distance: 9120,
-        snr: -22,
-        senderDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
-        receiverDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
-        senderLocation: new Location({
-            latitude: 37.58,
-            longitude: -122.37,
-            grid: "CM87TN",
-        }),
-        receiverLocation: new Location({
-            latitude: 50.11,
-            longitude: 8.68,
-            grid: "JO40IC",
-        }),
-    }),
-    new Spot({
-        sequence: OLDER.length + 10,
-        transmissionDate: at("2026-11-12T18:44:15Z"),
-        mode: "FT8",
-        band: "10M",
-        frequency: 28076240,
-        senderCall: "N0CALL",
-        receiverCall: "XE2YY",
-        distance: 2500,
-        snr: -9,
-        senderDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
-        receiverDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
-        senderLocation: new Location({
-            latitude: 37.58,
-            longitude: -122.37,
-            grid: "CM87TN",
-        }),
-        receiverLocation: new Location({
-            latitude: 25.69,
-            longitude: -100.32,
-            grid: "DL95UQ",
-        }),
-    }),
-    new Spot({
-        sequence: OLDER.length + 11,
-        transmissionDate: at("2026-11-12T18:44:22Z"),
-        mode: "FT4",
-        band: "17M",
-        frequency: 18105200,
-        senderCall: "N0CALL",
-        receiverCall: "PY2ABC",
-        distance: 10500,
-        snr: -14,
-        senderDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
-        receiverDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
-        senderLocation: new Location({
-            latitude: 37.58,
-            longitude: -122.37,
-            grid: "CM87TN",
-        }),
-        receiverLocation: new Location({
-            latitude: -23.55,
-            longitude: -46.63,
-            grid: "GG66QK",
-        }),
-    }),
-    new Spot({
-        sequence: OLDER.length + 12,
-        transmissionDate: at("2026-11-12T18:44:30Z"),
-        mode: "FT8",
-        band: "20M",
-        frequency: 14078200,
-        senderCall: "N0CALL",
-        receiverCall: "G4ABC",
-        distance: 8600,
-        snr: -23,
-        senderDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
-        receiverDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
-        senderLocation: new Location({
-            latitude: 37.58,
-            longitude: -122.37,
-            grid: "CM87TN",
-        }),
-        receiverLocation: new Location({
-            latitude: 51.51,
-            longitude: -0.13,
-            grid: "IO91WM",
-        }),
-    }),
-    new Spot({
-        sequence: OLDER.length + 13,
-        transmissionDate: at("2026-11-12T18:44:45Z"),
-        mode: "FT8",
-        band: "20M",
-        frequency: 14074680,
-        senderCall: "N0CALL",
-        receiverCall: "KL7ABC",
-        distance: 3200,
-        snr: -6,
-        senderDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
-        receiverDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
-        senderLocation: new Location({
-            latitude: 37.58,
-            longitude: -122.37,
-            grid: "CM87TN",
-        }),
-        receiverLocation: new Location({
-            latitude: 61.22,
-            longitude: -149.9,
-            grid: "BP51BF",
-        }),
-    }),
-    new Spot({
-        sequence: OLDER.length + 14,
-        transmissionDate: at("2026-11-12T18:45:00Z"),
-        mode: "FT8",
-        band: "20M",
-        frequency: 14076020,
-        senderCall: "N0CALL",
-        receiverCall: "AC0DEN",
-        distance: 1550,
-        snr: 2,
-        senderDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
-        receiverDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
-        senderLocation: new Location({
-            latitude: 37.58,
-            longitude: -122.37,
-            grid: "CM87TN",
-        }),
-        receiverLocation: new Location({
-            latitude: 39.74,
-            longitude: -104.99,
-            grid: "DM79MR",
-        }),
-    }),
-    new Spot({
-        sequence: OLDER.length + 15,
-        transmissionDate: at("2026-11-12T18:45:07Z"),
-        mode: "FT4",
-        band: "20M",
-        frequency: 14080900,
-        senderCall: "N0CALL",
-        receiverCall: "W6DEF",
-        distance: 140,
-        snr: 8,
-        senderDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
-        receiverDXCC: { countryCode: "US", ituZone: 5, cqZone: 7 },
-        senderLocation: new Location({
-            latitude: 37.58,
-            longitude: -122.37,
-            grid: "CM87TN",
-        }),
-        receiverLocation: new Location({
-            latitude: 38.58,
-            longitude: -121.49,
-            grid: "CM98GN",
-        }),
-    }),
-];
+);
 
-export const MOCK_SPOTS = [...OLDER, ...HAND_SPOTS];
+export const MOCK_SPOTS = [...OLDER, ...HAND_SPOTS].map((data) =>
+    Spot.fromData(data),
+);
