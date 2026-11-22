@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import circle from "@turf/circle";
-import { DisplayMode } from "@/enums/DisplayMode";
 import { UnitType } from "@/enums/UnitType";
 import { milesToKilometers } from "@/utils/geo";
 import { convertAndFormatDistance, formatNumber } from "@/utils/view";

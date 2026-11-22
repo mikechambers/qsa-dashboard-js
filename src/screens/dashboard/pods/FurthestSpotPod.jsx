@@ -1,7 +1,6 @@
 import { MAP_DISTANCE_RING_PALETTE } from "@/consts/config";
 import { useSelectedSpot } from "@/contexts/SelectedSpotContext";
 import { useSettings } from "@/contexts/SettingsContext";
-import { DisplayMode } from "@/enums/DisplayMode";
 import { SummaryBase } from "@/screens/dashboard/pods/PodBase";
 import { convertAndFormatDistance } from "@/utils/view";
 
@@ -29,7 +28,7 @@ export const FurthestSpotPod = ({ furthestSpot }) => {
             value={d}
             unit={unit}
             onClick={onFurthestClick}
-            swatchColor={theme?.furthest}
+            swatchColor={furthestSpot ? theme?.furthest : undefined}
             subvalue={subvalue}
         />
     );

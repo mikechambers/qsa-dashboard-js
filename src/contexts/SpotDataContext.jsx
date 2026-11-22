@@ -20,7 +20,6 @@ const SpotDataContext = createContext(null);
 export function SpotDataProvider({ children }) {
     const { settings } = useSettings();
 
-    console.log("SpotDataProvider");
     const [spots, setSpots] = useState(settings.demoMode ? MOCK_SPOTS : []);
 
     const [status, setStatus] = useState(
