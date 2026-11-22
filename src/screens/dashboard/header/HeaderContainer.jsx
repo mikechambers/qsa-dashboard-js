@@ -31,6 +31,7 @@ import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { ClockContainer } from "./ClockContainer";
 import { ControlContainer } from "./ControlContainer";
 import { Breakpoint } from "@/enums/Breakpoint";
+import { GithubIcon } from "@/screens/icons/GithubIcon";
 
 export const HeaderContainer = ({ callsign, grid }) => {
     const { settings, setShowFilters } = useSettings();
@@ -69,10 +70,10 @@ export const HeaderContainer = ({ callsign, grid }) => {
                         href="https://github.com/mikechambers/qsa-dashboard-js"
                         target="_blank"
                         rel="noopener noreferrer"
-                        aria-label="View project home and source on GitHub"
-                        title="View project home and source on GitHub"
+                        aria-label="View project info and source on GitHub"
+                        title="View project info and source on GitHub"
                     >
-                        <IconBrandGithub size={20} />
+                        <GithubIcon size="100%" />
                     </ActionIcon>
                 </Group>
             </Group>
