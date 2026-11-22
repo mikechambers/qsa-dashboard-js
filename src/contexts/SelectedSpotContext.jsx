@@ -1,22 +1,17 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useState } from "react";
 import { useSpotData } from "./SpotDataContext";
 
 const SelectedSpotContext = createContext(null);
 
 export function SelectedSpotProvider({ children }) {
-    const [selectedSpot, setSelectedSpot] = useState();
+    const [selectedId, setSelectedId] = useState();
 
     const { filteredSpots } = useSpotData();
 
-    useEffect(() => {
-        if (!selectedSpot) return;
+    const selectedSpot = filteredSpots.find((s) => s.id === selectedId);
 
-        const foundSpot = filteredSpots.find((s) => s.id === selectedSpot.id);
-
-        if (!foundSpot) {
-            setSelectedSpot(undefined);
-        }
-    }, [filteredSpots, selectedSpot]);
+    //only need to create once
+    const setSelectedSpot = useCallback((spot) => setSelectedId(spot?.id), []);
 
     return (
         <SelectedSpotContext.Provider
