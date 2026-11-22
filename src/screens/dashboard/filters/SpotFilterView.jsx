@@ -8,23 +8,16 @@ import {
     Input,
     Text,
     Button,
-    Collapse,
-    Badge,
+    Checkbox,
 } from "@mantine/core";
-import { useState } from "react";
-import { SpotFilter, SpotFilterDefaults } from "../../../models/SpotFilter";
+import { SpotFilter } from "../../../models/SpotFilter";
 import { useSpotData } from "../../../contexts/SpotDataContext";
 import { Band } from "../../../enums/Band";
 import { ALL_CASES } from "../../../consts";
 import { Mode } from "../../../enums/Mode";
 import { useSettings } from "../../../contexts/SettingsContext";
 import { UnitType } from "../../../enums/UnitType";
-import { useDisclosure } from "@mantine/hooks";
-import {
-    IconFilter2,
-    IconFilter2Search,
-    IconListSearch,
-} from "@tabler/icons-react";
+import { IconFilter2 } from "@tabler/icons-react";
 import { kilometersToMiles, milesToKilometers } from "@/utils/geo";
 import { MIN_SNR } from "@/consts/config";
 
@@ -70,96 +63,118 @@ export const SpotFilterView = () => {
 
     return (
         <Paper withBorder>
-            <Group align="flex-end" gap="xl">
-                <Group gap="xs" mih={30}>
+            <Group align="flex-end" gap="xl" pos="relative">
+                <Group gap="xs" mih={30} style={{ alignSelf: "flex-start" }}>
                     <IconFilter2 size={18} />
                     <Text size="sm" fw={600}>
                         Filters
                     </Text>
                 </Group>
-                <TextInput
-                    size="xs"
-                    label="Callsign"
-                    placeholder="callsign"
-                    value={filter.callsign}
-                    onChange={(e) =>
-                        setFilter(
-                            filter.with({
-                                callsign: e.currentTarget.value,
-                            }),
-                        )
-                    }
-                    w={160}
-                />
-                <Select
-                    label="Band"
-                    size="xs"
-                    placeholder="All"
-                    data={bandValues}
-                    value={filter.band}
-                    w={140}
-                    onChange={(v) => setFilter(filter.with({ band: v }))}
-                    allowDeselect={false}
-                />
 
-                <Select
-                    label="Mode"
-                    size="xs"
-                    placeholder="All"
-                    data={modeValues}
-                    value={filter.mode}
-                    w={140}
-                    onChange={(v) => setFilter(filter.with({ mode: v }))}
-                    allowDeselect={false}
-                />
-                <Stack gap={4} w={200}>
-                    <Input.Label size="xs">Min SNR (dB)</Input.Label>
-                    <Slider
-                        min={MIN_SNR}
+                <Group align="flex-start" gap="xl">
+                    <TextInput
                         size="xs"
-                        max={10}
-                        value={filter.snr}
-                        step={1}
-                        onChange={(v) => setFilter(filter.with({ snr: v }))}
-                        marks={[
-                            { value: MIN_SNR, label: `${MIN_SNR}` },
-                            { value: -20, label: "-20" },
-                            { value: -10, label: "-10" },
-                            { value: 0, label: "0" },
-                            { value: 10, label: "10" },
-                        ]}
-                        mb="md"
-                    />
-                </Stack>
-                <Stack gap={4} w={200}>
-                    <Input.Label size="xs">
-                        Min Distance ({distanceAbbreviation})
-                    </Input.Label>
-                    <Slider
-                        marks={distanceValues}
-                        value={sliderDistance}
-                        min={0}
-                        size="xs"
-                        max={distanceValues.at(-1).value}
-                        step={100}
-                        onChange={(v) => setDistanceFilter(v)}
-                        label={(v) =>
-                            `${v.toLocaleString()} ${distanceAbbreviation}`
+                        label="Callsign"
+                        placeholder="callsign"
+                        value={filter.callsign}
+                        onChange={(e) =>
+                            setFilter(
+                                filter.with({
+                                    callsign: e.currentTarget.value,
+                                }),
+                            )
                         }
-                        mb="md"
+                        w={160}
                     />
-                </Stack>
-                <Group ml="auto" gap="md">
-                    <Text size="sm" c="dimmed">
-                        Showing {filteredSpots.length} of {spots.length} spots
-                    </Text>
-                    <Button
-                        variant="default"
+
+                    <Select
+                        label="Band"
                         size="xs"
-                        onClick={() => setFilter(new SpotFilter())}
-                    >
-                        Reset
-                    </Button>
+                        placeholder="All"
+                        data={bandValues}
+                        value={filter.band}
+                        w={140}
+                        onChange={(v) => setFilter(filter.with({ band: v }))}
+                        allowDeselect={false}
+                    />
+
+                    <Select
+                        label="Mode"
+                        size="xs"
+                        placeholder="All"
+                        data={modeValues}
+                        value={filter.mode}
+                        w={140}
+                        onChange={(v) => setFilter(filter.with({ mode: v }))}
+                        allowDeselect={false}
+                    />
+
+                    <Stack gap={4} w={200}>
+                        <Input.Label size="xs" w={200}>
+                            Min SNR (dB)
+                        </Input.Label>
+                        <Slider
+                            min={MIN_SNR}
+                            size="xs"
+                            max={10}
+                            value={filter.snr}
+                            step={1}
+                            onChange={(v) => setFilter(filter.with({ snr: v }))}
+                            marks={[
+                                { value: MIN_SNR, label: `${MIN_SNR}` },
+                                { value: -20, label: "-20" },
+                                { value: -10, label: "-10" },
+                                { value: 0, label: "0" },
+                                { value: 10, label: "10" },
+                            ]}
+                            mb="md"
+                        />
+                    </Stack>
+                    <Stack gap={4} w={200}>
+                        <Input.Label size="xs" w={200}>
+                            Min Distance ({distanceAbbreviation})
+                        </Input.Label>
+                        <Slider
+                            marks={distanceValues}
+                            value={sliderDistance}
+                            min={0}
+                            size="xs"
+                            max={distanceValues.at(-1).value}
+                            step={100}
+                            onChange={(v) => setDistanceFilter(v)}
+                            label={(v) =>
+                                `${v.toLocaleString()} ${distanceAbbreviation}`
+                            }
+                            mb="md"
+                        />
+                    </Stack>
+                    <Checkbox
+                        mt={30}
+                        size="xs"
+                        checked={filter.skipDuplicates}
+                        onChange={(e) => {
+                            setFilter(
+                                filter.with({
+                                    skipDuplicates: e.currentTarget.checked,
+                                }),
+                            );
+                        }}
+                        label="Omit Duplicates"
+                    />
+                </Group>
+                <Button
+                    variant="default"
+                    size="xs"
+                    onClick={() => setFilter(new SpotFilter())}
+                    style={{ alignSelf: "flex-end" }}
+                >
+                    Reset
+                </Button>
+
+                <Group ml="auto" gap="md" pos="absolute" top={-8} right={-4}>
+                    <Text size="sm" c="dimmed" fw={600}>
+                        {filteredSpots.length} / {spots.length}
+                    </Text>
                 </Group>
             </Group>
         </Paper>

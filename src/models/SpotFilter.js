@@ -7,6 +7,7 @@ export const SpotFilterDefaults = {
     MODE: ALL_CASES,
     SNR: MIN_SNR,
     DISTANCE: 0,
+    SKIP_DUPLICATES: false,
 };
 
 export class SpotFilter {
@@ -15,6 +16,7 @@ export class SpotFilter {
     mode = SpotFilterDefaults.MODE;
     snr = SpotFilterDefaults.SNR;
     distance = SpotFilterDefaults.DISTANCE;
+    skipDuplicates = SpotFilterDefaults.SKIP_DUPLICATES;
 
     with(changes) {
         return Object.assign(new SpotFilter(), this, changes);
@@ -26,12 +28,15 @@ export class SpotFilter {
             this.band != SpotFilterDefaults.BAND ||
             this.mode != SpotFilterDefaults.MODE ||
             this.snr != SpotFilterDefaults.SNR ||
-            this.distance != SpotFilterDefaults.DISTANCE
+            this.distance != SpotFilterDefaults.DISTANCE ||
+            this.skipDuplicates != SpotFilterDefaults.SKIP_DUPLICATES
         );
     }
 
     filter(spots) {
-        return spots.filter((spot, index, array) => {
+        let hash = new Set();
+
+        return spots.filter((spot) => {
             if (this.callsign) {
                 const c = this.callsign.toUpperCase();
                 if (!spot.receiverCall.toUpperCase().startsWith(c)) {
@@ -57,6 +62,15 @@ export class SpotFilter {
 
             if (spot.distance < this.distance) {
                 return false;
+            }
+
+            if (this.skipDuplicates) {
+                const key = `${spot.receiverCall}|${spot.band}`;
+                if (hash.has(key)) {
+                    return false;
+                } else {
+                    hash.add(key);
+                }
             }
 
             return true;
