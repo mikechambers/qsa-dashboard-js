@@ -14,6 +14,7 @@ import { SpotFilter } from "../models/SpotFilter";
 import { SPOT_LIMIT } from "@/consts/config";
 import { useSettings } from "./SettingsContext";
 import { MOCK_SPOTS } from "@/debug";
+import { Mode } from "@/enums/Mode";
 
 const SpotDataContext = createContext(null);
 
@@ -113,7 +114,12 @@ export function SpotDataProvider({ children }) {
         client.on("message", (topic, message) => {
             let spot;
             try {
-                spot = Spot.fromData(JSON.parse(message.toString()));
+                const json = message.toString();
+                spot = Spot.fromData(JSON.parse(json));
+
+                if (spot.mode === Mode.UNKNOWN) {
+                    console.log("UNKNOWN MODE", json);
+                }
             } catch (e) {
                 console.error("Error parsing Spot JSON. Skipping.", e);
                 return;
