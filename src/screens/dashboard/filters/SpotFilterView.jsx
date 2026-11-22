@@ -160,6 +160,7 @@ export const SpotFilterView = () => {
                             );
                         }}
                         label="Omit Duplicates"
+                        style={{ alignSelf: "flex-end" }}
                     />
                 </Group>
                 <Button
