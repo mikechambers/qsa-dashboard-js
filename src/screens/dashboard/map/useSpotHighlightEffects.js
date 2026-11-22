@@ -12,6 +12,8 @@ import {
     EASING_TYPE,
     EMPTY_FEATURE_COLLECTION,
 } from "./config";
+import { ADD_SPOT_JITTER } from "@/consts/config";
+import { getJitteredCoordinates } from "@/utils/geo";
 
 export const isMapAlive = (map) => !!map && !!map.style;
 
@@ -40,18 +42,30 @@ export function useSpotHighlightEffects(map, ready, selectedSpot, location) {
             });
         };
 
-        featuresRef.current = [
-            ...featuresRef.current.filter((f) => f.id !== selectedSpot.id),
-            {
-                type: "Feature",
-                id: selectedSpot.id,
-                geometry: {
-                    type: "Point",
-                    coordinates: selectedSpot.receiverLocation.coordinates,
-                },
-                properties: { color: getCSSColorForSNR(selectedSpot.snr) },
+        const others = featuresRef.current.filter((f) => {
+            return f.id !== selectedSpot.id;
+        });
+
+        //if we are using spot jitter we need to adjust for it
+        const coordinates = ADD_SPOT_JITTER
+            ? getJitteredCoordinates(
+                  selectedSpot.receiverLocation,
+                  selectedSpot.id,
+              )
+            : selectedSpot.receiverLocation.coordinates;
+
+        const selectedFeature = {
+            type: "Feature",
+            id: selectedSpot.id,
+            geometry: {
+                type: "Point",
+                coordinates: coordinates,
             },
-        ];
+            properties: { color: getCSSColorForSNR(selectedSpot.snr) },
+        };
+
+        featuresRef.current = [...others, selectedFeature];
+
         syncSource();
 
         //animate the radius up to the selected size
