@@ -1,35 +1,8 @@
 import { useState, useEffect, useMemo } from "react";
 import { SummaryBase } from "./PodBase";
 import { formatHMS } from "@/utils/view";
+import { timeAgo } from "@/utils/date";
 import { useInterval } from "@mantine/hooks";
-
-//todo: could make this more general and re-usable
-function timeAgo(date) {
-    const secondsElapsed = Math.floor(
-        (Date.now() - new Date(date).getTime()) / 1000,
-    );
-
-    const intervals = [
-        { label: "days", seconds: 86400 },
-        { label: "hour", seconds: 3600 },
-        { label: "minute", seconds: 60 },
-        { label: "second", seconds: 1 },
-    ];
-
-    const rtf = new Intl.RelativeTimeFormat("en", {
-        numeric: "auto",
-        style: "narrow",
-    });
-
-    for (const interval of intervals) {
-        const count = Math.floor(secondsElapsed / interval.seconds);
-        if (count >= 1) {
-            return rtf.format(-count, interval.label);
-        }
-    }
-
-    return rtf.format(0, "second");
-}
 
 let sessionStart = null;
 

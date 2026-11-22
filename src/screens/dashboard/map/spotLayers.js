@@ -4,7 +4,6 @@ import {
     SPOT_PATH,
     CONNECTION_LINE_PATH,
     CONNECTION_POINT,
-    SELECTED_SPOT,
     CIRCLE_RADIUS,
     CIRCLE_STROKE,
 } from "./config";
@@ -29,28 +28,9 @@ export function addSpotLayer(map) {
             "circle-stroke-color": "white",
         },
     });
-
-    //selected spot is drawn here, above all other spots, so it is never
-    //hidden by other spots at the same location
-    map.addSource(SELECTED_SPOT, {
-        type: "geojson",
-        data: EMPTY_FEATURE_COLLECTION,
-    });
-
-    map.addLayer({
-        id: SELECTED_SPOT,
-        source: SELECTED_SPOT,
-        type: "circle",
-        paint: {
-            "circle-radius": CIRCLE_RADIUS,
-            "circle-color": ["get", "color"],
-            "circle-stroke-width": CIRCLE_STROKE,
-            "circle-stroke-color": "white",
-        },
-    });
 }
 
-//adds the layer for drawing the conncetion line
+//adds the layer for drawing the connection line
 export function addConnectionLineLayer(map) {
     map.addSource(CONNECTION_LINE_PATH, {
         type: "geojson",

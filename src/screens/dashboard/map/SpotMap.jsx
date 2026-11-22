@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import { setWorkerUrl } from "maplibre-gl";
 import workerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
 import "maplibre-gl/dist/maplibre-gl.css";
@@ -14,6 +15,8 @@ import { DEFAULT_ZOOM } from "./config";
 import { useMapInstance } from "./useMapInstance";
 import { useHomeMarker } from "./useHomeMarker";
 import { useSpotLayer } from "./useSpotLayer";
+import { useSelectedSpotMarker } from "./useSelectedSpotMarker";
+import { SpotPopup } from "./SpotPopup";
 
 import { addGreylineLayers } from "./greylineLayers";
 import { useGreyline } from "./useGreyline";
@@ -38,6 +41,7 @@ export const SpotMap = ({ spots, location }) => {
     const { furthestSpot } = useSpotData();
 
     const mapContainer = useRef(null);
+    const overlayRef = useRef(null);
 
     const startCoordinates = location?.coordinates ?? [-122.38, 37.58];
 
@@ -57,7 +61,7 @@ export const SpotMap = ({ spots, location }) => {
     useEffect(() => {
         if (!ready) return;
 
-        //todo: would could just pass in ready to these also, or dont pass into
+        //todo: could just pass in ready to these also, or dont pass into
         //use greyLine and the calls below
         addGreylineLayers(map, settings);
         addSpotLayer(map);
@@ -81,6 +85,14 @@ export const SpotMap = ({ spots, location }) => {
     useGreyline(map, ready, settings);
     useSpotHighlightEffects(map, ready, selectedSpot, location);
     useSpotLayer(map, ready, spots, setSelectedSpot);
+
+    //selected spot ring / dot, with popup content portaled into the marker
+    const popupContainer = useSelectedSpotMarker(
+        map,
+        ready,
+        selectedSpot,
+        overlayRef,
+    );
 
     //center and zoom on home location
     const centerOnLocation = () => {
@@ -116,6 +128,23 @@ export const SpotMap = ({ spots, location }) => {
             >
                 <IconCurrentLocation size={18} />
             </ActionIcon>
+            {/* popups render here so they sit above the legend and controls */}
+            <div
+                ref={overlayRef}
+                style={{
+                    position: "absolute",
+                    inset: 0,
+                    overflow: "hidden",
+                    pointerEvents: "none",
+                    zIndex: 2,
+                    borderRadius: "6px",
+                }}
+            />
+
+            {popupContainer &&
+                selectedSpot &&
+                createPortal(<SpotPopup spot={selectedSpot} />, popupContainer)}
+
             <SNRLegend
                 selectedSpot={selectedSpot}
                 style={{

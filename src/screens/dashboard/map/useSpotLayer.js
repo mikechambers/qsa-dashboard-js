@@ -55,7 +55,21 @@ export function useSpotLayer(map, ready, spots, onSpotHighlight) {
             if (s) highlightRef.current(s);
         };
 
-        map.on("mouseenter", SPOT_PATH, onSelect);
+        const onEnter = () => {
+            map.getCanvas().style.cursor = "pointer";
+        };
+
+        //clear the selection (and its popup) when the pointer leaves a spot
+        const onLeave = () => {
+            map.getCanvas().style.cursor = "";
+            highlightRef.current(undefined);
+        };
+
+        map.on("mouseenter", SPOT_PATH, onEnter);
+        //mousemove (not just mouseenter) so moving straight from one spot
+        //to a neighboring one still updates the selection
+        map.on("mousemove", SPOT_PATH, onSelect);
+        map.on("mouseleave", SPOT_PATH, onLeave);
         map.on("click", SPOT_PATH, onSelect);
 
         //click / tap on empty map: clear selectedSpot
@@ -70,7 +84,9 @@ export function useSpotLayer(map, ready, spots, onSpotHighlight) {
         map.on("click", onClick);
 
         return () => {
-            map.off("mouseenter", SPOT_PATH, onSelect);
+            map.off("mouseenter", SPOT_PATH, onEnter);
+            map.off("mousemove", SPOT_PATH, onSelect);
+            map.off("mouseleave", SPOT_PATH, onLeave);
             map.off("click", SPOT_PATH, onSelect);
             map.off("click", onClick);
         };
