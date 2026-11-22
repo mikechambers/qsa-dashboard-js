@@ -11,7 +11,11 @@ import { ConnectionStatus } from "../enums/ConnectionStatus";
 
 import Spot from "../models/Spot";
 import { SpotFilter } from "../models/SpotFilter";
-import { SPOT_BATCH_INTERVAL, SPOT_LIMIT } from "@/consts/config";
+import {
+    ADD_SPOT_JITTER,
+    SPOT_BATCH_INTERVAL,
+    SPOT_LIMIT,
+} from "@/consts/config";
 import { useSettings } from "./SettingsContext";
 import { MOCK_SPOTS } from "@/debug";
 import { Mode } from "@/enums/Mode";
@@ -118,7 +122,7 @@ export function SpotDataProvider({ children }) {
             let spot;
             try {
                 const json = message.toString();
-                spot = Spot.fromData(JSON.parse(json));
+                spot = Spot.fromData(JSON.parse(json), ADD_SPOT_JITTER);
 
                 if (spot.mode === Mode.UNKNOWN) {
                     console.log("UNKNOWN MODE", json);

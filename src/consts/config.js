@@ -1,3 +1,4 @@
+export const ADD_SPOT_JITTER = true;
 export const SPOT_BATCH_INTERVAL = 2000;
 export const SPOT_LIMIT = 3000;
 export const SETTINGS_PATH = "/settings";

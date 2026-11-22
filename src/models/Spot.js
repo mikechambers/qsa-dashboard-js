@@ -3,6 +3,7 @@ import { Band } from "@/enums/Band";
 import { Mode } from "@/enums/Mode";
 import { getDXCCEntity, gridToLocation } from "@/utils/geo";
 import { epochToDate } from "@/utils/date";
+import { normalizeMaidenHeadGrid } from "@/utils/radio";
 
 export default class Spot {
     sequence;
@@ -72,6 +73,7 @@ export default class Spot {
         const transmissionDate = epochToDate(data.t_tx);
 
         const senderLocation = gridToLocation(data.sl);
+
         const receiverLocation = gridToLocation(data.rl);
 
         const senderDXCC = getDXCCEntity(data.sa);
