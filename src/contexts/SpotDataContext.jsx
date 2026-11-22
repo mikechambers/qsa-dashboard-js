@@ -11,7 +11,7 @@ import { ConnectionStatus } from "../enums/ConnectionStatus";
 
 import Spot from "../models/Spot";
 import { SpotFilter } from "../models/SpotFilter";
-import { SPOT_LIMIT } from "@/consts/config";
+import { SPOT_BATCH_INTERVAL, SPOT_LIMIT } from "@/consts/config";
 import { useSettings } from "./SettingsContext";
 import { MOCK_SPOTS } from "@/debug";
 import { Mode } from "@/enums/Mode";
@@ -22,6 +22,8 @@ export function SpotDataProvider({ children }) {
     const { settings } = useSettings();
 
     const [spots, setSpots] = useState(settings.demoMode ? MOCK_SPOTS : []);
+
+    const batchRef = useRef([]);
 
     const [status, setStatus] = useState(
         settings.demoMode
@@ -39,6 +41,7 @@ export function SpotDataProvider({ children }) {
     const prevCallsignRef = useRef("");
 
     const clearSpots = () => {
+        batchRef.current = [];
         setSpots([]);
     };
 
@@ -125,13 +128,7 @@ export function SpotDataProvider({ children }) {
                 return;
             }
 
-            setSpots((prev) => {
-                //this will fail if a date is ever null
-                const next = [spot, ...prev].sort((a, b) => b.date - a.date);
-                return next.length > SPOT_LIMIT
-                    ? next.slice(0, SPOT_LIMIT)
-                    : next;
-            });
+            batchRef.current.push(spot);
         });
 
         const errHandler = (err) => {
@@ -141,7 +138,25 @@ export function SpotDataProvider({ children }) {
 
         client.on("error", errHandler);
 
+        const timer = setInterval(() => {
+            if (batchRef.current.length < 1) return;
+
+            const batch = batchRef.current;
+            batchRef.current = [];
+            setSpots((prev) => {
+                //this will fail if a date is ever null
+                const next = [...batch, ...prev].sort(
+                    (a, b) => b.date - a.date,
+                );
+                return next.length > SPOT_LIMIT
+                    ? next.slice(0, SPOT_LIMIT)
+                    : next;
+            });
+            batchRef.current = [];
+        }, SPOT_BATCH_INTERVAL);
+
         return () => {
+            clearInterval(timer);
             client.end();
 
             client.off("connect", updateState);
@@ -169,6 +184,7 @@ export function SpotDataProvider({ children }) {
             prevCallsignRef.current &&
             prevCallsignRef.current !== callsign
         ) {
+            batchRef.current = [];
             setSpots([]);
         }
         prevCallsignRef.current = callsign;
