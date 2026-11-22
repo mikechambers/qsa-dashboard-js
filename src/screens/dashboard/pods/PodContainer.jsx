@@ -10,11 +10,19 @@ import { ElapsedTimePod } from "./ElapsedTimePod";
 import { FurthestSpotPod } from "@/screens/dashboard/pods/FurthestSpotPod";
 import { DistanceSNRChartPod } from "./charts/DistanceSNRChartPod";
 import { SpotRateChartPod } from "./charts/SpotRateChartPod";
+import { useSpotIntervalData } from "./charts/useSpotIntervalData";
 
 export const PodContainer = () => {
-    const { furthestSpot, uniqueStations, uniqueCountries, mostRecentSpot } =
-        useSpotData();
+    const {
+        furthestSpot,
+        uniqueStations,
+        uniqueCountries,
+        mostRecentSpot,
+        filteredSpots,
+    } = useSpotData();
     const { settings } = useSettings();
+
+    const intervals = useSpotIntervalData(filteredSpots);
 
     const uniqueStationsSubValue = `in ${uniqueCountries.length} ${uniqueCountries.length === 1 ? "country" : "countries"}`;
 
@@ -36,10 +44,16 @@ export const PodContainer = () => {
                     </Group>
                 </Paper>
                 <Paper withBorder radius="md" w={350}>
-                    <DistanceSNRChartPod unitType={settings.unitType} />
+                    <DistanceSNRChartPod
+                        unitType={settings.unitType}
+                        intervals={intervals}
+                    />
                 </Paper>
                 <Paper withBorder radius="md" w={350}>
-                    <SpotRateChartPod unitType={settings.unitType} />
+                    <SpotRateChartPod
+                        unitType={settings.unitType}
+                        intervals={intervals}
+                    />
                 </Paper>
             </Group>
         </div>

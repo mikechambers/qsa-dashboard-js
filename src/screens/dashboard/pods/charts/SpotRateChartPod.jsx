@@ -1,10 +1,8 @@
 import { useId } from "react";
 
 import { ChartTooltip } from "./ChartTooltip";
-import { useSpotData } from "@/contexts/SpotDataContext";
 import { SignalColor } from "@/enums/SignalColors";
 import { UnitType } from "@/enums/UnitType";
-import { useSpotIntervalData } from "./useSpotIntervalData";
 import { kilometersToMiles } from "@/utils/geo";
 
 import { AreaChart } from "@mantine/charts";
@@ -44,10 +42,7 @@ const renderDot = ({ cx, cy, index, payload }) =>
         />
     ) : null;
 
-export const SpotRateChartPod = ({ unitType = UnitType.METRIC }) => {
-    const { filteredSpots } = useSpotData();
-    const intervals = useSpotIntervalData(filteredSpots);
-
+export const SpotRateChartPod = ({ intervals, unitType = UnitType.METRIC }) => {
     const gradId = `snr-${useId().replace(/:/g, "")}`;
 
     const snrColor = (snr) => SignalColor.getColorForSNR(snr);

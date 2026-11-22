@@ -1,10 +1,9 @@
 import { ChartTooltip } from "./ChartTooltip";
-import { useSpotData } from "@/contexts/SpotDataContext";
+
 import { SignalColor } from "@/enums/SignalColors";
 import { UnitType } from "@/enums/UnitType";
 import { PodChartBase } from "./PodChartBase";
 
-import { useSpotIntervalData } from "./useSpotIntervalData";
 import { kilometersToMiles } from "@/utils/geo";
 
 import { BarChart } from "@mantine/charts";
@@ -36,10 +35,10 @@ const fmtSnr = (snr) => `${Math.round(snr)} dB`;
 const tickLabel = (v) =>
     v >= 1000 ? `${Math.round(v / 100) / 10}k` : `${Math.round(v)}`;
 
-export const DistanceSNRChartPod = ({ unitType = UnitType.METRIC }) => {
-    const { filteredSpots } = useSpotData();
-    const intervals = useSpotIntervalData(filteredSpots);
-
+export const DistanceSNRChartPod = ({
+    intervals,
+    unitType = UnitType.METRIC,
+}) => {
     const snrColor = (snr) => SignalColor.getColorForSNR(snr);
 
     const toUnit = (km) =>
