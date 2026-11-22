@@ -143,8 +143,7 @@ export const SpotTable = () => {
                         fw={500}
                         style={{ fontVariantNumeric: "tabular-nums" }}
                     >
-                        {count} of {totalSpots}{" "}
-                        {totalSpots === 1 ? "spot" : "spots"}
+                        {totalSpots} {totalSpots === 1 ? "spot" : "spots"}
                     </Text>
                     <ActionIcon
                         variant="subtle"
