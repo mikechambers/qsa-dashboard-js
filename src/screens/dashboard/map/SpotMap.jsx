@@ -117,6 +117,7 @@ export const SpotMap = ({ spots, location }) => {
                 <IconCurrentLocation size={18} />
             </ActionIcon>
             <SNRLegend
+                selectedSpot={selectedSpot}
                 style={{
                     position: "absolute",
                     top: 10,
