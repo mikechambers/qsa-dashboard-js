@@ -73,7 +73,9 @@ export const SpotPopup = ({ spot }) => {
 
     const frequency = formatFrequency(spot.frequency);
     const dxcc = spot.receiverDXCC;
+    const grid = spot.receiverLocation?.grid;
     const zones = [
+        grid,
         dxcc?.ituZone != null && `ITU ${dxcc.ituZone}`,
         dxcc?.cqZone != null && `CQ ${dxcc.cqZone}`,
     ].filter(Boolean);
