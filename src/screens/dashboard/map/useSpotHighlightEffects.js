@@ -23,6 +23,8 @@
 
 import { useEffect } from "react";
 import greatCircle from "@turf/great-circle";
+import { ADD_SPOT_JITTER } from "@/consts/config";
+import { getSpotMapCoordinates } from "./spotCoordinates";
 import {
     CONNECTION_LINE_PATH,
     CONNECTION_POINT,
@@ -37,12 +39,14 @@ export function useSpotHighlightEffects(map, ready, selectedSpot, location) {
     useEffect(() => {
         if (!map || !ready || !selectedSpot || !location) return;
 
-        const to = selectedSpot.receiverLocation;
-        if (!to) return;
+        if (!selectedSpot.receiverLocation) return;
+
+        //same point the spot dot is drawn at (jitter included)
+        const to = getSpotMapCoordinates(selectedSpot, ADD_SPOT_JITTER);
 
         //draw the line
         map.getSource(CONNECTION_LINE_PATH)?.setData(
-            greatCircle(location.coordinates, to.coordinates, {
+            greatCircle(location.coordinates, to, {
                 npoints: 64,
             }),
         );
@@ -50,7 +54,7 @@ export function useSpotHighlightEffects(map, ready, selectedSpot, location) {
         //draw a small circle on the selectedSpot
         map.getSource(CONNECTION_POINT)?.setData({
             type: "Feature",
-            geometry: { type: "Point", coordinates: to.coordinates },
+            geometry: { type: "Point", coordinates: to },
             properties: {},
         });
 

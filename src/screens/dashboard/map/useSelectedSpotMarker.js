@@ -26,7 +26,7 @@ import { Marker } from "maplibre-gl";
 
 import { getCSSColorForSNR } from "@/utils/view";
 import { ADD_SPOT_JITTER } from "@/consts/config";
-import { getJitteredCoordinates } from "@/utils/geo";
+import { getSpotMapCoordinates } from "./spotCoordinates";
 
 import classes from "./SpotPopup.module.css";
 
@@ -41,13 +41,10 @@ export function useSelectedSpotMarker(map, ready, selectedSpot) {
     useEffect(() => {
         if (!map || !ready || !selectedSpot?.receiverLocation) return;
 
-        //if we are using spot jitter we need to adjust for it
-        const coordinates = ADD_SPOT_JITTER
-            ? getJitteredCoordinates(
-                  selectedSpot.receiverLocation,
-                  selectedSpot.id,
-              )
-            : selectedSpot.receiverLocation.coordinates;
+        const coordinates = getSpotMapCoordinates(
+            selectedSpot,
+            ADD_SPOT_JITTER,
+        );
 
         const color = getCSSColorForSNR(selectedSpot.snr);
 
