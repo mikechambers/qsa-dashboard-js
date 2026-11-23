@@ -32,6 +32,7 @@ import { ActionIcon } from "@mantine/core";
 import { useSettings } from "@/contexts/SettingsContext";
 import { DisplayMode } from "@/enums/DisplayMode";
 import { SNRLegend } from "./SNRKey";
+import { MapControls } from "./MapControls";
 
 import { DEFAULT_ZOOM } from "./config";
 
@@ -237,6 +238,8 @@ export const SpotMap = ({ spots, location }) => {
             {popupContainer &&
                 selectedSpot &&
                 createPortal(<SpotPopup spot={selectedSpot} />, popupContainer)}
+
+            <MapControls />
 
             <SNRLegend
                 selectedSpot={selectedSpot}
