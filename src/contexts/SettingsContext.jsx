@@ -110,6 +110,13 @@ export function SettingsProvider({ children }) {
         getInitialValueInEffect: false,
     });
 
+    //spot detail card on the map, expanded or collapsed. Not in the config screen.
+    const [showSpotDetail, setShowSpotDetail] = useLocalStorage({
+        key: getSettingKey("showSpotDetail"),
+        defaultValue: true,
+        getInitialValueInEffect: false,
+    });
+
     const [elevationValues, setElevationValues] = useLocalStorage({
         key: getSettingKey("elevationValues"),
         defaultValue: [
@@ -134,6 +141,7 @@ export function SettingsProvider({ children }) {
         elevationValues,
         showFilters,
         showSpots,
+        showSpotDetail,
     };
 
     return (
@@ -152,6 +160,7 @@ export function SettingsProvider({ children }) {
                 setElevationValues,
                 setShowFilters,
                 setShowSpots,
+                setShowSpotDetail,
                 setDemoMode,
             }}
         >

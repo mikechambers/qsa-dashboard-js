@@ -22,7 +22,6 @@
  */
 
 import { useEffect, useRef } from "react";
-import { createPortal } from "react-dom";
 import { LngLatBounds, setWorkerUrl } from "maplibre-gl";
 import workerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
 import "maplibre-gl/dist/maplibre-gl.css";
@@ -63,10 +62,10 @@ setWorkerUrl(workerUrl);
 const HOVER_FIT_DELAY_MS = 350;
 
 //rough size of the area the popup card covers, at the top right of the map
-const POPUP_AREA = { width: 340, height: 190 };
+const POPUP_AREA = { width: 340, openHeight: 190, closedHeight: 56 };
 
 //is the point on screen, and not hidden behind the popup?
-const isInView = (map, [lng, lat]) => {
+const isInView = (map, [lng, lat], detailOpen) => {
     //the map can show several copies of the world, so use the one nearest the center
     const centerLng = map.getCenter().lng;
     const wrappedLng = centerLng + ((((lng - centerLng + 180) % 360) + 360) % 360) - 180;
@@ -76,7 +75,10 @@ const isInView = (map, [lng, lat]) => {
     const margin = 30;
 
     //the popup covers the top right of the map
-    if (x > w - POPUP_AREA.width && y < POPUP_AREA.height) return false;
+    const popupHeight = detailOpen
+        ? POPUP_AREA.openHeight
+        : POPUP_AREA.closedHeight;
+    if (x > w - POPUP_AREA.width && y < popupHeight) return false;
 
     return x > margin && x < w - margin && y > margin && y < h - margin;
 };
@@ -105,12 +107,11 @@ const fitPath = (map, [fromLng, fromLat], [toLng, toLat]) => {
 };
 
 export const SpotMap = ({ spots, location }) => {
-    const { settings } = useSettings();
+    const { settings, setShowSpotDetail } = useSettings();
     const { selectedSpot, setSelectedSpot, focusRequest } = useSelectedSpot();
     const { furthestSpot } = useSpotData();
 
     const mapContainer = useRef(null);
-    const overlayRef = useRef(null);
 
     const startCoordinates = location?.coordinates ?? [-122.38, 37.58];
 
@@ -155,13 +156,8 @@ export const SpotMap = ({ spots, location }) => {
     useSpotHighlightEffects(map, ready, selectedSpot, location);
     useSpotLayer(map, ready, spots, setSelectedSpot);
 
-    //selected spot ring / dot, with popup content portaled into the marker
-    const popupContainer = useSelectedSpotMarker(
-        map,
-        ready,
-        selectedSpot,
-        overlayRef,
-    );
+    //selected spot ring / dot
+    useSelectedSpotMarker(map, ready, selectedSpot);
 
     //when a spot is clicked in the table, fit the path from home to it so
     //the spot (and its popup) is always in view, even a far away one.
@@ -179,7 +175,7 @@ export const SpotMap = ({ spots, location }) => {
     useEffect(() => {
         const to = selectedSpot?.receiverLocation?.coordinates;
         if (!map || !ready || !location || !to) return;
-        if (isInView(map, to)) return;
+        if (isInView(map, to, settings.showSpotDetail)) return;
 
         const timer = setTimeout(
             () => fitPath(map, location.coordinates, to),
@@ -222,22 +218,11 @@ export const SpotMap = ({ spots, location }) => {
             >
                 <IconCurrentLocation size={18} />
             </ActionIcon>
-            {/* popups render here so they sit above the legend and controls */}
-            <div
-                ref={overlayRef}
-                style={{
-                    position: "absolute",
-                    inset: 0,
-                    overflow: "hidden",
-                    pointerEvents: "none",
-                    zIndex: 2,
-                    borderRadius: "6px",
-                }}
+            <SpotPopup
+                spot={selectedSpot}
+                open={settings.showSpotDetail}
+                onOpenChange={setShowSpotDetail}
             />
-
-            {popupContainer &&
-                selectedSpot &&
-                createPortal(<SpotPopup spot={selectedSpot} />, popupContainer)}
 
             <MapControls />
 

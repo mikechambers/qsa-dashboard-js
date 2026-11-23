@@ -21,7 +21,7 @@
  * SOFTWARE.
  */
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Marker } from "maplibre-gl";
 
 import { getCSSColorForSNR } from "@/utils/view";
@@ -33,19 +33,13 @@ import classes from "./SpotPopup.module.css";
 //how long the marker lingers to play its exit animation (.out in the css)
 const EXIT_MS = 200;
 
-//draws the selected spot as an HTML marker (ring and dot) above
-//all other spots, and creates a popup element in an overlay above the map
-//(so it also sits above things like the legend). The popup stays in a fixed
-//place at the top left of the map (see .popup in the css).
-export function useSelectedSpotMarker(map, ready, selectedSpot, overlayRef) {
-    const [popupContainer, setPopupContainer] = useState(null);
-
+//draws the selected spot as an HTML marker (ring and dot) above all other
+//spots. The detail card is separate (see SpotPopup).
+export function useSelectedSpotMarker(map, ready, selectedSpot) {
     const id = selectedSpot?.id;
 
     useEffect(() => {
-        const overlay = overlayRef.current;
-        if (!map || !ready || !overlay || !selectedSpot?.receiverLocation)
-            return;
+        if (!map || !ready || !selectedSpot?.receiverLocation) return;
 
         //if we are using spot jitter we need to adjust for it
         const coordinates = ADD_SPOT_JITTER
@@ -74,21 +68,7 @@ export function useSelectedSpotMarker(map, ready, selectedSpot, overlayRef) {
             .setLngLat(coordinates)
             .addTo(map);
 
-        //popup, in the overlay above the map
-        const popup = document.createElement("div");
-        popup.className = classes.popup;
-
-        const body = document.createElement("div");
-        body.className = classes.body;
-        popup.append(body);
-        overlay.append(popup);
-
-        setPopupContainer(body);
-
         return () => {
-            popup.remove();
-            setPopupContainer(null);
-
             //let the ring and dot shrink away before removing the marker.
             //skip that if the map is already gone (unmounting) or the user
             //prefers reduced motion.
@@ -105,6 +85,4 @@ export function useSelectedSpotMarker(map, ready, selectedSpot, overlayRef) {
             setTimeout(() => marker.remove(), EXIT_MS);
         };
     }, [map, ready, id]);
-
-    return popupContainer;
 }

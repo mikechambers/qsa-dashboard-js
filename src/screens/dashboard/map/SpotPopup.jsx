@@ -21,7 +21,8 @@
  * SOFTWARE.
  */
 
-import { Group, Stack, Text } from "@mantine/core";
+import { ActionIcon, Group, Stack, Text } from "@mantine/core";
+import { IconChevronDown, IconChevronUp } from "@tabler/icons-react";
 
 import { useSettings } from "@/contexts/SettingsContext";
 import {
@@ -58,9 +59,44 @@ const Tile = ({ label, value, unit }) => (
     </div>
 );
 
-//small card shown above the selected spot on the map
-export const SpotPopup = ({ spot }) => {
+//detail card, always at the top right of the map. Shows the selected spot, and
+//can be collapsed to a single line.
+export const SpotPopup = ({ spot, open, onOpenChange }) => {
     const { settings } = useSettings();
+
+    const toggle = (
+        <ActionIcon
+            variant="default"
+            size="sm"
+            aria-label={open ? "Collapse spot details" : "Expand spot details"}
+            title={open ? "Collapse" : "Expand"}
+            onClick={() => onOpenChange(!open)}
+        >
+            {open ? (
+                <IconChevronUp size={16} />
+            ) : (
+                <IconChevronDown size={16} />
+            )}
+        </ActionIcon>
+    );
+
+    //nothing selected yet
+    if (!spot) {
+        return (
+            <div className={classes.popup}>
+                <div className={`${classes.card} ${classes.empty}`}>
+                    <Group justify="space-between" wrap="nowrap">
+                        <Text size="sm" c="dimmed">
+                            {open
+                                ? "Hover or click a spot to see its details"
+                                : "Spot details"}
+                        </Text>
+                        {toggle}
+                    </Group>
+                </div>
+            </div>
+        );
+    }
 
     const { d, unit } = convertAndFormatDistance(
         spot.distance,
@@ -81,49 +117,78 @@ export const SpotPopup = ({ spot }) => {
     ].filter(Boolean);
 
     return (
-        <div className={classes.card}>
-            <div
-                className={classes.bar}
-                style={{ background: getCSSColorForSNR(spot.snr) }}
-            />
-
-            <Group
-                gap="md"
-                justify="space-between"
-                align="flex-start"
-                wrap="nowrap"
-            >
-                <Stack gap={2}>
-                    <CallsignField callsign={spot.receiverCall} />
-                    <Text size="sm" c="dimmed">
-                        {dxcc?.shortName}
-                    </Text>
-                </Stack>
-                <Group gap={4} wrap="nowrap">
-                    <ModeField mode={spot.mode} />
-                    <BandBadge band={spot.band} />
-                </Group>
-            </Group>
-
-            <div className={classes.tiles}>
-                <Tile label="Distance" value={d} unit={unit} />
-                <Tile label="Signal" value={spot.snr} unit="dB" />
-                <Tile
-                    label="Freq"
-                    value={frequency}
-                    unit={frequency ? "MHz" : undefined}
+        <div className={classes.popup}>
+            <div className={classes.card}>
+                <div
+                    className={classes.bar}
+                    style={{ background: getCSSColorForSNR(spot.snr) }}
                 />
-            </div>
 
-            <Group gap="md" mt={8} wrap="nowrap" justify="space-between">
-                <Text size="xs" c="dimmed">
-                    {zones.join(" · ")}
-                </Text>
-                <Text size="xs" c="dimmed">
-                    {time} {timeZone}
-                    {ago && ` · ${ago}`}
-                </Text>
-            </Group>
+                {open ? (
+                    <>
+                        <Group
+                            gap="md"
+                            justify="space-between"
+                            align="flex-start"
+                            wrap="nowrap"
+                        >
+                            <Stack gap={2}>
+                                <CallsignField callsign={spot.receiverCall} />
+                                <Text size="sm" c="dimmed">
+                                    {dxcc?.shortName}
+                                </Text>
+                            </Stack>
+                            <Group gap={4} wrap="nowrap" align="center">
+                                <ModeField mode={spot.mode} />
+                                <BandBadge band={spot.band} />
+                                {toggle}
+                            </Group>
+                        </Group>
+
+                        <div className={classes.tiles}>
+                            <Tile label="Distance" value={d} unit={unit} />
+                            <Tile label="Signal" value={spot.snr} unit="dB" />
+                            <Tile
+                                label="Freq"
+                                value={frequency}
+                                unit={frequency ? "MHz" : undefined}
+                            />
+                        </div>
+
+                        <Group
+                            gap="md"
+                            mt={8}
+                            wrap="nowrap"
+                            justify="space-between"
+                        >
+                            <Text size="xs" c="dimmed">
+                                {zones.join(" · ")}
+                            </Text>
+                            <Text size="xs" c="dimmed">
+                                {time} {timeZone}
+                                {ago && ` · ${ago}`}
+                            </Text>
+                        </Group>
+                    </>
+                ) : (
+                    //collapsed: the essentials on one line
+                    <Group justify="space-between" wrap="nowrap">
+                        <Group gap="sm" wrap="nowrap" align="baseline">
+                            <CallsignField callsign={spot.receiverCall} />
+                            <Text size="sm" c="dimmed" style={{ whiteSpace: "nowrap" }}>
+                                {[
+                                    dxcc?.countryCode?.toUpperCase(),
+                                    `${d} ${unit}`,
+                                    `${spot.snr} dB`,
+                                ]
+                                    .filter(Boolean)
+                                    .join(" · ")}
+                            </Text>
+                        </Group>
+                        {toggle}
+                    </Group>
+                )}
+            </div>
         </div>
     );
 };

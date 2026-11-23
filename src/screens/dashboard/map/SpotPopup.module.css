@@ -93,30 +93,13 @@
     }
 }
 
-/* fixed at the top right of the map, whichever spot is selected */
+/* always at the top right of the map, whether or not a spot is selected */
 .popup {
     position: absolute;
     right: 10px;
     top: 10px;
+    z-index: 2;
     max-width: calc(100% - 20px);
-    pointer-events: none;
-}
-
-.body {
-    width: max-content;
-    max-width: 100%;
-    white-space: nowrap;
-    animation: popup-in 140ms ease-out;
-    pointer-events: auto;
-}
-
-@keyframes popup-in {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
 }
 
 .card {
@@ -157,4 +140,9 @@
 .tileLabel {
     font-size: 11px;
     letter-spacing: 0.04em;
+}
+
+/* nothing selected: no color bar, so no room for it */
+.empty {
+    padding-left: 14px;
 }
