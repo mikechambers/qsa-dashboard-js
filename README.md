@@ -8,7 +8,12 @@ You can install it locally or use it [online](https://rememberthefuture.info/).
 
 Data is sourced via MQTT feed from [PSKReporter](https://www.mqtt.pskreporter.info/).
 
-[![image](images/light-sm.png)](images/light.png?raw=true)
+[![Expanded screenshot](images/screenshot-expanded.png)](images/screenshot-expanded.png?raw=true)
+
+<a href="images/screenshot-collapsed.png"><img src="images/screenshot-collapsed.png" width="200" alt="Collapsed screenshot"></a>
+<a href="images/screenshot-filters.png"><img src="images/screenshot-filters.png" width="200" alt="Filters screenshot"></a>
+<a href="images/screenshot-settings.png"><img src="images/screenshot-settings.png" width="200" alt="Settings screenshot"></a>
+<a href="images/screenshot-dark.png"><img src="images/screenshot-dark.png" width="200" alt="Dark screenshot"></a>
 
 [Screenshots](images/)
 
