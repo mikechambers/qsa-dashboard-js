@@ -25,6 +25,7 @@ Data is sourced via MQTT feed from [PSKReporter](https://www.mqtt.pskreporter.in
 - FT8
 - FT4
 - JS8
+- VARAC
 - CW
 - MFSK
 - JT9

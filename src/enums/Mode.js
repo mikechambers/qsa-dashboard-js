@@ -25,6 +25,7 @@ const Modes = {
     FT8: "FT8",
     FT4: "FT4",
     JS8: "JS8",
+    VARAC: "VARAC",
     CW: "CW",
     MFSK: "MFSK",
     JT9: "JT9",
