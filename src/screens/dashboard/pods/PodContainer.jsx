@@ -23,6 +23,7 @@
 
 import classes from "../DashboardScreen.module.css";
 
+import { useMemo } from "react";
 import { Divider, Group, Paper } from "@mantine/core";
 import { SummaryBase } from "./PodBase";
 import { useSpotData } from "@/contexts/SpotDataContext";
@@ -36,6 +37,8 @@ import { SpotRateChartPod } from "./charts/SpotRateChartPod";
 import { useSpotIntervalData } from "./charts/useSpotIntervalData";
 import { FurthestSpotPod } from "./FurthestSpotPod";
 import { MostRecentSpotPod } from "./MostRecentSpotPod";
+import { BandsPod } from "./BandsPod";
+import { ALL_CASES } from "@/consts";
 
 export const PodContainer = () => {
     const {
@@ -44,8 +47,18 @@ export const PodContainer = () => {
         uniqueCountries,
         mostRecentSpot,
         filteredSpots,
+        spots,
+        filter,
+        setFilter,
     } = useSpotData();
     const { settings } = useSettings();
+
+    //the bands pod ignores the band filter, so the other bands stay visible
+    //(and clickable) while one is selected
+    const bandSpots = useMemo(
+        () => filter.with({ band: ALL_CASES }).filter(spots),
+        [filter, spots],
+    );
 
     const intervals = useSpotIntervalData(filteredSpots);
 
@@ -69,6 +82,29 @@ export const PodContainer = () => {
                         <Divider orientation="vertical" />
                         <ElapsedTimePod mostRecentSpot={mostRecentSpot} />
                     </Group>
+                </Paper>
+                {/* grows with the tiles, but no wider than they need, and
+                    no narrower than 350. If there isn't room for all of them
+                    the tiles scroll. */}
+                <Paper
+                    withBorder
+                    radius="md"
+                    style={{
+                        flex: "1 1 350px",
+                        minWidth: 350,
+                        maxWidth: "max-content",
+                    }}
+                >
+                    <BandsPod
+                        spots={bandSpots}
+                        unitType={settings.unitType}
+                        selectedBand={
+                            filter.band === ALL_CASES ? null : filter.band
+                        }
+                        onSelectBand={(band) =>
+                            setFilter(filter.with({ band: band ?? ALL_CASES }))
+                        }
+                    />
                 </Paper>
                 <Paper withBorder radius="md" w={350}>
                     <DistanceSNRChartPod

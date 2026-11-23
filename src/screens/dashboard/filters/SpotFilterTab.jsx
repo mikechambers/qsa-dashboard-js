@@ -22,12 +22,13 @@
  */
 
 import { ActionIcon, Group, Text } from "@mantine/core";
-import { IconChevronDown, IconFilter2 } from "@tabler/icons-react";
+import { IconChevronDown } from "@tabler/icons-react";
 
 import { useSettings } from "@/contexts/SettingsContext";
 import { useSpotData } from "@/contexts/SpotDataContext";
 
 import classes from "../DashboardScreen.module.css";
+import { FilterIcon } from "./FilterIcon";
 
 //shown in place of the filters when they are collapsed. Click to open.
 export const SpotFilterTab = () => {
@@ -44,7 +45,7 @@ export const SpotFilterTab = () => {
             aria-label="Show filters"
             title="Show filters"
         >
-            <IconFilter2 size={18} />
+            <FilterIcon active={isFiltered} />
             {/* baseline aligned, since the two texts are different sizes */}
             <Group gap="xs" align="baseline" wrap="nowrap">
                 <Text size="sm" fw={600}>

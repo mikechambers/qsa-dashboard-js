@@ -1,0 +1,92 @@
+/* MIT License
+ *
+ * Copyright (c) 2026 Mike Chambers
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+/* the tiles scroll sideways, but with no scrollbar. The arrows in BandsPod
+   show that there is more. */
+.scroller {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.scroller::-webkit-scrollbar {
+    display: none;
+}
+
+/* fade at the edge, over the tiles that are cut off */
+.fade {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 44px;
+    display: flex;
+    align-items: center;
+    pointer-events: none;
+}
+
+.fadeRight {
+    right: 0;
+    justify-content: flex-end;
+    background: linear-gradient(
+        to right,
+        transparent,
+        var(--mantine-color-body) 70%
+    );
+}
+
+.fadeLeft {
+    left: 0;
+    justify-content: flex-start;
+    background: linear-gradient(
+        to left,
+        transparent,
+        var(--mantine-color-body) 70%
+    );
+}
+
+.fade button {
+    pointer-events: auto;
+}
+
+/* a tile is a button: click to filter to that band */
+.tile {
+    background: transparent;
+    border: 1px solid var(--mantine-color-default-border);
+    border-radius: 6px;
+    transition: background-color 120ms, border-color 120ms;
+}
+
+.tile:hover {
+    background: var(--mantine-color-default-hover);
+}
+
+.tile:focus-visible {
+    outline: 2px solid var(--band-color);
+    outline-offset: 1px;
+}
+
+/* filtered to this band */
+.tile[data-selected] {
+    border-color: var(--band-color);
+    background: color-mix(in srgb, var(--band-color) 14%, transparent);
+    box-shadow: inset 0 0 0 1px var(--band-color);
+}

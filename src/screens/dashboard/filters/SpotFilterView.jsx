@@ -41,9 +41,10 @@ import { ALL_CASES } from "../../../consts";
 import { Mode } from "../../../enums/Mode";
 import { useSettings } from "../../../contexts/SettingsContext";
 import { UnitType } from "../../../enums/UnitType";
-import { IconChevronUp, IconFilter2 } from "@tabler/icons-react";
+import { IconChevronUp } from "@tabler/icons-react";
 import { kilometersToMiles, milesToKilometers } from "@/utils/geo";
 import { MIN_SNR } from "@/consts/config";
+import { FilterIcon } from "./FilterIcon";
 
 const bandValues = [ALL_CASES, ...Band.cases];
 const modeValues = [ALL_CASES, ...Mode.cases];
@@ -94,7 +95,7 @@ export const SpotFilterView = () => {
                         mih={30}
                         style={{ alignSelf: "flex-start" }}
                     >
-                        <IconFilter2 size={18} />
+                        <FilterIcon active={filter.hasFilter()} />
                         <Text size="sm" fw={600}>
                             Filters
                         </Text>
