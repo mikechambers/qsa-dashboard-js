@@ -111,6 +111,7 @@
     width: max-content;
     white-space: nowrap;
     animation: popup-in 140ms ease-out;
+    pointer-events: auto;
 }
 
 .below .body {
