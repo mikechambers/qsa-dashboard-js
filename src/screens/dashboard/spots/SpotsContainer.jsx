@@ -21,7 +21,7 @@
  * SOFTWARE.
  */
 
-import { Text } from "@mantine/core";
+import { ActionIcon, Text } from "@mantine/core";
 import { IconChevronLeft } from "@tabler/icons-react";
 
 import { useSpotData } from "@/contexts/SpotDataContext";
@@ -43,7 +43,18 @@ export const SpotsContainer = ({ open, onOpenChange }) => {
                     aria-label="Open spots table"
                     title="Open spots table"
                 >
-                    <IconChevronLeft size={18} className={classes.spotsTabIcon} />
+                    {/* sits where the collapse button is when the table is open */}
+                    <ActionIcon
+                        component="span"
+                        variant="default"
+                        size="sm"
+                        aria-hidden="true"
+                    >
+                        <IconChevronLeft
+                            size={16}
+                            className={classes.spotsTabIcon}
+                        />
+                    </ActionIcon>
                     <Text
                         size="sm"
                         fw={700}

@@ -1,0 +1,75 @@
+/* MIT License
+ *
+ * Copyright (c) 2026 Mike Chambers
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+import { ActionIcon, Group, Text } from "@mantine/core";
+import { IconChevronDown, IconFilter2 } from "@tabler/icons-react";
+
+import { useSettings } from "@/contexts/SettingsContext";
+import { useSpotData } from "@/contexts/SpotDataContext";
+
+import classes from "../DashboardScreen.module.css";
+
+//shown in place of the filters when they are collapsed. Click to open.
+export const SpotFilterTab = () => {
+    const { setShowFilters } = useSettings();
+    const { filter, filteredSpots, spots } = useSpotData();
+
+    const isFiltered = filter.hasFilter();
+
+    return (
+        <button
+            type="button"
+            className={classes.filterTab}
+            onClick={() => setShowFilters(true)}
+            aria-label="Show filters"
+            title="Show filters"
+        >
+            <IconFilter2 size={18} />
+            {/* baseline aligned, since the two texts are different sizes */}
+            <Group gap="xs" align="baseline" wrap="nowrap">
+                <Text size="sm" fw={600}>
+                    Filters
+                </Text>
+                <Text
+                    size="xs"
+                    c={isFiltered ? "orange" : "dimmed"}
+                    fw={isFiltered ? 600 : undefined}
+                    style={{ fontVariantNumeric: "tabular-nums" }}
+                >
+                    {filteredSpots.length} of {spots.length} spots
+                </Text>
+            </Group>
+
+            {/* sits where the collapse button is when the filters are open */}
+            <ActionIcon
+                component="span"
+                variant="default"
+                size="sm"
+                aria-hidden="true"
+                ml="auto"
+            >
+                <IconChevronDown size={16} />
+            </ActionIcon>
+        </button>
+    );
+};

@@ -43,6 +43,7 @@ import { HeaderContainer } from "./header/HeaderContainer";
 import { gridToLocation } from "@/utils/geo";
 import { PodContainer } from "./pods/PodContainer";
 import { SpotFilterView } from "./filters/SpotFilterView";
+import { SpotFilterTab } from "./filters/SpotFilterTab";
 import { SelectedSpotProvider } from "@/contexts/SelectedSpotContext";
 import { Collapse } from "@mantine/core";
 import { SpotsContainer } from "./spots/SpotsContainer";
@@ -109,12 +110,12 @@ export default function DashboardScreen() {
                 >
                     <PodContainer />
 
-                    <Collapse
-                        className={classes.filter}
-                        expanded={settings.showFilters}
-                    >
-                        <SpotFilterView />
-                    </Collapse>
+                    <div className={classes.filter}>
+                        <Collapse expanded={settings.showFilters}>
+                            <SpotFilterView />
+                        </Collapse>
+                        {!settings.showFilters && <SpotFilterTab />}
+                    </div>
 
                     <div className={classes.spotMap}>
                         <SpotMap location={location} spots={filteredSpots} />

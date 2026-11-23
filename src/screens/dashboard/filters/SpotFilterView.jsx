@@ -41,7 +41,7 @@ import { ALL_CASES } from "../../../consts";
 import { Mode } from "../../../enums/Mode";
 import { useSettings } from "../../../contexts/SettingsContext";
 import { UnitType } from "../../../enums/UnitType";
-import { IconChevronsUp, IconFilter2 } from "@tabler/icons-react";
+import { IconChevronUp, IconFilter2 } from "@tabler/icons-react";
 import { kilometersToMiles, milesToKilometers } from "@/utils/geo";
 import { MIN_SNR } from "@/consts/config";
 
@@ -209,15 +209,15 @@ export const SpotFilterView = () => {
                     Reset
                 </Button>
 
-                <Group gap="sm" pos="absolute" top={-8} right={-4}>
+                <Group gap="sm" pos="absolute" top={-3} right={-4}>
                     <ActionIcon
-                        variant="subtle"
+                        variant="default"
                         size="sm"
-                        aria-label="Hide Filters"
-                        title="Hide Filters"
+                        aria-label="Collapse filters"
+                        title="Collapse filters"
                         onClick={() => setShowFilters(false)}
                     >
-                        <IconChevronsUp size={18} />
+                        <IconChevronUp size={16} />
                     </ActionIcon>
                 </Group>
             </Group>

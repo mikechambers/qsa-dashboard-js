@@ -165,7 +165,7 @@
         flex: 1;
         flex-direction: column;
         justify-content: flex-start;
-        padding: 12px 0;
+        padding: 14px 0 12px;
     }
 
     .spotsTabIcon {
@@ -176,4 +176,23 @@
         writing-mode: vertical-rl;
         letter-spacing: 0.05em;
     }
+}
+
+
+/* the bar shown in place of the filters when they are collapsed */
+.filterTab {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 8px 8px 8px 12px;
+    color: inherit;
+    background: var(--mantine-color-body);
+    border: 1px solid var(--mantine-color-default-border);
+    border-radius: var(--mantine-radius-default);
+    cursor: pointer;
+}
+
+.filterTab:hover {
+    background: var(--mantine-color-default-hover);
 }
