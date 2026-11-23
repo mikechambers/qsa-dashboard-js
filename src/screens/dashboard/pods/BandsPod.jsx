@@ -38,7 +38,7 @@ const TILE_HEIGHT = 72;
 const GAP = 6;
 
 //one number per band: how many spots, when it was last heard, average snr,
-//and the furthest distance. Most recently heard first.
+//and the furthest distance. Most spots first, ties go to the most recently heard.
 const getBandStats = (spots) => {
     const stats = new Map();
 
@@ -57,7 +57,7 @@ const getBandStats = (spots) => {
         s.furthest = Math.max(s.furthest, spot.distance ?? 0);
     }
 
-    return [...stats.values()].sort((a, b) => b.last - a.last);
+    return [...stats.values()].sort((a, b) => b.count - a.count || b.last - a.last);
 };
 
 //1234 spots becomes 1.2k

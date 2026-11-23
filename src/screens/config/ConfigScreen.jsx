@@ -144,7 +144,7 @@ export default function ConfigScreen() {
                 onSubmit={form.onSubmit(onUpdateClick)}
             >
                 <Stack gap="lg">
-                    {settings.callsign && (
+                    {settings.callsign ? (
                         <Group>
                             <Button
                                 variant="subtle"
@@ -153,6 +153,12 @@ export default function ConfigScreen() {
                             >
                                 ← Back to dashboard
                             </Button>
+                        </Group>
+                    ) : (
+                        <Group pt="md" justify="center">
+                            <Text size="sm" c="dimmed">
+                                Enter Station info to load dashboard
+                            </Text>
                         </Group>
                     )}
                     <Fieldset legend="Station">

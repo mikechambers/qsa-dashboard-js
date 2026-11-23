@@ -119,7 +119,7 @@ export const SpotRateChartPod = ({ intervals, unitType = UnitType.METRIC }) => {
                     strokeDasharray="0"
                     withDots={false}
                     areaProps={{
-                        isAnimationActive: true,
+                        isAnimationActive: false,
                         dot: renderDot,
                         stroke: flat ? COLOR : `url(#${gradId})`,
                     }}
