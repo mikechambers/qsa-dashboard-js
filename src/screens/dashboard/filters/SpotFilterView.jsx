@@ -32,6 +32,7 @@ import {
     Text,
     Button,
     Checkbox,
+    ActionIcon,
 } from "@mantine/core";
 import { SpotFilter } from "../../../models/SpotFilter";
 import { useSpotData } from "../../../contexts/SpotDataContext";
@@ -40,7 +41,7 @@ import { ALL_CASES } from "../../../consts";
 import { Mode } from "../../../enums/Mode";
 import { useSettings } from "../../../contexts/SettingsContext";
 import { UnitType } from "../../../enums/UnitType";
-import { IconFilter2 } from "@tabler/icons-react";
+import { IconChevronsUp, IconFilter2 } from "@tabler/icons-react";
 import { kilometersToMiles, milesToKilometers } from "@/utils/geo";
 import { MIN_SNR } from "@/consts/config";
 
@@ -49,7 +50,7 @@ const modeValues = [ALL_CASES, ...Mode.cases];
 
 export const SpotFilterView = () => {
     const { filter, setFilter, filteredSpots, spots } = useSpotData();
-    const { settings } = useSettings();
+    const { settings, setShowFilters } = useSettings();
 
     const distanceValues =
         settings.unitType === UnitType.METRIC
@@ -83,16 +84,29 @@ export const SpotFilterView = () => {
         settings.unitType == UnitType.METRIC
             ? filter.distance
             : Math.round(kilometersToMiles(filter.distance));
-
+    const isFiltered = filteredSpots.length !== spots.length;
     return (
         <Paper withBorder>
-            <Group align="flex-end" gap="xl" pos="relative">
-                <Group gap="xs" mih={30} style={{ alignSelf: "flex-start" }}>
-                    <IconFilter2 size={18} />
-                    <Text size="sm" fw={600}>
-                        Filters
+            <Group align="flex-end" gap="lg" pos="relative">
+                <Stack gap={0}>
+                    <Group
+                        gap="xs"
+                        mih={30}
+                        style={{ alignSelf: "flex-start" }}
+                    >
+                        <IconFilter2 size={18} />
+                        <Text size="sm" fw={600}>
+                            Filters
+                        </Text>
+                    </Group>
+                    <Text
+                        size="xs"
+                        c={isFiltered ? "orange" : "dimmed"}
+                        fw={isFiltered ? 600 : undefined}
+                    >
+                        {filteredSpots.length} of {spots.length} spots
                     </Text>
-                </Group>
+                </Stack>
 
                 <Group align="flex-start" gap="xl">
                     <TextInput
@@ -195,10 +209,16 @@ export const SpotFilterView = () => {
                     Reset
                 </Button>
 
-                <Group ml="auto" gap="md" pos="absolute" top={-8} right={-4}>
-                    <Text size="sm" c="dimmed" fw={600}>
-                        {filteredSpots.length} / {spots.length}
-                    </Text>
+                <Group gap="sm" pos="absolute" top={-8} right={-4}>
+                    <ActionIcon
+                        variant="subtle"
+                        size="sm"
+                        aria-label="Hide Filters"
+                        title="Hide Filters"
+                        onClick={() => setShowFilters(false)}
+                    >
+                        <IconChevronsUp size={18} />
+                    </ActionIcon>
                 </Group>
             </Group>
         </Paper>

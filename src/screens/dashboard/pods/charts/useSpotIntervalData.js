@@ -21,8 +21,7 @@
  * SOFTWARE.
  */
 
-import { useEffect, useRef, useState } from "react";
-
+import { useEffect, useMemo, useState } from "react";
 const MINUTE = 60 * 1000;
 const MINUTES = 30;
 
@@ -83,32 +82,19 @@ const buildBuckets = (spots, now) => {
     );
 };
 
+const currentMinute = () => Math.floor(Date.now() / MINUTE);
+
 export const useSpotIntervalData = (spots) => {
-    //store a reference to always point at the current
-    //spot (for the interval enclosure)
-    const spotsRef = useRef(spots);
-    spotsRef.current = spots;
+    const [minute, setMinute] = useState(currentMinute);
 
-    //where we store the interval data
-    const [data, setData] = useState(() =>
-        buildBuckets(spots ?? [], Date.now()),
-    );
-
-    //called on initialization
     useEffect(() => {
-        //function to rebuild data using the latest spots
-        const rebuild = () =>
-            setData(buildBuckets(spotsRef.current ?? [], Date.now()));
-
-        //run once
-        rebuild();
-
-        //start an interval to run once a minute
-        const id = setInterval(rebuild, MINUTE);
-
-        //clean up interval when unmounted
+        const id = setInterval(() => setMinute(currentMinute()), 1000);
         return () => clearInterval(id);
-    }, [spots]);
+    }, []);
 
-    return data;
+    //updates when. new spots or the minute changes
+    return useMemo(
+        () => buildBuckets(spots ?? [], minute * MINUTE),
+        [spots, minute],
+    );
 };
