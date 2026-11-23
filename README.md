@@ -10,7 +10,7 @@ Data is sourced via MQTT feed from [PSKReporter](https://www.mqtt.pskreporter.in
 
 [![image](images/light-sm.png)](images/light.png?raw=true)
 
-[More Screenshots](images/)
+[Screenshots](images/)
 
 **Features**
 
@@ -91,12 +91,14 @@ You can hover over a spot in the table or on the map to select it, and its detai
 
 You can filter the data views via the filter bar. These filters are applied in real time, and affect the table, map and charts:
 
-- _Callsign_ : only show spots from receivers whose callsign starts with this
-- _Band_ : only show spots from specified band
-- _Mode_ : only show spots from specified mode
-- _Min SNR_ : hide spots weaker than this
-- _Min Distance_ : hide spots closer than this
-- _Omit Duplicates_ : Omit duplicate reports from same callsign on the same band
+|          **FILTER** | **DESCRIPTION**                                                 |
+| ------------------: | --------------------------------------------------------------- |
+|        **Callsign** | Only show spots from receivers whose callsign starts with this. |
+|            **Band** | Only show spots from the specified band.                        |
+|            **Mode** | Only show spots from the specified mode.                        |
+|         **Min SNR** | Hide spots weaker than this.                                    |
+|    **Min Distance** | Hide spots closer than this.                                    |
+| **Omit Duplicates** | Omit duplicate reports from the same callsign on the same band. |
 
 ## Charts
 
@@ -120,19 +122,19 @@ PSKReporter will resend duplicates, resetting every 5 minutes.
 
 The following settings are avaliable by clicking the **Settings** button.
 
-|                |                                                                                                                              |
-| -------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| Callsign       | _(required)_ The callsign whose signal you want to track.                                                                    |
-| Location Grid  | The maidenhead grid location for the specified callsign. Used to show your location on the map and display signal paths.     |
-| Theme          | The color theme for the UI display. Options are Light or Dark.                                                               |
-| Units          | The measurement units to display distances in. Metric or Imperial.                                                           |
-| Time Zone      | The time zone to display time in. Options are UTC or Local (uses system time zone.)                                          |
-| Grey Line      | Whether to display a greyline overlay, showing the transition between day and night. Can be useful for timing band openings. |
-| Twilight Bands | Which lines the greyline overlay draws: horizon, civil, nautical and astronomical twilight.                                  |
-| Distance Rings | Master switch for the distance rings on the map. Needs a location grid. Disabled when both options below are off.            |
-| Distance       | Draw rings at fixed distances around your location, in your selected units.                                                  |
-| Max Distance   | Draw a ring at the distance of the furthest spot currently shown.                                                            |
-| Demo Mode      | Populates the map with demo data. Requires a page refresh when changing settings.                                            |
+|            SETTING | DESCRIPTION                                                                                                                  |
+| -----------------: | ---------------------------------------------------------------------------------------------------------------------------- |
+|       **Callsign** | _(required)_ The callsign whose signal you want to track.                                                                    |
+|  **Location Grid** | The maidenhead grid location for the specified callsign. Used to show your location on the map and display signal paths.     |
+|          **Theme** | The color theme for the UI display. Options are Light or Dark.                                                               |
+|          **Units** | The measurement units to display distances in. Metric or Imperial.                                                           |
+|      **Time Zone** | The time zone to display time in. Options are UTC or Local (uses system time zone.)                                          |
+|      **Grey Line** | Whether to display a greyline overlay, showing the transition between day and night. Can be useful for timing band openings. |
+| **Twilight Bands** | Which lines the greyline overlay draws: horizon, civil, nautical and astronomical twilight.                                  |
+| **Distance Rings** | Master switch for the distance rings on the map. Needs a location grid. Disabled when both options below are off.            |
+|       **Distance** | Draw rings at fixed distances around your location, in your selected units.                                                  |
+|   **Max Distance** | Draw a ring at the distance of the furthest spot currently shown.                                                            |
+|      **Demo Mode** | Populates the map with demo data. Requires a page refresh when changing settings.                                            |
 
 Settings are saved in your browser's local storage.
 
