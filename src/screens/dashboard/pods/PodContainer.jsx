@@ -30,10 +30,12 @@ import { useSpotData } from "@/contexts/SpotDataContext";
 import { useSettings } from "@/contexts/SettingsContext";
 import { ElapsedTimePod } from "./ElapsedTimePod";
 
-import { FurthestSpotPod } from "@/screens/dashboard/pods/FurthestSpotPod";
+import { SpotPod } from "@/screens/dashboard/pods/SpotPod";
 import { DistanceSNRChartPod } from "./charts/DistanceSNRChartPod";
 import { SpotRateChartPod } from "./charts/SpotRateChartPod";
 import { useSpotIntervalData } from "./charts/useSpotIntervalData";
+import { FurthestSpotPod } from "./FurthestSpotPod";
+import { MostRecentSpotPod } from "./MostRecentSpotPod";
 
 export const PodContainer = () => {
     const {
@@ -54,7 +56,9 @@ export const PodContainer = () => {
             <Group gap="md">
                 <Paper withBorder radius="md">
                     <Group gap={20} align="stretch">
-                        <FurthestSpotPod furthestSpot={furthestSpot} />
+                        <FurthestSpotPod spot={furthestSpot} />
+                        <Divider orientation="vertical" />
+                        <MostRecentSpotPod spot={mostRecentSpot} />
                         <Divider orientation="vertical" />
                         <SummaryBase
                             label="Stations"
