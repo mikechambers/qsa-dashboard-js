@@ -1,21 +1,32 @@
+/* MIT License
+ *
+ * Copyright (c) 2026 Mike Chambers
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 /**
  * twilight.js
  *
  * Builds "grey line" (day/night terminator) and twilight lines as GeoJSON,
  * ready to drop into a MapLibre geojson source.
  *
- * The idea:
- *   1. Find the point on Earth where the sun is directly overhead
- *      (the "subsolar point").
- *   2. Every spot where the sun sits at elevation h lies on a circle around
- *      that point, with angular radius (90 - h) degrees.
- *        h =   0  -> radius  90  (the grey line / terminator)
- *        h =  -6  -> radius  96  (civil twilight edge)
- *        h = -12  -> radius 102  (nautical twilight edge)
- *        h = -18  -> radius 108  (astronomical twilight edge)
- *   3. Generate points around each circle and return them as LineStrings.
- *
- * No dependencies.
  */
 
 const RAD = Math.PI / 180; // degrees -> radians
@@ -110,9 +121,6 @@ export function getSubsolarPoint(date = new Date()) {
 /**
  * How high is the sun above the horizon at a given spot? (degrees)
  * 90 = straight up, 0 = on the horizon, negative = below.
- *
- * Handy for tests, or for "is this station in daylight/twilight" checks.
- * It is just 90 minus the angular distance to the subsolar point.
  */
 export function getSunElevation(lat, lon, date = new Date()) {
     const sun = getSubsolarPoint(date);
@@ -306,12 +314,6 @@ export function getNightGeoJSON(date = new Date(), elevations) {
 /**
  * Daylight as filled polygons: one per elevation, each a cap centered on
  * the subsolar point.
- *
- * A spot where the sun is above elevation h is within (90 - h) degrees of
- * the subsolar point:  h = 0 -> 90,  -6 -> 96,  -12 -> 102,  -18 -> 108.
- *
- * Nested again: draw with a low fill opacity and they stack, so the
- * lightening is strongest in full daylight and fades out through twilight.
  */
 export function getDayGeoJSON(date = new Date(), elevations) {
     const sun = getSubsolarPoint(date);
