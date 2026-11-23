@@ -145,7 +145,7 @@ export function SpotDataProvider({ children }) {
             let spot;
             try {
                 const json = message.toString();
-                spot = Spot.fromData(JSON.parse(json), ADD_SPOT_JITTER);
+                spot = Spot.fromData(JSON.parse(json));
 
                 if (spot.mode === Mode.UNKNOWN) {
                     console.log("UNKNOWN MODE", json);
