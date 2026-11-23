@@ -31,7 +31,7 @@ const median = (values) => {
     return a.length % 2 ? a[mid] : (a[mid - 1] + a[mid]) / 2;
 };
 
-const buildBuckets = (spots, now) => {
+export const buildBuckets = (spots, now) => {
     //find the start of the oldest buck (30 minutes past).
     //first, get the start of the current minute
     // Math.floor(now / MINUTE) convert ms to seconds, and then drop remainder (floor) then convert back to minutes : (* MINUTE)
