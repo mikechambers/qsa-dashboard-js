@@ -83,7 +83,6 @@ export const SpotDetail = ({ spot }) => {
                     }}
                 />
                 <Stack gap="sm">
-                    {/* Row 1: header */}
                     <Group gap="sm" wrap="nowrap" justify="space-between">
                         <Group>
                             <CallsignField callsign={spot.senderCall} />

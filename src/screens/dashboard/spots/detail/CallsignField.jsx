@@ -23,12 +23,12 @@
 
 import { Anchor, Text } from "@mantine/core";
 
-export const CallsignField = ({ callsign, clickable = true }) => {
+export const CallsignField = ({ callsign, size = "lg", clickable = true }) => {
     const url = `https://www.qrz.com/db/${encodeURIComponent(callsign)}`;
 
     return clickable ? (
         <Anchor
-            fz="lg"
+            fz={size}
             fw={600}
             underline="hover"
             href={url}
@@ -39,7 +39,7 @@ export const CallsignField = ({ callsign, clickable = true }) => {
             {callsign}
         </Anchor>
     ) : (
-        <Text fz="lg" fw={600}>
+        <Text fz={size} fw={600}>
             {callsign}
         </Text>
     );

@@ -42,6 +42,7 @@ import { useSelectedSpot } from "@/contexts/SelectedSpotContext";
 import { IconInbox, IconTrash } from "@tabler/icons-react";
 import { modals } from "@mantine/modals";
 import { useSpotData } from "@/contexts/SpotDataContext";
+import { CallsignCell } from "./CallsignCell";
 
 export const SpotTable = () => {
     const { filteredSpots, filter, clearSpots } = useSpotData();
@@ -194,7 +195,7 @@ export const SpotTable = () => {
                     >
                         <Table.Thead>
                             <Table.Tr>
-                                <Table.Th>{timeZone}</Table.Th>
+                                <Table.Th>Station</Table.Th>
 
                                 <Table.Th ta="left">Loc</Table.Th>
                                 <Table.Th ta="right">Distance</Table.Th>
@@ -236,7 +237,9 @@ export const SpotTable = () => {
                                         }}
                                     >
                                         <Table.Td w={20}>
-                                            <TimeCell date={spot.date} />
+                                            <CallsignCell
+                                                callsign={spot.receiverCall}
+                                            />
                                         </Table.Td>
                                         <Table.Td ta="left">
                                             <Text size="sm">
