@@ -21,15 +21,21 @@
  * SOFTWARE.
  */
 
-import { Text } from "@mantine/core";
-import { normalizeCallsign } from "@/utils/radio";
+import { Anchor, Text } from "@mantine/core";
 
 export const CallsignField = ({ callsign }) => {
-    const c = normalizeCallsign(callsign);
+    const url = `https://www.qrz.com/db/${encodeURIComponent(callsign)}`;
 
     return (
-        <Text fx="lg" fw={600}>
-            {c}
-        </Text>
+        <Anchor
+            fx="lg"
+            target="_blank"
+            fw={600}
+            underline="hover"
+            href={url}
+            rel="noopener noreferrer"
+        >
+            {callsign}
+        </Anchor>
     );
 };
