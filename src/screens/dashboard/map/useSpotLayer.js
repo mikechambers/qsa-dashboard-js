@@ -85,7 +85,9 @@ export function useSpotLayer(map, ready, spots, onSpotHighlight) {
         //clear the selection (and its popup) when the pointer leaves a spot
         const onLeave = () => {
             map.getCanvas().style.cursor = "";
-            highlightRef.current(undefined);
+
+            //dont unselect when mouse out of spot
+            //highlightRef.current(undefined);
         };
 
         map.on("mouseenter", SPOT_PATH, onEnter);
