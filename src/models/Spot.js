@@ -26,7 +26,6 @@ import { Band } from "@/enums/Band";
 import { Mode } from "@/enums/Mode";
 import { getDXCCEntity, gridToLocation } from "@/utils/geo";
 import { epochToDate } from "@/utils/date";
-import { normalizeMaidenHeadGrid } from "@/utils/radio";
 
 export default class Spot {
     sequence;
