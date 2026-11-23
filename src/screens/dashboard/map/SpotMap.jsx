@@ -61,7 +61,10 @@ setWorkerUrl(workerUrl);
 //how long the mouse rests on a table row before an off-map spot is brought into view
 const HOVER_FIT_DELAY_MS = 350;
 
-//is the point on screen, with some room around it for the popup?
+//rough size of the area the popup card covers, at the top right of the map
+const POPUP_AREA = { width: 340, height: 190 };
+
+//is the point on screen, and not hidden behind the popup?
 const isInView = (map, [lng, lat]) => {
     //the map can show several copies of the world, so use the one nearest the center
     const centerLng = map.getCenter().lng;
@@ -70,6 +73,9 @@ const isInView = (map, [lng, lat]) => {
     const { x, y } = map.project([wrappedLng, lat]);
     const { clientWidth: w, clientHeight: h } = map.getContainer();
     const margin = 30;
+
+    //the popup covers the top right of the map
+    if (x > w - POPUP_AREA.width && y < POPUP_AREA.height) return false;
 
     return x > margin && x < w - margin && y > margin && y < h - margin;
 };
@@ -89,7 +95,7 @@ const fitPath = (map, [fromLng, fromLat], [toLng, toLat]) => {
         "(prefers-reduced-motion: reduce)",
     ).matches;
 
-    //extra room on top for the popup
+    //extra room on top, so the spot isn't hidden behind the popup
     map.fitBounds(bounds, {
         padding: { top: 200, bottom: 50, left: 60, right: 60 },
         maxZoom: 6,

@@ -34,7 +34,7 @@ export const SNRLegend = ({ selectedSpot }) => {
             radius="md"
             p="xs"
             pos="absolute"
-            right={20}
+            left={20}
             top={20}
             w={180}
         >

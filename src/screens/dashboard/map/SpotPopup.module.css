@@ -93,30 +93,21 @@
     }
 }
 
+/* fixed at the top right of the map, whichever spot is selected */
 .popup {
     position: absolute;
-    left: 0;
-    top: 0;
-    width: 0;
-    height: 0;
+    right: 10px;
+    top: 10px;
+    max-width: calc(100% - 20px);
     pointer-events: none;
-    will-change: transform;
 }
 
 .body {
-    position: absolute;
-    left: 0;
-    bottom: 26px;
-    transform: translateX(calc(-50% + var(--shift, 0px)));
     width: max-content;
+    max-width: 100%;
     white-space: nowrap;
     animation: popup-in 140ms ease-out;
     pointer-events: auto;
-}
-
-.below .body {
-    bottom: auto;
-    top: 26px;
 }
 
 @keyframes popup-in {
@@ -146,28 +137,6 @@
     bottom: 10px;
     width: 4px;
     border-radius: 2px;
-}
-
-.card::after {
-    content: "";
-    position: absolute;
-    left: calc(50% - var(--shift, 0px));
-    bottom: -6px;
-    width: 10px;
-    height: 10px;
-    background: var(--mantine-color-body);
-    border-right: 1px solid var(--mantine-color-default-border);
-    border-bottom: 1px solid var(--mantine-color-default-border);
-    transform: translateX(-50%) rotate(45deg);
-}
-
-.below .card::after {
-    bottom: auto;
-    top: -6px;
-    border-right: none;
-    border-bottom: none;
-    border-left: 1px solid var(--mantine-color-default-border);
-    border-top: 1px solid var(--mantine-color-default-border);
 }
 
 /* row of three stats under the header */

@@ -30,18 +30,13 @@ import { getJitteredCoordinates } from "@/utils/geo";
 
 import classes from "./SpotPopup.module.css";
 
-//rough size of the popup card, used to keep it inside the map
-const POPUP_HALF_WIDTH = 165;
-const POPUP_HEIGHT = 190;
-const EDGE_PADDING = 8;
-
 //how long the marker lingers to play its exit animation (.out in the css)
 const EXIT_MS = 200;
 
 //draws the selected spot as an HTML marker (ring and dot) above
 //all other spots, and creates a popup element in an overlay above the map
-//(so it also sits above things like the legend). The popup follows the spot
-//as the map moves.
+//(so it also sits above things like the legend). The popup stays in a fixed
+//place at the top left of the map (see .popup in the css).
 export function useSelectedSpotMarker(map, ready, selectedSpot, overlayRef) {
     const [popupContainer, setPopupContainer] = useState(null);
 
@@ -88,34 +83,9 @@ export function useSelectedSpotMarker(map, ready, selectedSpot, overlayRef) {
         popup.append(body);
         overlay.append(popup);
 
-        //We read the marker's actual screen position instead of using
-        //map.project(). The marker is drawn on whichever copy of the world is
-        //nearest the view, but project() uses the raw longitude, so near the
-        //left / right edge the popup could land on the other side of the map.
-        const update = () => {
-            const mapRect = map.getContainer().getBoundingClientRect();
-            const markerRect = el.getBoundingClientRect();
-            const x = markerRect.left - mapRect.left;
-            const y = markerRect.top - mapRect.top;
-            const width = mapRect.width;
-            const minX = POPUP_HALF_WIDTH + EDGE_PADDING;
-
-            popup.style.transform = `translate(${x}px, ${y}px)`;
-            popup.classList.toggle(classes.below, y < POPUP_HEIGHT);
-
-            let shift = 0;
-            if (x < minX) shift = minX - x;
-            else if (width - x < minX) shift = -(minX - (width - x));
-            popup.style.setProperty("--shift", `${shift}px`);
-        };
-
-        update();
-        map.on("move", update);
-
         setPopupContainer(body);
 
         return () => {
-            map.off("move", update);
             popup.remove();
             setPopupContainer(null);
 
