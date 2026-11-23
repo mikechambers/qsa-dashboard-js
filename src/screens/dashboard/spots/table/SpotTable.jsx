@@ -84,23 +84,35 @@ export const SpotTable = () => {
         getItemKey: (index) => spots[index].sequence,
     });
 
+    //keep the latest values in refs so the effect below only has to run when
+    //the selection changes. If it also ran on scroll (range) or new spots, it
+    //would yank the table back to the selected row whenever it was off screen,
+    //so you could never scroll away from it (or back to the top).
+    const spotsRef = useRef(spots);
+    const virtualizerRef = useRef(virtualizer);
+    spotsRef.current = spots;
+    virtualizerRef.current = virtualizer;
+
+    const selectedSequence = selectedSpot?.sequence;
+
     useEffect(() => {
-        if (selectedSpot == null) return;
+        if (selectedSequence == null) return;
         if (hoverSelect.current) {
             hoverSelect.current = false;
             return;
         }
 
-        const index = spots.findIndex(
-            (s) => s.sequence === selectedSpot.sequence,
+        const index = spotsRef.current.findIndex(
+            (s) => s.sequence === selectedSequence,
         );
         if (index < 0) return;
 
-        const range = virtualizer.range;
+        const v = virtualizerRef.current;
+        const range = v.range;
         const visible =
             range && index >= range.startIndex && index <= range.endIndex;
-        if (!visible) virtualizer.scrollToIndex(index, { align: "start" });
-    }, [selectedSpot, spots, virtualizer, virtualizer?.range]);
+        if (!visible) v.scrollToIndex(index, { align: "start" });
+    }, [selectedSequence]);
 
     const virtualItems = virtualizer.getVirtualItems();
 
