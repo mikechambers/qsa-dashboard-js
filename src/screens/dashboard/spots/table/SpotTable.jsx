@@ -51,7 +51,7 @@ export const SpotTable = () => {
     const totalSpots = spots.length;
     const hoverSelect = useRef(false);
 
-    const { selectedSpot, setSelectedSpot } = useSelectedSpot();
+    const { selectedSpot, setSelectedSpot, focusSpot } = useSelectedSpot();
 
     const [scrollParent, setScrollParent] = useState(null);
 
@@ -190,7 +190,7 @@ export const SpotTable = () => {
                 </Paper>
             ) : (
                 <Table.ScrollContainer
-                    minWidth={418}
+                    minWidth={380}
                     maxHeight="100%"
                     style={{ flex: 1, minHeight: 0 }}
                     scrollAreaProps={{ viewportRef: setScrollParent }}
@@ -202,7 +202,7 @@ export const SpotTable = () => {
                         withTableBorder
                         withRowBorders={true}
                         verticalSpacing="xs"
-                        horizontalSpacing="md"
+                        horizontalSpacing={8}
                         highlightOnHoverColor="var(--mantine-primary-color-light)"
                     >
                         <Table.Thead>
@@ -240,7 +240,11 @@ export const SpotTable = () => {
                                                 ? "var(--mantine-color-blue-light)"
                                                 : undefined
                                         }
-                                        style={{ scrollMarginTop: 40 }}
+                                        style={{
+                                            scrollMarginTop: 40,
+                                            cursor: "pointer",
+                                        }}
+                                        onClick={() => focusSpot(spot)}
                                         id={`spot-row-${spot.id}`}
                                         key={spot.sequence}
                                         onMouseEnter={() => {

@@ -29,6 +29,11 @@ const SelectedSpotContext = createContext(null);
 export function SelectedSpotProvider({ children }) {
     const [selectedId, setSelectedId] = useState();
 
+    //bumped when a spot is explicitly chosen (a table click), so the map can
+    //fit the path to it. Hover selection doesn't do this, since the map would
+    //jump around as the mouse moves over the table.
+    const [focusRequest, setFocusRequest] = useState(null);
+
     const { filteredSpots } = useSpotData();
 
     const selectedSpot = filteredSpots.find((s) => s.id === selectedId);
@@ -36,11 +41,19 @@ export function SelectedSpotProvider({ children }) {
     //only need to create once
     const setSelectedSpot = useCallback((spot) => setSelectedId(spot?.id), []);
 
+    const focusSpot = useCallback((spot) => {
+        if (!spot) return;
+        setSelectedId(spot.id);
+        setFocusRequest((r) => ({ id: spot.id, n: (r?.n ?? 0) + 1 }));
+    }, []);
+
     return (
         <SelectedSpotContext.Provider
             value={{
                 selectedSpot,
                 setSelectedSpot,
+                focusSpot,
+                focusRequest,
             }}
         >
             {children}

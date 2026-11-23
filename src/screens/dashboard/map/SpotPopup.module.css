@@ -133,8 +133,19 @@
     background: var(--mantine-color-body);
     border: 1px solid var(--mantine-color-default-border);
     border-radius: var(--mantine-radius-md);
-    padding: 10px 12px;
+    padding: 12px 14px 10px 26px;
+    width: 320px;
     box-shadow: var(--mantine-shadow-md);
+}
+
+/* signal strength color, same bar as the spot detail used to have */
+.bar {
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    bottom: 10px;
+    width: 4px;
+    border-radius: 2px;
 }
 
 .card::after {
@@ -157,4 +168,24 @@
     border-bottom: none;
     border-left: 1px solid var(--mantine-color-default-border);
     border-top: 1px solid var(--mantine-color-default-border);
+}
+
+/* row of three stats under the header */
+.tiles {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin-top: 12px;
+    padding: 10px 0;
+    border-top: 1px solid var(--mantine-color-default-border);
+    border-bottom: 1px solid var(--mantine-color-default-border);
+}
+
+.tile + .tile {
+    padding-left: 12px;
+    border-left: 1px solid var(--mantine-color-default-border);
+}
+
+.tileLabel {
+    font-size: 11px;
+    letter-spacing: 0.04em;
 }

@@ -21,18 +21,42 @@
  * SOFTWARE.
  */
 
-import { Group, Text } from "@mantine/core";
+import { Group, Stack, Text } from "@mantine/core";
 
 import { useSettings } from "@/contexts/SettingsContext";
-import { convertAndFormatDistance, formatTime } from "@/utils/view";
+import {
+    convertAndFormatDistance,
+    formatFrequency,
+    formatTime,
+    getCSSColorForSNR,
+} from "@/utils/view";
 import { getShortTimeZoneName, timeAgo } from "@/utils/date";
 
 import { BandBadge } from "../spots/BandBadge";
 import { ModeField } from "../spots/ModeBadge";
-import { SNRBar } from "../spots/SNRBar";
 import { CallsignField } from "../spots/detail/CallsignField";
 
 import classes from "./SpotPopup.module.css";
+
+//one labelled value in the row of stats
+const Tile = ({ label, value, unit }) => (
+    <div className={classes.tile}>
+        <Text size="xs" c="dimmed" tt="uppercase" className={classes.tileLabel}>
+            {label}
+        </Text>
+        <Text fw={700} style={{ whiteSpace: "nowrap" }}>
+            {value}
+            {unit && (
+                <>
+                    {" "}
+                    <Text span size="xs" c="dimmed" fw={500}>
+                        {unit}
+                    </Text>
+                </>
+            )}
+        </Text>
+    </div>
+);
 
 //small card shown above the selected spot on the map
 export const SpotPopup = ({ spot }) => {
@@ -47,36 +71,57 @@ export const SpotPopup = ({ spot }) => {
     const timeZone = getShortTimeZoneName(settings.timeMode);
     const ago = timeAgo(spot.date);
 
+    const frequency = formatFrequency(spot.frequency);
+    const dxcc = spot.receiverDXCC;
+    const zones = [
+        dxcc?.ituZone != null && `ITU ${dxcc.ituZone}`,
+        dxcc?.cqZone != null && `CQ ${dxcc.cqZone}`,
+    ].filter(Boolean);
+
     return (
         <div className={classes.card}>
-            <Group gap="md" justify="space-between" wrap="nowrap">
-                <CallsignField callsign={spot.receiverCall} />
-                <Group gap={4} wrap="nowrap">
-                    <BandBadge band={spot.band} />
-                    <ModeField mode={spot.mode} />
-                </Group>
-            </Group>
+            <div
+                className={classes.bar}
+                style={{ background: getCSSColorForSNR(spot.snr) }}
+            />
 
-            <Group gap="md" mt={6} wrap="nowrap" justify="space-between">
-                <Text size="sm">
-                    {d} {unit}
-                </Text>
-                <Group gap={6} wrap="nowrap">
-                    <SNRBar snr={spot.snr} />
-                    <Text
-                        size="sm"
-                        fw={500}
-                        style={{ fontVariantNumeric: "tabular-nums" }}
-                    >
-                        {spot.snr} dB
+            <Group
+                gap="md"
+                justify="space-between"
+                align="flex-start"
+                wrap="nowrap"
+            >
+                <Stack gap={2}>
+                    <CallsignField callsign={spot.receiverCall} />
+                    <Text size="sm" c="dimmed">
+                        {dxcc?.shortName}
                     </Text>
+                </Stack>
+                <Group gap={4} wrap="nowrap">
+                    <ModeField mode={spot.mode} />
+                    <BandBadge band={spot.band} />
                 </Group>
             </Group>
 
-            <Text size="xs" c="dimmed" mt={6} justify="center">
-                {time} {timeZone}
-                {ago && ` · ${ago}`}
-            </Text>
+            <div className={classes.tiles}>
+                <Tile label="Distance" value={d} unit={unit} />
+                <Tile label="Signal" value={spot.snr} unit="dB" />
+                <Tile
+                    label="Freq"
+                    value={frequency}
+                    unit={frequency ? "MHz" : undefined}
+                />
+            </div>
+
+            <Group gap="md" mt={8} wrap="nowrap" justify="space-between">
+                <Text size="xs" c="dimmed">
+                    {zones.join(" · ")}
+                </Text>
+                <Text size="xs" c="dimmed">
+                    {time} {timeZone}
+                    {ago && ` · ${ago}`}
+                </Text>
+            </Group>
         </div>
     );
 };

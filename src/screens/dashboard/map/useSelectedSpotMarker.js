@@ -31,8 +31,8 @@ import { getJitteredCoordinates } from "@/utils/geo";
 import classes from "./SpotPopup.module.css";
 
 //rough size of the popup card, used to keep it inside the map
-const POPUP_HALF_WIDTH = 105;
-const POPUP_HEIGHT = 110;
+const POPUP_HALF_WIDTH = 165;
+const POPUP_HEIGHT = 190;
 const EDGE_PADDING = 8;
 
 //how long the marker lingers to play its exit animation (.out in the css)

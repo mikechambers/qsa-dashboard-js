@@ -42,7 +42,7 @@
 /* 768px matches mantine sm */
 @media (min-width: 48em) {
     .dashboardScreenMain {
-        grid-template-columns: 1fr 420px;
+        grid-template-columns: 1fr 440px;
         grid-template-rows: auto auto 1fr;
     }
 
