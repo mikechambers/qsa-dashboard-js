@@ -111,7 +111,7 @@ export const SpotFilterView = () => {
                 <Group align="flex-start" gap="xl">
                     <TextInput
                         size="xs"
-                        label="Callsign"
+                        label="Receiving Station"
                         placeholder="callsign"
                         value={filter.callsign}
                         onChange={(e) =>
