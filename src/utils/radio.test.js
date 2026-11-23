@@ -25,7 +25,7 @@
 import { describe, it, expect } from 'vitest'
 //import radio from '@/utils/radio'
 
-import {isValidCallsign, isValidUSCallsign, isValidGlobalCallsign, normalizeMaidenHeadGrid} from "@/utils/radio"
+import {isValidCallsign, isValidUSCallsign, isValidGlobalCallsign, normalizeMaidenHeadGrid, isValidMaidenHeadGrid} from "@/utils/radio"
 
 
 describe('isValidCallsign: valid', () => {
@@ -205,11 +205,16 @@ describe('normalizeMaidenHeadGrid', () => {
 
     // --- 5. Structural Edge Cases ---
     describe('Extended or Unusual Formats', () => {
-        it('should pass through characters beyond index 5 as lowercase', () => {
-            // Some specialized extended locator maps go up to 8 characters (sub-subsquares)
-            // e.g., FN42bb22 or FN42bbcc. Your slicing approach smoothly handles this!
-            expect(normalizeMaidenHeadGrid("fn42bbcc")).toBe("FN42bbcc");
-            expect(normalizeMaidenHeadGrid("FN42BBCC")).toBe("FN42bbcc");
+        it('should cut grids longer than 6 characters down to 6', () => {
+            // Only 4 and 6 character grids are supported, so an 8 character
+            // locator like FN42bbcc is truncated to FN42bb.
+            expect(normalizeMaidenHeadGrid("fn42bbcc")).toBe("FN42bb");
+            expect(normalizeMaidenHeadGrid("FN42BBCC")).toBe("FN42bb");
+        });
+
+        it('should reject 8 character grids as invalid', () => {
+            expect(isValidMaidenHeadGrid("FN42bbcc")).toBe(false);
+            expect(isValidMaidenHeadGrid("FN42bb22")).toBe(false);
         });
     });
 });
