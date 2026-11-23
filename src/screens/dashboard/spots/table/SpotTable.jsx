@@ -110,37 +110,6 @@ export const SpotTable = () => {
 
     const count = spots ? spots.length : 0;
 
-    if (!spots || !spots.length) {
-        return (
-            <Paper
-                p={0}
-                justify="center"
-                style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    flex: 1,
-                    minHeight: 0,
-                    justifyContent: "center", // vertical, since the direction is column
-                    alignItems: "center", // horizontal
-                }}
-            >
-                <EmptyState
-                    icon={<IconInbox size={40} stroke={1.5} />}
-                    title={
-                        filter.hasFilter()
-                            ? "No Spots Match Filter"
-                            : "No spots yet"
-                    }
-                    description={
-                        filter.hasFilter()
-                            ? ""
-                            : "Spots will appear here as they arrive."
-                    }
-                />
-            </Paper>
-        );
-    }
-
     return (
         <Paper
             p={0}
@@ -179,107 +148,136 @@ export const SpotTable = () => {
                     </ActionIcon>
                 </Group>
             </Group>
-            <Table.ScrollContainer
-                minWidth={418}
-                maxHeight="100%"
-                style={{ flex: 1, minHeight: 0 }}
-                scrollAreaProps={{ viewportRef: setScrollParent }}
-            >
-                <Table
-                    styles={{ td: { verticalAlign: "top" } }}
-                    stickyHeader
-                    highlightOnHover
-                    withTableBorder
-                    withRowBorders={true}
-                    verticalSpacing="xs"
-                    horizontalSpacing="md"
-                    highlightOnHoverColor="var(--mantine-primary-color-light)"
+            {!spots || !spots.length ? (
+                <Paper
+                    p={0}
+                    justify="center"
+                    style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        flex: 1,
+                        minHeight: 0,
+                        justifyContent: "center", // vertical, since the direction is column
+                        alignItems: "center", // horizontal
+                    }}
                 >
-                    <Table.Thead>
-                        <Table.Tr>
-                            <Table.Th>{timeZone}</Table.Th>
-
-                            <Table.Th ta="left">Loc</Table.Th>
-                            <Table.Th ta="right">Distance</Table.Th>
-                            <Table.Th ta="right">SNR</Table.Th>
-
-                            <Table.Th ta="center">Band</Table.Th>
-                        </Table.Tr>
-                    </Table.Thead>
-                    <Table.Tbody>
-                        {paddingTop > 0 && (
+                    <EmptyState
+                        icon={<IconInbox size={40} stroke={1.5} />}
+                        title={
+                            filter.hasFilter()
+                                ? "No Spots Match Filter"
+                                : "No spots yet"
+                        }
+                        description={
+                            filter.hasFilter()
+                                ? ""
+                                : "Spots will appear here as they arrive."
+                        }
+                    />
+                </Paper>
+            ) : (
+                <Table.ScrollContainer
+                    minWidth={418}
+                    maxHeight="100%"
+                    style={{ flex: 1, minHeight: 0 }}
+                    scrollAreaProps={{ viewportRef: setScrollParent }}
+                >
+                    <Table
+                        styles={{ td: { verticalAlign: "top" } }}
+                        stickyHeader
+                        highlightOnHover
+                        withTableBorder
+                        withRowBorders={true}
+                        verticalSpacing="xs"
+                        horizontalSpacing="md"
+                        highlightOnHoverColor="var(--mantine-primary-color-light)"
+                    >
+                        <Table.Thead>
                             <Table.Tr>
-                                <Table.Td
-                                    colSpan={5}
-                                    style={{
-                                        height: paddingTop,
-                                        padding: 0,
-                                        border: 0,
-                                    }}
-                                />
+                                <Table.Th>{timeZone}</Table.Th>
+
+                                <Table.Th ta="left">Loc</Table.Th>
+                                <Table.Th ta="right">Distance</Table.Th>
+                                <Table.Th ta="right">SNR</Table.Th>
+
+                                <Table.Th ta="center">Band</Table.Th>
                             </Table.Tr>
-                        )}
-                        {virtualItems.map((virtualRow) => {
-                            const spot = spots[virtualRow.index];
-                            return (
-                                <Table.Tr
-                                    ref={virtualizer.measureElement}
-                                    data-index={virtualRow.index}
-                                    bg={
-                                        selectedSpot === spot
-                                            ? "var(--mantine-color-blue-light)"
-                                            : undefined
-                                    }
-                                    style={{ scrollMarginTop: 40 }}
-                                    id={`spot-row-${spot.id}`}
-                                    key={spot.sequence}
-                                    onMouseEnter={() => {
-                                        hoverSelect.current = true;
-                                        setSelectedSpot(spot);
-                                    }}
-                                >
-                                    <Table.Td w={20}>
-                                        <TimeCell date={spot.date} />
-                                    </Table.Td>
-                                    <Table.Td ta="left">
-                                        <Text size="sm">
-                                            {spot.receiverDXCC?.countryCode?.toUpperCase()}
-                                        </Text>
-                                    </Table.Td>
-                                    <Table.Td ta="right">
-                                        <DistanceCell
-                                            distance={spot.distance}
-                                        />
-                                    </Table.Td>
-
-                                    <Table.Td ta="right">
-                                        <SNRCell snr={spot.snr} />
-                                    </Table.Td>
-
-                                    <Table.Td ta="center">
-                                        <BandFrequencyView
-                                            frequency={spot.frequency}
-                                            band={spot.band}
-                                        />
-                                    </Table.Td>
+                        </Table.Thead>
+                        <Table.Tbody>
+                            {paddingTop > 0 && (
+                                <Table.Tr>
+                                    <Table.Td
+                                        colSpan={5}
+                                        style={{
+                                            height: paddingTop,
+                                            padding: 0,
+                                            border: 0,
+                                        }}
+                                    />
                                 </Table.Tr>
-                            );
-                        })}
-                        {paddingBottom > 0 && (
-                            <Table.Tr>
-                                <Table.Td
-                                    colSpan={5}
-                                    style={{
-                                        height: paddingBottom,
-                                        padding: 0,
-                                        border: 0,
-                                    }}
-                                />
-                            </Table.Tr>
-                        )}
-                    </Table.Tbody>
-                </Table>
-            </Table.ScrollContainer>
+                            )}
+                            {virtualItems.map((virtualRow) => {
+                                const spot = spots[virtualRow.index];
+                                return (
+                                    <Table.Tr
+                                        ref={virtualizer.measureElement}
+                                        data-index={virtualRow.index}
+                                        bg={
+                                            selectedSpot === spot
+                                                ? "var(--mantine-color-blue-light)"
+                                                : undefined
+                                        }
+                                        style={{ scrollMarginTop: 40 }}
+                                        id={`spot-row-${spot.id}`}
+                                        key={spot.sequence}
+                                        onMouseEnter={() => {
+                                            hoverSelect.current = true;
+                                            setSelectedSpot(spot);
+                                        }}
+                                    >
+                                        <Table.Td w={20}>
+                                            <TimeCell date={spot.date} />
+                                        </Table.Td>
+                                        <Table.Td ta="left">
+                                            <Text size="sm">
+                                                {spot.receiverDXCC?.countryCode?.toUpperCase()}
+                                            </Text>
+                                        </Table.Td>
+                                        <Table.Td ta="right">
+                                            <DistanceCell
+                                                distance={spot.distance}
+                                            />
+                                        </Table.Td>
+
+                                        <Table.Td ta="right">
+                                            <SNRCell snr={spot.snr} />
+                                        </Table.Td>
+
+                                        <Table.Td ta="center">
+                                            <BandFrequencyView
+                                                frequency={spot.frequency}
+                                                band={spot.band}
+                                            />
+                                        </Table.Td>
+                                    </Table.Tr>
+                                );
+                            })}
+                            {paddingBottom > 0 && (
+                                <Table.Tr>
+                                    <Table.Td
+                                        colSpan={5}
+                                        style={{
+                                            height: paddingBottom,
+                                            padding: 0,
+                                            border: 0,
+                                        }}
+                                    />
+                                </Table.Tr>
+                            )}
+                        </Table.Tbody>
+                    </Table>
+                </Table.ScrollContainer>
+            )}
         </Paper>
     );
 };
