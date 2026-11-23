@@ -39,12 +39,12 @@ import { DistanceCell } from "./DistanceCell";
 import { useSettings } from "@/contexts/SettingsContext";
 import { getShortTimeZoneName } from "@/utils/date";
 import { useSelectedSpot } from "@/contexts/SelectedSpotContext";
-import { IconInbox, IconTrash } from "@tabler/icons-react";
+import { IconChevronRight, IconInbox, IconTrash } from "@tabler/icons-react";
 import { modals } from "@mantine/modals";
 import { useSpotData } from "@/contexts/SpotDataContext";
 import { CallsignCell } from "./CallsignCell";
 
-export const SpotTable = () => {
+export const SpotTable = ({ onCollapse }) => {
     const { filteredSpots, filter, clearSpots } = useSpotData();
 
     const spots = filteredSpots;
@@ -159,6 +159,17 @@ export const SpotTable = () => {
                     >
                         <IconTrash />
                     </ActionIcon>
+                    {onCollapse && (
+                        <ActionIcon
+                            variant="default"
+                            size="sm"
+                            title="Collapse spots table"
+                            aria-label="Collapse spots table"
+                            onClick={onCollapse}
+                        >
+                            <IconChevronRight size={16} />
+                        </ActionIcon>
+                    )}
                 </Group>
             </Group>
             {!spots || !spots.length ? (

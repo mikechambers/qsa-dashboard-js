@@ -21,14 +21,47 @@
  * SOFTWARE.
  */
 
+import { Text } from "@mantine/core";
+import { IconChevronLeft } from "@tabler/icons-react";
+
+import { useSpotData } from "@/contexts/SpotDataContext";
 import { SpotTable } from "./table/SpotTable";
 
 import classes from "../DashboardScreen.module.css";
 
-export const SpotsContainer = () => {
+//the spots table, or a tab to open it when it is collapsed
+export const SpotsContainer = ({ open, onOpenChange }) => {
+    const { filteredSpots } = useSpotData();
+
+    if (!open) {
+        return (
+            <div className={classes.spotsContainer}>
+                <button
+                    type="button"
+                    className={classes.spotsTab}
+                    onClick={() => onOpenChange(true)}
+                    aria-label="Open spots table"
+                    title="Open spots table"
+                >
+                    <IconChevronLeft size={18} className={classes.spotsTabIcon} />
+                    <Text
+                        size="sm"
+                        fw={700}
+                        style={{ fontVariantNumeric: "tabular-nums" }}
+                    >
+                        {filteredSpots.length}
+                    </Text>
+                    <Text size="sm" c="dimmed" className={classes.spotsTabLabel}>
+                        Spots
+                    </Text>
+                </button>
+            </div>
+        );
+    }
+
     return (
         <div className={classes.spotsContainer}>
-            <SpotTable />
+            <SpotTable onCollapse={() => onOpenChange(false)} />
         </div>
     );
 };

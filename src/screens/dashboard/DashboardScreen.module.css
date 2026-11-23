@@ -50,6 +50,11 @@
     .filter          { grid-row: 2; }
     .spotMap         { grid-row: 3; }
     .spotsContainer  { grid-row: 3; }
+
+    /* table collapsed to a tab on the right edge */
+    .dashboardScreenMain.spotsCollapsed {
+        grid-template-columns: 1fr 44px;
+    }
 }
 
 .spotMap {
@@ -129,4 +134,46 @@
 .spotMap,
 .spotsContainer {
     margin-top: var(--mantine-spacing-md);
+}
+
+/* the tab shown in place of the spots table when it is collapsed */
+.spotsTab {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 10px;
+    color: inherit;
+    background: var(--mantine-color-body);
+    border: 1px solid var(--mantine-color-default-border);
+    border-radius: var(--mantine-radius-default);
+    cursor: pointer;
+}
+
+.spotsTab:hover {
+    background: var(--mantine-color-default-hover);
+}
+
+/* points down on a narrow screen, where the tab is a bar under the map */
+.spotsTabIcon {
+    transform: rotate(-90deg);
+}
+
+@media (min-width: 48em) {
+    .spotsTab {
+        flex: 1;
+        flex-direction: column;
+        justify-content: flex-start;
+        padding: 12px 0;
+    }
+
+    .spotsTabIcon {
+        transform: none;
+    }
+
+    .spotsTabLabel {
+        writing-mode: vertical-rl;
+        letter-spacing: 0.05em;
+    }
 }

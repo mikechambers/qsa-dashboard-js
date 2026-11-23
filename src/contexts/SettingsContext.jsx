@@ -103,6 +103,13 @@ export function SettingsProvider({ children }) {
         getInitialValueInEffect: false,
     });
 
+    //spots table open, or collapsed to a tab. Not shown in the config screen.
+    const [showSpots, setShowSpots] = useLocalStorage({
+        key: getSettingKey("showSpots"),
+        defaultValue: true,
+        getInitialValueInEffect: false,
+    });
+
     const [elevationValues, setElevationValues] = useLocalStorage({
         key: getSettingKey("elevationValues"),
         defaultValue: [
@@ -126,6 +133,7 @@ export function SettingsProvider({ children }) {
         showMaxDistance,
         elevationValues,
         showFilters,
+        showSpots,
     };
 
     return (
@@ -143,6 +151,7 @@ export function SettingsProvider({ children }) {
                 setShowMaxDistance,
                 setElevationValues,
                 setShowFilters,
+                setShowSpots,
                 setDemoMode,
             }}
         >

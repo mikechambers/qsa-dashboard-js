@@ -50,7 +50,7 @@ import { SETTINGS_PATH } from "@/consts/config";
 
 export default function DashboardScreen() {
     let params = useParams();
-    let { settings } = useSettings();
+    let { settings, setShowSpots } = useSettings();
 
     const { filteredSpots, setActiveCallsign } = useSpotData();
 
@@ -102,7 +102,11 @@ export default function DashboardScreen() {
             >
                 <HeaderContainer callsign={callsign} grid={grid} />
 
-                <div className={classes.dashboardScreenMain}>
+                <div
+                    className={`${classes.dashboardScreenMain} ${
+                        settings.showSpots ? "" : classes.spotsCollapsed
+                    }`}
+                >
                     <PodContainer />
 
                     <Collapse
@@ -116,7 +120,10 @@ export default function DashboardScreen() {
                         <SpotMap location={location} spots={filteredSpots} />
                     </div>
 
-                    <SpotsContainer />
+                    <SpotsContainer
+                        open={settings.showSpots}
+                        onOpenChange={setShowSpots}
+                    />
                 </div>
             </div>
         </SelectedSpotProvider>
