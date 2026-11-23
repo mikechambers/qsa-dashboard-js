@@ -1,10 +1,14 @@
 # QSA Dashboard
 
-QSA Dashboard is a web based dashboard for tracking amateur radio signal propagation for digital modes.
+QSA Dashboard is a web based dashboard created by Mike Chambers (W6MSH) for tracking realtime amateur radio signal propagation for digital modes.
 
 It provides insight into how your signal is propagating, as well as antenna performance and band conditions for the station you are tracking.
 
+You can install it locally or use it [online](https://rememberthefuture.info/).
+
 Data is sourced via MQTT feed from [PSKReporter](https://www.mqtt.pskreporter.info/).
+
+[![image](images/light-sm.png)](images/light.png)![[image](images/dark-sm.png)](images/dark.png)[![image](images/settings-sm.png)](images/settings.png)
 
 **Features**
 
@@ -18,6 +22,7 @@ Data is sourced via MQTT feed from [PSKReporter](https://www.mqtt.pskreporter.in
 
 - FT8
 - FT4
+- JS8
 - CW
 - MFSK
 - JT9
@@ -28,7 +33,7 @@ Data is sourced via MQTT feed from [PSKReporter](https://www.mqtt.pskreporter.in
 - SSB
 - OLIVIA
 
-Spots in any other mode (WSPR, for example) are still shown, with the mode listed as UNKNOWN.
+Spots in any other mode are still shown, with the mode listed as UNKNOWN.
 
 ## Installation
 
@@ -53,9 +58,7 @@ $ npm run dev
 
 Then point your browser to the dev url (printed out in terminal when you run it).
 
-If you want to play around without transmitting, enable the Demo Mode setting in the app's setting screen.
-
-which will prepopulate the app with mock spots.
+If you want to play around without transmitting, enable the Demo Mode setting in the app's setting screen, which will prepopulate the app with mock spots.
 
 ## Usage
 
@@ -64,7 +67,7 @@ which will prepopulate the app with mock spots.
 On first launch, you will be prompted to enter your station details.
 
 - _Callsign_ **(required)** : Your amateur radio call sign, or the callsign that you plan to track.
-- _Grid Location_ Your maidenhead grid location (4 - 6 chars), used to show your location on the map and display propagation routes. It is optional, but without it there is no home marker, path line or distance rings.
+- _Grid Location_ Your [maidenhead grid location](https://www.levinecentral.com/ham/grid_square.php) (4 - 6 chars), used to show your location on the map, determine distance and display propagation routes. It is optional, but without it there is no home marker, path line or distance rings.
 
 Once you have entered your station details, click "Update station" to load the dashboard.
 
@@ -91,6 +94,7 @@ You can filter the data views via the filter bar. These filters are applied in r
 - _Mode_ : only show spots from specified mode
 - _Min SNR_ : hide spots weaker than this
 - _Min Distance_ : hide spots closer than this
+- _Omit Duplicates_ : Omit duplicate reports from same callsign on the same band
 
 ## Charts
 
@@ -112,6 +116,8 @@ PSKReporter will resend duplicates, resetting every 5 minutes.
 
 ## Settings
 
+The following settings are avaliable by clicking the **Settings** button.
+
 |                |                                                                                                                              |
 | -------------- | ---------------------------------------------------------------------------------------------------------------------------- |
 | Callsign       | _(required)_ The callsign whose signal you want to track.                                                                    |
@@ -128,7 +134,7 @@ PSKReporter will resend duplicates, resetting every 5 minutes.
 
 Settings are saved in your browser's local storage.
 
-## Known Issues
+## Notes
 
 - The first minute in the charts is often much higher than the minutes after it (see the note under Spots / Minute)
 - Distance rings (especially large ones) can look distorted on the map due to how the map is projected
