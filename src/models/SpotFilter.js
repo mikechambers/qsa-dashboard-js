@@ -62,7 +62,7 @@ export class SpotFilter {
         return spots.filter((spot) => {
             if (this.callsign) {
                 const c = this.callsign.toUpperCase();
-                if (!spot.receiverCall.toUpperCase().startsWith(c)) {
+                if (!spot.receiverCall?.toUpperCase().startsWith(c)) {
                     return false;
                 }
             }
@@ -88,7 +88,7 @@ export class SpotFilter {
             }
 
             if (this.skipDuplicates) {
-                const key = `${spot.receiverCall}|${spot.band}`;
+                const key = `${spot.receiverCall}|${spot.band}|${spot.mode}`;
                 if (hash.has(key)) {
                     return false;
                 } else {
