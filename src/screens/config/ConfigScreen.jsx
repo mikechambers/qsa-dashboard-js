@@ -49,6 +49,7 @@ import { UnitType } from "@/enums/UnitType";
 import { TimeMode } from "@/enums/TimeMode";
 import { DisplayMode } from "@/enums/DisplayMode";
 import { ElevationValue } from "@/lib/twilight";
+import { NavigationContainer } from "../NavigationContainer";
 
 const greylineLayers = [
     {
@@ -133,9 +134,8 @@ export default function ConfigScreen() {
         navigate(dashboardPath(c, g));
     };
 
-    const onBackClick = () => {
-        navigate(dashboardPath(settings.callsign, settings.grid));
-    };
+    const hasCallsign =
+        settings.callsign != null && settings.callsign.length > 0;
 
     return (
         <div
@@ -146,17 +146,8 @@ export default function ConfigScreen() {
                 onSubmit={form.onSubmit(onUpdateClick)}
             >
                 <Stack gap="lg">
-                    {settings.callsign ? (
-                        <Group>
-                            <Button
-                                variant="subtle"
-                                size="compact-sm"
-                                onClick={onBackClick}
-                            >
-                                ← Back to dashboard
-                            </Button>
-                        </Group>
-                    ) : (
+                    <NavigationContainer disableDashboard={!hasCallsign} />
+                    {!hasCallsign && (
                         <Group pt="md" justify="center">
                             <Text size="sm" c="dimmed">
                                 Enter Station info to load dashboard

@@ -12,10 +12,10 @@ import {
 } from "@mantine/core";
 
 import screenClasses from "../screens.module.css";
-import { useNavigate } from "react-router";
-import { DASHBOARD_PATH } from "@/consts/config";
 import { APP_VERSION, BUILD_DATE } from "@/consts";
 import SCREENSHOT from "@/assets/screenshot-expanded.png";
+import classes from "./AboutScreen.module.css";
+import { NavigationContainer } from "../NavigationContainer";
 
 const REPO_URL = "https://github.com/mikechambers/qsa-dashboard-js";
 const REPORT_ISSUES_URL =
@@ -36,20 +36,15 @@ const ExternalLink = ({ href, children, ...props }) => (
 
 const Section = ({ title, children }) => (
     <Stack gap="sm">
-        <Divider />
         <Text tt="uppercase" fz="xs" fw={700} lts="0.1em" c="dimmed">
             {title}
         </Text>
+        <Divider />
         {children}
     </Stack>
 );
 
 export const AboutScreen = () => {
-    const navigate = useNavigate();
-
-    const onDashboardClick = () => {
-        navigate(DASHBOARD_PATH);
-    };
     return (
         <div
             className={`${screenClasses.centerScreen} ${screenClasses.screen}`}
@@ -60,15 +55,7 @@ export const AboutScreen = () => {
                 gap="xl"
                 className={screenClasses.footerPadding}
             >
-                <Group>
-                    <Button
-                        variant="subtle"
-                        size="compact-sm"
-                        onClick={onDashboardClick}
-                    >
-                        ← Back to dashboard
-                    </Button>
-                </Group>
+                <NavigationContainer />
 
                 <Stack gap="xs">
                     <Title order={1} fz={48} fw={800} lh={1.05} lts="-0.02em">
@@ -99,12 +86,12 @@ export const AboutScreen = () => {
                     </Text>
 
                     <Image
+                        className={classes.screenshot}
                         src={SCREENSHOT}
                         alt="Screenshot"
                         radius="md"
                         width="500"
                         height="auto"
-                        style={{ boxShadow: "0 2px 6px rgba(0,0,0,0.50)" }}
                     />
                 </Stack>
 
@@ -177,7 +164,7 @@ export const AboutScreen = () => {
                     <Text>
                         Found a bug or have an idea? Let me know on{" "}
                         <ExternalLink href={REPORT_ISSUES_URL}>
-                            the Github project page
+                            the GitHub project page
                         </ExternalLink>
                         .
                     </Text>
