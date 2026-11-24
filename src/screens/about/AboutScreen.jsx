@@ -4,6 +4,7 @@ import { Title, Text, Stack, Anchor, Group, Button, List } from "@mantine/core";
 import screenClasses from "../screens.module.css";
 import { useNavigate } from "react-router";
 import { DASHBOARD_PATH } from "@/consts/config";
+import { APP_VERSION, BUILD_DATE } from "@/consts";
 
 const ExternalLink = ({ href, children }) => (
     <Anchor href={href} target="_blank" rel="noopener noreferrer">
@@ -143,6 +144,10 @@ export const AboutScreen = () => {
                         GitHub
                     </ExternalLink>
                     .
+                </Text>
+
+                <Text size="xs" c="dimmed">
+                    Version {APP_VERSION} ({BUILD_DATE})
                 </Text>
             </Stack>
         </div>

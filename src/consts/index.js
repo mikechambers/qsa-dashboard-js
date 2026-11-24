@@ -22,3 +22,7 @@
  */
 
 export const ALL_CASES = "All";
+
+// injected at build time by vite.config.js
+export const APP_VERSION = __APP_VERSION__;
+export const BUILD_DATE = __BUILD_DATE__;
