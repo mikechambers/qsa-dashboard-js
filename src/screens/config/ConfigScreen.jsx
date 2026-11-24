@@ -39,17 +39,17 @@ import {
 import { useForm } from "@mantine/form";
 import { useSettings } from "@/contexts/SettingsContext";
 
-import { useNavigate } from "react-router";
 import { isValidCallsign, isValidMaidenHeadGrid } from "@/utils/radio";
-import { dashboardPath } from "@/utils/routes";
 
+import { useNavigate, Link } from "react-router";
 import classes from "./ConfigScreen.module.css";
 import screenClasses from "../screens.module.css";
 import { UnitType } from "@/enums/UnitType";
 import { TimeMode } from "@/enums/TimeMode";
 import { DisplayMode } from "@/enums/DisplayMode";
 import { ElevationValue } from "@/lib/twilight";
-import { NavigationContainer } from "../NavigationContainer";
+
+import { ABOUT_PATH, DASHBOARD_PATH } from "@/consts/config";
 
 const greylineLayers = [
     {
@@ -131,7 +131,7 @@ export default function ConfigScreen() {
         setCallsign(c);
         setGrid(g);
 
-        navigate(dashboardPath(c, g));
+        navigate(DASHBOARD_PATH);
     };
 
     const hasCallsign =
@@ -146,11 +146,33 @@ export default function ConfigScreen() {
                 onSubmit={form.onSubmit(onUpdateClick)}
             >
                 <Stack gap="lg">
-                    <NavigationContainer disableDashboard={!hasCallsign} />
+                    <Group>
+                        <Anchor
+                            component={Link}
+                            to={DASHBOARD_PATH}
+                            underline={!hasCallsign}
+                            c={!hasCallsign ? "dimmed" : undefined}
+                            fw={!hasCallsign ? 500 : 400}
+                            style={{
+                                cursor: !hasCallsign ? "default" : "pointer",
+                            }}
+                        >
+                            Dashboard
+                        </Anchor>
+                        |
+                        <Anchor
+                            component={Link}
+                            to={ABOUT_PATH}
+                            underline="hover"
+                        >
+                            About
+                        </Anchor>
+                    </Group>
+
                     {!hasCallsign && (
                         <Group pt="md" justify="center">
                             <Text size="sm" c="dimmed">
-                                Enter Station info to load dashboard
+                                Enter Station info to view dashboard
                             </Text>
                         </Group>
                     )}

@@ -12,10 +12,11 @@ import {
 } from "@mantine/core";
 
 import screenClasses from "../screens.module.css";
+import { useNavigate, Link } from "react-router";
+import { DASHBOARD_PATH, SETTINGS_PATH } from "@/consts/config";
 import { APP_VERSION, BUILD_DATE } from "@/consts";
 import SCREENSHOT from "@/assets/screenshot-expanded.png";
 import classes from "./AboutScreen.module.css";
-import { NavigationContainer } from "../NavigationContainer";
 
 const REPO_URL = "https://github.com/mikechambers/qsa-dashboard-js";
 const REPORT_ISSUES_URL =
@@ -45,6 +46,17 @@ const Section = ({ title, children }) => (
 );
 
 export const AboutScreen = () => {
+    const navigate = useNavigate();
+
+    const onDashboardClick = () => {
+        navigate(DASHBOARD_PATH);
+    };
+
+    const links = [
+        { label: "Dashboard", link: DASHBOARD_PATH },
+        { label: "Settings", link: SETTINGS_PATH },
+    ];
+
     return (
         <div
             className={`${screenClasses.centerScreen} ${screenClasses.screen}`}
@@ -55,8 +67,6 @@ export const AboutScreen = () => {
                 gap="xl"
                 className={screenClasses.footerPadding}
             >
-                <NavigationContainer />
-
                 <Stack gap="xs">
                     <Title order={1} fz={48} fw={800} lh={1.05} lts="-0.02em">
                         QSA Dashboard
@@ -84,7 +94,23 @@ export const AboutScreen = () => {
                         <ExternalLink href={REPO_URL}>GitHub</ExternalLink> and
                         is release under an MIT open source license.
                     </Text>
-
+                    <Group>
+                        <Anchor
+                            component={Link}
+                            to={DASHBOARD_PATH}
+                            underline="hover"
+                        >
+                            View Dashboard
+                        </Anchor>
+                        |
+                        <Anchor
+                            component={Link}
+                            to={SETTINGS_PATH}
+                            underline="hover"
+                        >
+                            View Settings
+                        </Anchor>
+                    </Group>
                     <Image
                         className={classes.screenshot}
                         src={SCREENSHOT}
