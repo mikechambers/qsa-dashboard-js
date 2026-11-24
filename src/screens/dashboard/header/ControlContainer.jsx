@@ -21,7 +21,7 @@
  * SOFTWARE.
  */
 
-import { SETTINGS_PATH } from "@/consts/config";
+import { ABOUT_PATH, SETTINGS_PATH } from "@/consts/config";
 import { Button, ButtonGroup } from "@mantine/core";
 import { useFullscreenDocument } from "@mantine/hooks";
 import {

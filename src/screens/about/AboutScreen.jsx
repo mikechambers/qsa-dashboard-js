@@ -65,14 +65,17 @@ export const AboutScreen = () => {
                     <Title order={1} fz={48} fw={800} lh={1.05} lts="-0.02em">
                         QSA Dashboard
                     </Title>
+                    {/** 
                     <Text fz="xl" c="dimmed" lh={1.4}>
                         See where your signal is being heard, in real time.
                     </Text>
+                    */}
                 </Stack>
 
                 <Stack gap="sm">
                     <Text>
-                        QSA Dashboard (qsa-dashboard-js) created by{" "}
+                        QSA Dashboard (qsa-dashboard-js) is created and
+                        maintained by{" "}
                         <ExternalLink href="https://www.mikechambers.com">
                             Mike Chambers
                         </ExternalLink>{" "}
@@ -80,19 +83,6 @@ export const AboutScreen = () => {
                         source license and is available on{" "}
                         <ExternalLink href={REPO_URL}>GitHub</ExternalLink>.
                     </Text>
-                    <Group gap="xs">
-                        <Text fz="xs" fw={700} tt="uppercase" lts="0.1em" c="dimmed">
-                            Follow
-                        </Text>
-                        {FOLLOW_LINKS.map(({ label, href }) => (
-                            <Fragment key={href}>
-                                <Text c="dimmed">·</Text>
-                                <ExternalLink href={href} fw={500}>
-                                    {label}
-                                </ExternalLink>
-                            </Fragment>
-                        ))}
-                    </Group>
                 </Stack>
 
                 <Section title="Acknowledgements">
@@ -110,7 +100,7 @@ export const AboutScreen = () => {
                         who runs a receiving station and reports spots.
                     </Text>
 
-                    <List size="sm" c="dimmed">
+                    <List>
                         <List.Item>
                             Map styles by{" "}
                             <ExternalLink href="https://maptoolkit.net">
@@ -164,6 +154,19 @@ export const AboutScreen = () => {
                         Found a bug or have an idea? Let me know on{" "}
                         <ExternalLink href={REPO_URL}>GitHub</ExternalLink>.
                     </Text>
+                </Section>
+
+                <Section title="Follow">
+                    <Group gap="xs">
+                        {FOLLOW_LINKS.map(({ label, href }) => (
+                            <Fragment key={href}>
+                                <ExternalLink href={href} fw={500}>
+                                    {label}
+                                </ExternalLink>
+                                <Text c="dimmed">·</Text>
+                            </Fragment>
+                        ))}
+                    </Group>
                 </Section>
 
                 <Text size="xs" c="dimmed" ta="center" ff="monospace">
