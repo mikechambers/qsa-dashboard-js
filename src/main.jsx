@@ -27,7 +27,8 @@ import { BrowserRouter, Route, Routes, Navigate } from "react-router";
 import App from "./App";
 import ConfigScreen from "@/screens/config/ConfigScreen";
 import DashboardScreen from "@/screens/dashboard/DashboardScreen";
-import { DASHBOARD_PATH, SETTINGS_PATH } from "@/consts/config";
+import { ABOUT_PATH, DASHBOARD_PATH, SETTINGS_PATH } from "@/consts/config";
+import { AboutScreen } from "@/screens/about/AboutScreen";
 
 const root = document.getElementById("root");
 
@@ -41,6 +42,7 @@ ReactDOM.createRoot(root).render(
                         element={<Navigate to={DASHBOARD_PATH} replace />}
                     />
                     <Route path={SETTINGS_PATH} element={<ConfigScreen />} />
+                    <Route path={ABOUT_PATH} element={<AboutScreen />} />
                     <Route
                         path={`${DASHBOARD_PATH}/:callsign?/:grid?`}
                         element={<DashboardScreen />}

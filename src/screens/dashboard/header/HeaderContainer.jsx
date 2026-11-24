@@ -21,32 +21,13 @@
  * SOFTWARE.
  */
 
-import {
-    Group,
-    Text,
-    Paper,
-    ActionIcon,
-    Title,
-    Button,
-    ButtonGroup,
-    Indicator,
-} from "@mantine/core";
+import { Group, Text, Paper, ActionIcon, Title, Button } from "@mantine/core";
 import { ConnectionStatusBadge } from "./ConnectionStatusBadge";
-import {
-    IconAdjustmentsHorizontal,
-    IconBrandGithub,
-    IconFilter2,
-} from "@tabler/icons-react";
+import { IconInfoCircle } from "@tabler/icons-react";
 
 import { normalizeCallsign, normalizeMaidenHeadGrid } from "@/utils/radio";
 
-import { useFullscreenDocument } from "@mantine/hooks";
-
-import { IconArrowsMaximize, IconArrowsMinimize } from "@tabler/icons-react";
-
-import { useSettings } from "@/contexts/SettingsContext";
-import { useSpotData } from "@/contexts/SpotDataContext";
-import { SETTINGS_PATH } from "@/consts/config";
+import { ABOUT_PATH } from "@/consts/config";
 import { useNavigate } from "react-router";
 
 import { useBreakpoint } from "@/hooks/useBreakpoint";
@@ -57,15 +38,14 @@ import { Breakpoint } from "@/enums/Breakpoint";
 import { GithubIcon } from "@/screens/icons/GithubIcon";
 
 export const HeaderContainer = ({ callsign, grid }) => {
-    const { settings, setShowFilters } = useSettings();
     const breakpoint = useBreakpoint();
     const navigate = useNavigate();
-
-    const { filter } = useSpotData();
 
     //todo: maybe normalize when we save?
     const cs = normalizeCallsign(callsign);
     const g = normalizeMaidenHeadGrid(grid);
+
+    const compact = breakpoint === Breakpoint.COMPACT;
 
     return (
         <Paper>
@@ -82,9 +62,17 @@ export const HeaderContainer = ({ callsign, grid }) => {
                 <ClockContainer breakpoint={breakpoint} />
                 <Group wrap="nowrap" gap={16}>
                     <ConnectionStatusBadge breakpoint={breakpoint} />
-                    <ControlContainer
-                        compact={breakpoint === Breakpoint.COMPACT}
-                    />
+                    <ControlContainer compact={compact} />
+
+                    <Button
+                        variant="default"
+                        title="About"
+                        onClick={() => navigate(ABOUT_PATH)}
+                        leftSection={!compact && <IconInfoCircle size={16} />}
+                    >
+                        {compact ? <IconInfoCircle size={16} /> : "About"}
+                    </Button>
+
                     <ActionIcon
                         variant="subtle"
                         color="gray"

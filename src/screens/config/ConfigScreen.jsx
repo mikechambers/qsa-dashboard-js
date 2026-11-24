@@ -138,7 +138,9 @@ export default function ConfigScreen() {
     };
 
     return (
-        <div className={`${classes.configScreen} ${screenClasses.screen}`}>
+        <div
+            className={`${screenClasses.centerScreen} ${screenClasses.screen}`}
+        >
             <form
                 className={classes.configForm}
                 onSubmit={form.onSubmit(onUpdateClick)}

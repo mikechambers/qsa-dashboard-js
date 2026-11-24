@@ -29,3 +29,8 @@
     flex-grow: 1;
     min-height: 0;
 }
+
+.centerScreen {
+    justify-content: flex-start;
+    align-items: center; 
+}
