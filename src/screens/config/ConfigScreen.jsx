@@ -142,7 +142,7 @@ export default function ConfigScreen() {
             className={`${screenClasses.centerScreen} ${screenClasses.screen}`}
         >
             <form
-                className={classes.configForm}
+                className={`${classes.configForm} ${screenClasses.footerPadding}`}
                 onSubmit={form.onSubmit(onUpdateClick)}
             >
                 <Stack gap="lg">
