@@ -28,6 +28,7 @@ import {
     IconArrowsMaximize,
     IconArrowsMinimize,
     IconAdjustmentsHorizontal,
+    IconInfoCircle,
 } from "@tabler/icons-react";
 import { useNavigate } from "react-router";
 
@@ -48,6 +49,14 @@ export const ControlContainer = ({ compact = false }) => {
                 {compact ? <IconAdjustmentsHorizontal size={16} /> : "Settings"}
             </Button>
 
+            <Button
+                variant="default"
+                title="About"
+                onClick={() => navigate(ABOUT_PATH)}
+                leftSection={!compact && <IconInfoCircle size={16} />}
+            >
+                {compact ? <IconInfoCircle size={16} /> : "About"}
+            </Button>
             <Button
                 variant="default"
                 onClick={toggle}

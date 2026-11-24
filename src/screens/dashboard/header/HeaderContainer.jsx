@@ -63,16 +63,7 @@ export const HeaderContainer = ({ callsign, grid }) => {
                 <Group wrap="nowrap" gap={16}>
                     <ConnectionStatusBadge breakpoint={breakpoint} />
                     <ControlContainer compact={compact} />
-
-                    <Button
-                        variant="default"
-                        title="About"
-                        onClick={() => navigate(ABOUT_PATH)}
-                        leftSection={!compact && <IconInfoCircle size={16} />}
-                    >
-                        {compact ? <IconInfoCircle size={16} /> : "About"}
-                    </Button>
-
+                    {/* 
                     <ActionIcon
                         variant="subtle"
                         color="gray"
@@ -86,6 +77,7 @@ export const HeaderContainer = ({ callsign, grid }) => {
                     >
                         <GithubIcon size="100%" />
                     </ActionIcon>
+                    */}
                 </Group>
             </Group>
         </Paper>
