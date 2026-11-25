@@ -128,7 +128,7 @@ export function SpotDataProvider({ children }) {
 
     //one once per page to connect
     useEffect(() => {
-        const clientId = `qsa-dashboard-${crypto.randomUUID()}`;
+        const clientId = `qsa-dashboard-w6msh-${crypto.randomUUID()}`;
         const client = mqtt.connect("wss://mqtt.pskreporter.info:1886", {
             clientId: clientId,
         });
