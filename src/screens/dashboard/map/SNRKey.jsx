@@ -33,6 +33,7 @@ export const SNRLegend = ({ selectedSpot }) => {
             withBorder
             radius="md"
             p="xs"
+            visibleFrom="sm"
             pos="absolute"
             left={20}
             top={20}

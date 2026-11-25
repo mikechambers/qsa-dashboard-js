@@ -27,7 +27,8 @@
 .dashboardScreenMain {
     flex-grow: 1;
     display: grid;
-    grid-template-columns: 1fr;
+    /* not just 1fr, which can't shrink below its widest content */
+    grid-template-columns: minmax(0, 1fr);
 
     /* we handle gap manually with top margin below to handle collapse
         element so it doesnt take up space when hidden
@@ -37,6 +38,13 @@
     margin-top: var(--mantine-spacing-md);   /* matches the gap */
     align-content: start;
     min-height: 0;
+}
+
+/* phones: the table needs its own height, or it collapses to nothing */
+@media (max-width: 47.99em) {
+    .dashboardScreenMain:not(.spotsCollapsed) .spotsContainer {
+        height: 400px;
+    }
 }
 
 /* 768px matches mantine sm */

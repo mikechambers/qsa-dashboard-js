@@ -54,7 +54,7 @@ export const SummaryBase = ({
                         />
                     )}
 
-                    <Text fz={26} fw={600} lh={1.1} ff={ff}>
+                    <Text fz={{ base: 20, sm: 26 }} fw={600} lh={1.1} ff={ff}>
                         {value ?? "-"}
                     </Text>
                     {unit && (

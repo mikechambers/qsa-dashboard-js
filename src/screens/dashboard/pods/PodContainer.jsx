@@ -24,7 +24,7 @@
 import classes from "../DashboardScreen.module.css";
 
 import { useMemo } from "react";
-import { Divider, Group, Paper } from "@mantine/core";
+import { Box, Divider, Group, Paper } from "@mantine/core";
 import { SummaryBase } from "./PodBase";
 import { useSpotData } from "@/contexts/SpotDataContext";
 
@@ -36,6 +36,8 @@ import { MostRecentSpotPod } from "./MostRecentSpotPod";
 import { BandsPod } from "./BandsPod";
 import { ALL_CASES } from "@/consts";
 import { ChartContainer } from "./charts/ChartContainer";
+import { useBreakpoint } from "@/hooks/useBreakpoint";
+import { Breakpoint } from "@/enums/Breakpoint";
 
 export const PodContainer = () => {
     const {
@@ -49,6 +51,8 @@ export const PodContainer = () => {
         setFilter,
     } = useSpotData();
     const { settings } = useSettings();
+    //phones only get the essentials: no session timer, bands or charts
+    const compact = useBreakpoint() === Breakpoint.COMPACT;
 
     //the bands pod ignores the band filter, so the other bands stay visible
     //(and clickable) while one is selected
@@ -69,7 +73,7 @@ export const PodContainer = () => {
         <div className={classes.summary}>
             <Group gap="md">
                 <Paper withBorder radius="md">
-                    <Group gap={20} align="stretch">
+                    <Group gap={compact ? 6 : 20} align="stretch">
                         <FurthestSpotPod spot={furthestSpot} />
                         <Divider orientation="vertical" />
                         <MostRecentSpotPod spot={mostRecentSpot} />
@@ -80,8 +84,10 @@ export const PodContainer = () => {
                             subvalue={uniqueStationsSubValue}
                         />
 
-                        <Divider orientation="vertical" />
-                        <ElapsedTimePod mostRecentSpot={mostRecentSpot} />
+                        <Divider orientation="vertical" visibleFrom="sm" />
+                        <Box visibleFrom="sm">
+                            <ElapsedTimePod mostRecentSpot={mostRecentSpot} />
+                        </Box>
                     </Group>
                 </Paper>
                 {/* grows with the tiles, but no wider than they need. If
@@ -89,6 +95,7 @@ export const PodContainer = () => {
                 <Paper
                     withBorder
                     radius="md"
+                    visibleFrom="sm"
                     style={{
                         flex: `1 1 ${bandsMinWidth}px`,
                         minWidth: bandsMinWidth,
@@ -107,10 +114,14 @@ export const PodContainer = () => {
                     />
                 </Paper>
 
-                <ChartContainer
-                    spots={filteredSpots}
-                    unitType={settings.unitType}
-                />
+                {/* not rendered at all on phones, since a hidden chart
+                    has no size and warns about it */}
+                {!compact && (
+                    <ChartContainer
+                        spots={filteredSpots}
+                        unitType={settings.unitType}
+                    />
+                )}
             </Group>
         </div>
     );

@@ -22,7 +22,7 @@
  */
 
 import { createContext, useContext } from "react";
-import { useLocalStorage } from "@mantine/hooks";
+import { useLocalStorage, useMediaQuery } from "@mantine/hooks";
 import { UnitType } from "../enums/UnitType";
 import { TimeMode } from "../enums/TimeMode";
 import { DisplayMode } from "../enums/DisplayMode";
@@ -97,11 +97,25 @@ export function SettingsProvider({ children }) {
         getInitialValueInEffect: false,
     });
 
-    const [showFilters, setShowFilters] = useLocalStorage({
+    //filters are remembered separately on phones, where they start closed
+    const isPhone = useMediaQuery("(max-width: 47.99em)", false, {
+        getInitialValueInEffect: false,
+    });
+
+    const [showFiltersLarge, setShowFiltersLarge] = useLocalStorage({
         key: getSettingKey("showFilters"),
         defaultValue: true,
         getInitialValueInEffect: false,
     });
+
+    const [showFiltersPhone, setShowFiltersPhone] = useLocalStorage({
+        key: getSettingKey("showFiltersPhone"),
+        defaultValue: false,
+        getInitialValueInEffect: false,
+    });
+
+    const showFilters = isPhone ? showFiltersPhone : showFiltersLarge;
+    const setShowFilters = isPhone ? setShowFiltersPhone : setShowFiltersLarge;
 
     //spots table open, or collapsed to a tab. Not shown in the config screen.
     const [showSpots, setShowSpots] = useLocalStorage({

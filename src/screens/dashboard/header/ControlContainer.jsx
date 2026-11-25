@@ -41,6 +41,8 @@ export const ControlContainer = ({ compact = false }) => {
             <Button
                 variant="default"
                 title="Open Settings"
+                //the default padding squeezes an icon on its own
+                px={compact ? "xs" : undefined}
                 onClick={() => navigate(SETTINGS_PATH)}
                 leftSection={
                     !compact && <IconAdjustmentsHorizontal size={16} />
@@ -52,6 +54,8 @@ export const ControlContainer = ({ compact = false }) => {
             <Button
                 variant="default"
                 title="About"
+                //the default padding squeezes an icon on its own
+                px={compact ? "xs" : undefined}
                 onClick={() => navigate(ABOUT_PATH)}
                 leftSection={!compact && <IconInfoCircle size={16} />}
             >
