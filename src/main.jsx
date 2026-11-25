@@ -39,7 +39,7 @@ ReactDOM.createRoot(root).render(
                 <Route path="/" element={<App />}>
                     <Route
                         index
-                        element={<Navigate to={DASHBOARD_PATH} replace />}
+                        element={<Navigate to={ABOUT_PATH} replace />}
                     />
                     <Route path={SETTINGS_PATH} element={<ConfigScreen />} />
                     <Route path={ABOUT_PATH} element={<AboutScreen />} />

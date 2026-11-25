@@ -99,8 +99,8 @@ export const AboutScreen = () => {
                         <ExternalLink href="https://www.mqtt.pskreporter.info/">
                             PSK Reporter MQTT feed
                         </ExternalLink>
-                        , run by Tom M0LTE. The spots themselves come from
-                        Philip Gladstone's{" "}
+                        , run by Tom Fanning (M0LTE). The spots themselves come
+                        from Philip Gladstone's{" "}
                         <ExternalLink href="https://pskreporter.info">
                             pskreporter.info
                         </ExternalLink>
