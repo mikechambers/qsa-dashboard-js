@@ -18,9 +18,11 @@ import screenClasses from "../screens.module.css";
 import NavBar from "../nav/NavBar";
 import { APP_VERSION, BUILD_DATE } from "@/consts";
 import SCREENSHOT_EXPANDED from "@/assets/screenshot-expanded.png";
+import SCREENSHOT_EXPANDED_THUMB from "@/assets/screenshot-expanded-thumb.webp";
 import SCREENSHOT_DARK from "@/assets/screenshot-dark.png";
-import SCREENSHOT_COLLAPSED from "@/assets/screenshot-collapsed.png";
+import SCREENSHOT_DARK_THUMB from "@/assets/screenshot-dark-thumb.webp";
 import SCREENSHOT_FILTERS from "@/assets/screenshot-filters.png";
+import SCREENSHOT_FILTERS_THUMB from "@/assets/screenshot-filters-thumb.webp";
 
 const REPO_URL = "https://github.com/mikechambers/qsa-dashboard-js";
 const REPORT_ISSUES_URL =
@@ -55,12 +57,19 @@ export const AboutScreen = () => {
     const slides = [
         {
             src: SCREENSHOT_EXPANDED,
+            thumb: SCREENSHOT_EXPANDED_THUMB,
             alt: "All Modules Expanded",
             caption: "All Modules Expanded",
         },
-        { src: SCREENSHOT_DARK, alt: "Dark Mode", caption: "Dark Mode" },
+        {
+            src: SCREENSHOT_DARK,
+            thumb: SCREENSHOT_DARK_THUMB,
+            alt: "Dark Mode",
+            caption: "Dark Mode",
+        },
         {
             src: SCREENSHOT_FILTERS,
+            thumb: SCREENSHOT_FILTERS_THUMB,
             alt: "Filters",
             caption: "Filters Enabled",
         },
@@ -118,7 +127,7 @@ export const AboutScreen = () => {
                             {slides.map((slide, i) => (
                                 <Image
                                     key={slide.src}
-                                    src={slide.src}
+                                    src={slide.thumb}
                                     alt={slide.alt}
                                     radius="md"
                                     style={{ cursor: "pointer" }}

@@ -21,14 +21,18 @@
  * SOFTWARE.
  */
 
-import { StrictMode } from "react";
+import { StrictMode, lazy } from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Route, Routes, Navigate } from "react-router";
 import App from "./App";
-import ConfigScreen from "@/screens/config/ConfigScreen";
-import DashboardScreen from "@/screens/dashboard/DashboardScreen";
 import { ABOUT_PATH, DASHBOARD_PATH, SETTINGS_PATH } from "@/consts/config";
 import { AboutScreen } from "@/screens/about/AboutScreen";
+
+//loaded on first visit, so their code stays out of the initial bundle
+const ConfigScreen = lazy(() => import("@/screens/config/ConfigScreen"));
+const DashboardScreen = lazy(
+    () => import("@/screens/dashboard/DashboardScreen"),
+);
 
 const root = document.getElementById("root");
 

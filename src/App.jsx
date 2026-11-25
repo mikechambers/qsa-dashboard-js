@@ -21,6 +21,8 @@
  * SOFTWARE.
  */
 
+import { Suspense } from "react";
+
 import "./styles/global.css";
 import "@mantine/core/styles.css";
 import "@mantine/charts/styles.css";
@@ -83,7 +85,9 @@ function ThemedApp() {
         <MantineProvider theme={theme} forceColorScheme={colorScheme}>
             <ModalsProvider>
                 <div id="main">
-                    <Outlet />
+                    <Suspense fallback={null}>
+                        <Outlet />
+                    </Suspense>
                 </div>
             </ModalsProvider>
         </MantineProvider>
