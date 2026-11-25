@@ -31,10 +31,6 @@ import { useSpotData } from "@/contexts/SpotDataContext";
 import { useSettings } from "@/contexts/SettingsContext";
 import { ElapsedTimePod } from "./ElapsedTimePod";
 
-import { SpotPod } from "@/screens/dashboard/pods/SpotPod";
-import { DistanceSNRChartPod } from "./charts/DistanceSNRChartPod";
-import { SpotRateChartPod } from "./charts/SpotRateChartPod";
-import { useSpotIntervalData } from "./charts/useSpotIntervalData";
 import { FurthestSpotPod } from "./FurthestSpotPod";
 import { MostRecentSpotPod } from "./MostRecentSpotPod";
 import { BandsPod } from "./BandsPod";
@@ -61,6 +57,12 @@ export const PodContainer = () => {
         [filter, spots],
     );
 
+    //width the tiles need (92px each, 6px gaps, plus the Paper's padding and
+    //border), capped at 350 so that with many bands they scroll instead
+    const bandCount = new Set(bandSpots.map((s) => s.band).filter(Boolean))
+        .size;
+    const bandsMinWidth = Math.min(Math.max(bandCount, 1) * 98 + 20, 350);
+
     const uniqueStationsSubValue = `in ${uniqueCountries.length} ${uniqueCountries.length === 1 ? "country" : "countries"}`;
 
     return (
@@ -82,15 +84,14 @@ export const PodContainer = () => {
                         <ElapsedTimePod mostRecentSpot={mostRecentSpot} />
                     </Group>
                 </Paper>
-                {/* grows with the tiles, but no wider than they need, and
-                    no narrower than 350. If there isn't room for all of them
-                    the tiles scroll. */}
+                {/* grows with the tiles, but no wider than they need. If
+                    there isn't room for all of them the tiles scroll. */}
                 <Paper
                     withBorder
                     radius="md"
                     style={{
-                        flex: "1 1 350px",
-                        minWidth: 350,
+                        flex: `1 1 ${bandsMinWidth}px`,
+                        minWidth: bandsMinWidth,
                         maxWidth: "max-content",
                     }}
                 >
