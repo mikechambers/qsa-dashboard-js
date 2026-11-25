@@ -7,14 +7,20 @@ import {
     Group,
     List,
     Divider,
-    Image,
 } from "@mantine/core";
+
+import "@mantine/lightbox/styles.css";
+import { useState } from "react";
+import { Image, SimpleGrid } from "@mantine/core";
+import { Lightbox } from "@mantine/lightbox";
 
 import screenClasses from "../screens.module.css";
 import NavBar from "../nav/NavBar";
 import { APP_VERSION, BUILD_DATE } from "@/consts";
-import SCREENSHOT from "@/assets/screenshot-expanded.png";
-import classes from "./AboutScreen.module.css";
+import SCREENSHOT_EXPANDED from "@/assets/screenshot-expanded.png";
+import SCREENSHOT_DARK from "@/assets/screenshot-dark.png";
+import SCREENSHOT_COLLAPSED from "@/assets/screenshot-collapsed.png";
+import SCREENSHOT_FILTERS from "@/assets/screenshot-filters.png";
 
 const REPO_URL = "https://github.com/mikechambers/qsa-dashboard-js";
 const REPORT_ISSUES_URL =
@@ -44,6 +50,21 @@ const Section = ({ title, children }) => (
 );
 
 export const AboutScreen = () => {
+    const [opened, setOpened] = useState(false);
+    const [index, setIndex] = useState(0);
+    const slides = [
+        {
+            src: SCREENSHOT_EXPANDED,
+            alt: "All Modules Expanded",
+            caption: "All Modules Expanded",
+        },
+        { src: SCREENSHOT_DARK, alt: "Dark Mode", caption: "Dark Mode" },
+        {
+            src: SCREENSHOT_FILTERS,
+            alt: "Filters",
+            caption: "Filters Enabled",
+        },
+    ];
     return (
         <div
             className={`${screenClasses.centerScreen} ${screenClasses.screen}`}
@@ -83,14 +104,32 @@ export const AboutScreen = () => {
                         <ExternalLink href={REPO_URL}>GitHub</ExternalLink> and
                         is released under an MIT open source license.
                     </Text>
-                    <Image
-                        className={classes.screenshot}
-                        src={SCREENSHOT}
-                        alt="Screenshot"
-                        radius="md"
-                        width="500"
-                        height="auto"
-                    />
+
+                    <Group>
+                        <Lightbox
+                            opened={opened}
+                            onClose={() => setOpened(false)}
+                            slides={slides}
+                            currentIndex={index}
+                            onIndexChange={setIndex}
+                        />
+
+                        <SimpleGrid cols={3}>
+                            {slides.map((slide, i) => (
+                                <Image
+                                    key={slide.src}
+                                    src={slide.src}
+                                    alt={slide.alt}
+                                    radius="md"
+                                    style={{ cursor: "pointer" }}
+                                    onClick={() => {
+                                        setIndex(i);
+                                        setOpened(true);
+                                    }}
+                                />
+                            ))}
+                        </SimpleGrid>
+                    </Group>
                 </Stack>
 
                 <Section title="Acknowledgements">
