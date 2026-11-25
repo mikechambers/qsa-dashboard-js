@@ -39,6 +39,7 @@ import { FurthestSpotPod } from "./FurthestSpotPod";
 import { MostRecentSpotPod } from "./MostRecentSpotPod";
 import { BandsPod } from "./BandsPod";
 import { ALL_CASES } from "@/consts";
+import { ChartContainer } from "./charts/ChartContainer";
 
 export const PodContainer = () => {
     const {
@@ -59,8 +60,6 @@ export const PodContainer = () => {
         () => filter.with({ band: ALL_CASES }).filter(spots),
         [filter, spots],
     );
-
-    const intervals = useSpotIntervalData(filteredSpots);
 
     const uniqueStationsSubValue = `in ${uniqueCountries.length} ${uniqueCountries.length === 1 ? "country" : "countries"}`;
 
@@ -106,18 +105,11 @@ export const PodContainer = () => {
                         }
                     />
                 </Paper>
-                <Paper withBorder radius="md" w={350}>
-                    <DistanceSNRChartPod
-                        unitType={settings.unitType}
-                        intervals={intervals}
-                    />
-                </Paper>
-                <Paper withBorder radius="md" w={350}>
-                    <SpotRateChartPod
-                        unitType={settings.unitType}
-                        intervals={intervals}
-                    />
-                </Paper>
+
+                <ChartContainer
+                    spots={filteredSpots}
+                    unitType={settings.unitType}
+                />
             </Group>
         </div>
     );

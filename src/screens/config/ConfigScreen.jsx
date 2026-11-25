@@ -41,7 +41,8 @@ import { useSettings } from "@/contexts/SettingsContext";
 
 import { isValidCallsign, isValidMaidenHeadGrid } from "@/utils/radio";
 
-import { useNavigate, Link } from "react-router";
+import { useNavigate } from "react-router";
+import NavBar from "../nav/NavBar";
 import classes from "./ConfigScreen.module.css";
 import screenClasses from "../screens.module.css";
 import { UnitType } from "@/enums/UnitType";
@@ -49,7 +50,7 @@ import { TimeMode } from "@/enums/TimeMode";
 import { DisplayMode } from "@/enums/DisplayMode";
 import { ElevationValue } from "@/lib/twilight";
 
-import { ABOUT_PATH, DASHBOARD_PATH } from "@/consts/config";
+import { DASHBOARD_PATH } from "@/consts/config";
 
 const greylineLayers = [
     {
@@ -146,28 +147,7 @@ export default function ConfigScreen() {
                 onSubmit={form.onSubmit(onUpdateClick)}
             >
                 <Stack gap="lg">
-                    <Group>
-                        <Anchor
-                            component={Link}
-                            to={DASHBOARD_PATH}
-                            underline={!hasCallsign}
-                            c={!hasCallsign ? "dimmed" : undefined}
-                            fw={!hasCallsign ? 500 : 400}
-                            style={{
-                                cursor: !hasCallsign ? "default" : "pointer",
-                            }}
-                        >
-                            Dashboard
-                        </Anchor>
-                        |
-                        <Anchor
-                            component={Link}
-                            to={ABOUT_PATH}
-                            underline="hover"
-                        >
-                            About
-                        </Anchor>
-                    </Group>
+                    <NavBar />
 
                     {!hasCallsign && (
                         <Group pt="md" justify="center">

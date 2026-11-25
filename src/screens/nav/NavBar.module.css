@@ -1,0 +1,32 @@
+.nav {
+    border-bottom: 1px solid var(--mantine-color-default-border);
+}
+
+.link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 10px 0;
+    margin-bottom: -1px; /* sit the underline on top of the nav border */
+    border-bottom: 2px solid transparent;
+    font-size: var(--mantine-font-size-sm);
+    font-weight: 500;
+    line-height: 1.4;
+    text-decoration: none;
+    color: var(--mantine-color-dimmed);
+}
+
+.link:hover {
+    color: var(--mantine-color-text);
+}
+
+.active {
+    color: var(--mantine-color-text);
+    border-bottom-color: var(--mantine-primary-color-filled);
+}
+
+.disabled,
+.disabled:hover {
+    color: var(--mantine-color-disabled-color);
+    cursor: not-allowed;
+}
