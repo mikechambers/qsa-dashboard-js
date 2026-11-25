@@ -4,7 +4,7 @@ QSA Dashboard is a web based dashboard created by Mike Chambers (W6MSH) for trac
 
 It provides insight into how your signal is propagating, as well as antenna performance and band conditions for the station you are tracking.
 
-You can install it locally or use it [online](https://rememberthefuture.info/).
+You can install it locally or use it at [https://w6msh.mikechambers.com/](https://w6msh.mikechambers.com/).
 
 Data is sourced via MQTT feed from [PSKReporter](https://www.mqtt.pskreporter.info/).
 
