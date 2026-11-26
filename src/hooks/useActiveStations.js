@@ -21,32 +21,12 @@
  * SOFTWARE.
  */
 
-import { useEffect, useState } from "react";
-import { useWsjtx } from "@/contexts/WsjtxContext";
-import { Band } from "@/enums/Band";
-import { getActiveStations, getWorkingCall } from "@/utils/activeStations";
+import { createContext, useContext } from "react";
 
-//how often to check for expired stations
-const REFRESH_MS = 5000;
+//filled in by ActiveStationsProvider
+export const ActiveStationsContext = createContext([]);
 
 //stations WSJT-X is hearing right now, on the band it is on
 export function useActiveStations() {
-    const { connected, status, decodes } = useWsjtx();
-
-    //rerender now and then so old stations drop off
-    const [, setTick] = useState(0);
-    useEffect(() => {
-        if (!connected) return;
-
-        const timer = setInterval(() => setTick((t) => t + 1), REFRESH_MS);
-        return () => clearInterval(timer);
-    }, [connected]);
-
-    if (!connected) return [];
-
-    return getActiveStations(decodes, {
-        band: status && Band.fromFrequency(status.dialFrequency),
-        myCall: status?.deCall,
-        workingCall: getWorkingCall(status),
-    });
+    return useContext(ActiveStationsContext);
 }

@@ -41,6 +41,7 @@ import "@fontsource/roboto-mono/600.css";
 import { DisplayMode } from "./enums/DisplayMode";
 import { ModalsProvider } from "@mantine/modals";
 import { WsjtxProvider } from "./contexts/WsjtxContext";
+import { ActiveStationsProvider } from "./contexts/ActiveStationsContext";
 import { useDesktopMenu } from "./hooks/useDesktopMenu";
 
 const theme = createTheme({
@@ -72,7 +73,9 @@ export default function App() {
         <SettingsProvider>
             <SpotDataProvider>
                 <WsjtxProvider>
-                    <ThemedApp />
+                    <ActiveStationsProvider>
+                        <ThemedApp />
+                    </ActiveStationsProvider>
                 </WsjtxProvider>
             </SpotDataProvider>
         </SettingsProvider>

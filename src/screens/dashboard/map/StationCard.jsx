@@ -147,18 +147,22 @@ export const StationCard = ({
         );
     }
 
+    const description = [status ?? phrase, typeNote].filter(Boolean).join(" · ");
+
     return (
         <div className={classes.card}>
             {bar}
 
+            {/* if there isn't room, the description is cut short, never the
+                badges */}
             <Group justify="space-between" wrap="nowrap" gap={6}>
-                <Group gap={6} wrap="nowrap">
+                <Group gap={6} wrap="nowrap" style={{ minWidth: 0 }}>
                     {typeTag}
-                    <Text size="xs" c="dimmed" style={{ whiteSpace: "nowrap" }}>
-                        {[status ?? phrase, typeNote].filter(Boolean).join(" · ")}
+                    <Text size="xs" c="dimmed" truncate title={description}>
+                        {description}
                     </Text>
                 </Group>
-                <Group gap={4} wrap="nowrap">
+                <Group gap={4} wrap="nowrap" style={{ flexShrink: 0 }}>
                     {/* pinned cards need the room for the pin button */}
                     {onUnpin ? (
                         <ActionIcon

@@ -73,7 +73,7 @@ const reportNote = (report) => {
 
 //what a station heard by WSJT-X is doing, for the top of its card
 const describeStation = ({ decode, callingYou, working }, myCall) => {
-    if (working) return "You're working them";
+    if (working) return "Working them";
     if (callingYou) return "Calling you";
     if (myCall && decode.toCall === myCall) return "To you";
     if (decode.toCall) return `To ${decode.toCall}`;
