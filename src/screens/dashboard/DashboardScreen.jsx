@@ -42,6 +42,7 @@ import { SpotMap } from "./map/SpotMap";
 import { HeaderContainer } from "./header/HeaderContainer";
 import { gridToLocation } from "@/utils/geo";
 import { PodContainer } from "./pods/PodContainer";
+import { PodsTab } from "./pods/PodsTab";
 import { SpotFilterView } from "./filters/SpotFilterView";
 import { SpotFilterTab } from "./filters/SpotFilterTab";
 import { SelectedSpotProvider } from "@/contexts/SelectedSpotContext";
@@ -108,7 +109,12 @@ export default function DashboardScreen() {
                         settings.showSpots ? "" : classes.spotsCollapsed
                     }`}
                 >
-                    <PodContainer />
+                    <div className={classes.summary}>
+                        <Collapse expanded={settings.showPods}>
+                            <PodContainer />
+                        </Collapse>
+                        {!settings.showPods && <PodsTab />}
+                    </div>
 
                     <div className={classes.filter}>
                         <Collapse expanded={settings.showFilters}>

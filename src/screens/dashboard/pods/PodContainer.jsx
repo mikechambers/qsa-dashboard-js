@@ -21,10 +21,9 @@
  * SOFTWARE.
  */
 
-import classes from "../DashboardScreen.module.css";
-
 import { useMemo } from "react";
-import { Box, Divider, Group, Paper } from "@mantine/core";
+import { ActionIcon, Box, Divider, Group, Paper } from "@mantine/core";
+import { IconChevronUp } from "@tabler/icons-react";
 import { SummaryBase } from "./PodBase";
 import { useSpotData } from "@/contexts/SpotDataContext";
 
@@ -57,7 +56,7 @@ export const PodContainer = () => {
         setFilter,
         activeCallsign,
     } = useSpotData();
-    const { settings } = useSettings();
+    const { settings, setShowPods } = useSettings();
     //phones only get the essentials: no session timer, bands or charts
     const compact = useBreakpoint() === Breakpoint.COMPACT;
 
@@ -98,9 +97,23 @@ export const PodContainer = () => {
 
     const uniqueStationsSubValue = `in ${summary.countryCount} ${summary.countryCount === 1 ? "country" : "countries"}`;
 
+    //the collapse button is beside the pods, except on phones, where there
+    //isn't the width for that and it goes under them
     return (
-        <div className={classes.summary}>
-            <Group gap="md">
+        <Group
+            gap={compact ? 4 : "xs"}
+            align={compact ? "flex-end" : "flex-start"}
+            wrap="nowrap"
+            style={{ flexDirection: compact ? "column" : "row" }}
+        >
+            <Group
+                gap="md"
+                style={
+                    compact
+                        ? { alignSelf: "stretch" }
+                        : { flex: 1, minWidth: 0 }
+                }
+            >
                 <WsjtxPod />
                 <Paper withBorder radius="md">
                     <Group gap={compact ? 6 : 20} align="stretch">
@@ -121,7 +134,7 @@ export const PodContainer = () => {
                     </Group>
                 </Paper>
                 {/* grows with the tiles, but no wider than they need. If
-                    there isn't room for all of them the tiles scroll. */}
+                        there isn't room for all of them the tiles scroll. */}
                 <Paper
                     withBorder
                     radius="md"
@@ -146,14 +159,26 @@ export const PodContainer = () => {
                 </Paper>
 
                 {/* web only, and not on phones. Not rendered at all there, since
-                    a hidden chart has no size and warns about it */}
-                {!compact && PLATFORM !== Platform.DESKTOP && (
-                    <ChartContainer
-                        spots={filteredSpots}
-                        unitType={settings.unitType}
-                    />
-                )}
+                        a hidden chart has no size and warns about it */}
+                {settings.showPods &&
+                    !compact &&
+                    PLATFORM !== Platform.DESKTOP && (
+                        <ChartContainer
+                            spots={filteredSpots}
+                            unitType={settings.unitType}
+                        />
+                    )}
             </Group>
-        </div>
+
+            <ActionIcon
+                variant="default"
+                size="sm"
+                aria-label="Collapse summary"
+                title="Collapse summary"
+                onClick={() => setShowPods(false)}
+            >
+                <IconChevronUp size={16} />
+            </ActionIcon>
+        </Group>
     );
 };

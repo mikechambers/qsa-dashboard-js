@@ -124,6 +124,13 @@ export function SettingsProvider({ children }) {
         getInitialValueInEffect: false,
     });
 
+    //pods above the map open, or collapsed to a bar. Not in the config screen.
+    const [showPods, setShowPods] = useLocalStorage({
+        key: getSettingKey("showPods"),
+        defaultValue: true,
+        getInitialValueInEffect: false,
+    });
+
     //spot detail card on the map, expanded or collapsed. Not in the config screen.
     const [showSpotDetail, setShowSpotDetail] = useLocalStorage({
         key: getSettingKey("showSpotDetail"),
@@ -174,6 +181,7 @@ export function SettingsProvider({ children }) {
         elevationValues,
         showFilters,
         showSpots,
+        showPods,
         showSpotDetail,
         showSpotMarkers,
         showHeard,
@@ -196,6 +204,7 @@ export function SettingsProvider({ children }) {
                 setElevationValues,
                 setShowFilters,
                 setShowSpots,
+                setShowPods,
                 setShowSpotDetail,
                 setShowSpotMarkers,
                 setShowHeard,

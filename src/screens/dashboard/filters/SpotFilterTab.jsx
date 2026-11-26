@@ -42,7 +42,7 @@ export const SpotFilterTab = () => {
     return (
         <button
             type="button"
-            className={classes.filterTab}
+            className={classes.collapsedBar}
             onClick={() => setShowFilters(true)}
             aria-label="Show filters"
             title="Show filters"

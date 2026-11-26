@@ -81,6 +81,8 @@ export const SpotTable = ({ onCollapse }) => {
     const { spots, filteredSpots, filter, clearSpots } = useSpotData();
     const { shownSpots, show, setShow } = useTypeFilter();
     const hoverSelect = useRef(false);
+    //the station row under the mouse
+    const hoveredCall = useRef(null);
 
     const {
         selectedSpot,
@@ -180,6 +182,24 @@ export const SpotTable = ({ onCollapse }) => {
             range && index >= range.startIndex && index <= range.endIndex;
         if (!visible) v.scrollToIndex(index, { align: "start" });
     }, [selectedSequence]);
+
+    //the same for a station hovered on the map
+    const stationCall = station.call;
+
+    useEffect(() => {
+        if (!stationCall || hoveredCall.current === stationCall) return;
+
+        const index = rowsRef.current.findIndex(
+            (r) => !r.spot && r.call === stationCall,
+        );
+        if (index < 0) return;
+
+        const v = virtualizerRef.current;
+        const range = v.range;
+        const visible =
+            range && index >= range.startIndex && index <= range.endIndex;
+        if (!visible) v.scrollToIndex(index, { align: "start" });
+    }, [stationCall]);
 
     const virtualItems = virtualizer.getVirtualItems();
 
@@ -360,11 +380,15 @@ export const SpotTable = ({ onCollapse }) => {
                                         key={row.key}
                                         onMouseEnter={() => {
                                             if (!spot) {
+                                                hoveredCall.current = row.call;
                                                 hoverStation(row.call);
                                                 return;
                                             }
                                             hoverSelect.current = true;
                                             setSelectedSpot(spot);
+                                        }}
+                                        onMouseLeave={() => {
+                                            hoveredCall.current = null;
                                         }}
                                     >
                                         <Table.Td w={20}>

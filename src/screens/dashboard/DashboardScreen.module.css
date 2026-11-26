@@ -187,8 +187,8 @@
 }
 
 
-/* the bar shown in place of the filters when they are collapsed */
-.filterTab {
+/* the bar shown in place of the pods or filters when they are collapsed */
+.collapsedBar {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -201,6 +201,6 @@
     cursor: pointer;
 }
 
-.filterTab:hover {
+.collapsedBar:hover {
     background: var(--mantine-color-default-hover);
 }
