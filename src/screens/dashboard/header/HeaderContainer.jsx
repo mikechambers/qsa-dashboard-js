@@ -34,6 +34,7 @@ import { useBreakpoint } from "@/hooks/useBreakpoint";
 
 import { ClockContainer } from "./ClockContainer";
 import { ControlContainer } from "./ControlContainer";
+import { WsjtxStatus } from "./WsjtxStatus";
 import { Breakpoint } from "@/enums/Breakpoint";
 import { GithubIcon } from "@/screens/icons/GithubIcon";
 
@@ -61,6 +62,7 @@ export const HeaderContainer = ({ callsign, grid }) => {
 
                 <ClockContainer breakpoint={breakpoint} />
                 <Group wrap="nowrap" gap={16}>
+                    <WsjtxStatus compact={compact} />
                     <ConnectionStatusBadge breakpoint={breakpoint} />
                     <ControlContainer compact={compact} />
                     {/* 

@@ -21,6 +21,7 @@
  * SOFTWARE.
  */
 
+import { Tooltip } from "@mantine/core";
 import { useSpotData } from "@/contexts/SpotDataContext";
 import { ConnectionStatus as CS } from "@/enums/ConnectionStatus";
 import {
@@ -50,7 +51,11 @@ const STATUS_STYLES = {
 export const ConnectionStatusBadge = () => {
     const { status } = useSpotData();
 
-    const { color, icon: Icon } = STATUS_STYLES[status];
+    const { color, label, icon: Icon } = STATUS_STYLES[status];
 
-    return <Icon size={28} color={`var(--mantine-color-${color}-6)`} />;
+    return (
+        <Tooltip label={`PSK Reporter: ${label}`}>
+            <Icon size={28} color={`var(--mantine-color-${color}-6)`} />
+        </Tooltip>
+    );
 };

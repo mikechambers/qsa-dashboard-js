@@ -43,12 +43,38 @@ const Bands = {
     B23CM: "23CM",
 };
 
+//band edges in Hz, using the widest allocation of any region
+const BAND_RANGES = [
+    [135_700, 137_800, Bands.B2200M],
+    [472_000, 479_000, Bands.B630M],
+    [1_800_000, 2_000_000, Bands.B160M],
+    [3_500_000, 4_000_000, Bands.B80M],
+    [5_060_000, 5_450_000, Bands.B60M],
+    [7_000_000, 7_300_000, Bands.B40M],
+    [10_100_000, 10_150_000, Bands.B30M],
+    [14_000_000, 14_350_000, Bands.B20M],
+    [18_068_000, 18_168_000, Bands.B17M],
+    [21_000_000, 21_450_000, Bands.B15M],
+    [24_890_000, 24_990_000, Bands.B12M],
+    [28_000_000, 29_700_000, Bands.B10M],
+    [50_000_000, 54_000_000, Bands.B6M],
+    [70_000_000, 71_000_000, Bands.B4M],
+    [144_000_000, 148_000_000, Bands.B2M],
+    [222_000_000, 225_000_000, Bands.B125M],
+    [420_000_000, 450_000_000, Bands.B70CM],
+    [902_000_000, 928_000_000, Bands.B33CM],
+    [1_240_000_000, 1_300_000_000, Bands.B23CM],
+];
+
 export const Band = Object.freeze({
     ...Bands,
 
     get cases() {
         return Object.values(Bands);
     },
+
+    fromFrequency: (hz) =>
+        BAND_RANGES.find(([low, high]) => hz >= low && hz <= high)?.[2],
 
     fromData: (v) => {
         if (!v) {

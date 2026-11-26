@@ -24,6 +24,8 @@
 import { listen } from "@tauri-apps/api/event";
 import { Platform } from "@/enums/Platform";
 import { PLATFORM } from "./platform";
+import { createDecoder } from "./wsjtxDecoder";
+import { loadCallsignLookup } from "./callsignLookup";
 
 //calls onMessage with each message from WSJT-X (sent by the Rust listener).
 //Returns a function that stops listening. Does nothing in the web version.
@@ -36,4 +38,21 @@ export function listenToWsjtx(onMessage) {
     return () => {
         unlisten.then((off) => off());
     };
+}
+
+//like listenToWsjtx, but also turns decodes into Decode objects.
+//onMessage is called with (message, decode). decode is only set for decodes
+export function listenToDecodes(onMessage) {
+    if (PLATFORM !== Platform.DESKTOP) return () => {};
+
+    const decoder = createDecoder();
+
+    //decodes arriving before this finishes won't have country info
+    loadCallsignLookup()
+        .then((lookup) => decoder.setCallsignLookup(lookup))
+        .catch((e) => console.error("Error loading country data", e));
+
+    return listenToWsjtx((message) =>
+        onMessage(message, decoder.handle(message)),
+    );
 }
