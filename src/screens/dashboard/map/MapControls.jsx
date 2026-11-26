@@ -26,8 +26,7 @@ import { IconCircleDashed, IconSunMoon } from "@tabler/icons-react";
 import { useSettings } from "@/contexts/SettingsContext";
 import { useWsjtx } from "@/contexts/WsjtxContext";
 import { StationType } from "@/enums/StationType";
-import { STATION_COLORS } from "./config";
-import { getStationIconURL } from "./stationIcons";
+import { TypeIcon } from "./TypeIcon";
 
 const MapToggle = ({ label, on, onChange, children, ...props }) => (
     <Tooltip label={label} position="right" withArrow>
@@ -44,16 +43,6 @@ const MapToggle = ({ label, on, onChange, children, ...props }) => (
             {children}
         </ActionIcon>
     </Tooltip>
-);
-
-const SpotIcon = () => (
-    <svg width="16" height="16" aria-hidden="true">
-        <circle cx="8" cy="8" r="7" fill={STATION_COLORS[StationType.SPOT]} />
-    </svg>
-);
-
-const StationIcon = ({ type }) => (
-    <img src={getStationIconURL(type)} alt="" width={20} height={25} />
 );
 
 //small stack of on / off buttons for the map. The overlays flip the same
@@ -92,19 +81,19 @@ export const MapControls = () => {
     const markers = [
         {
             label: "Spots (heard you)",
-            icon: SpotIcon,
+            icon: () => <TypeIcon type={StationType.SPOT} />,
             on: settings.showSpotMarkers,
             onChange: setShowSpotMarkers,
         },
         {
             label: "Heard (you hear them)",
-            icon: () => <StationIcon type={StationType.HEARD} />,
+            icon: () => <TypeIcon type={StationType.HEARD} />,
             on: settings.showHeard,
             onChange: setShowHeard,
         },
         {
             label: "Calling CQ",
-            icon: () => <StationIcon type={StationType.CQ} />,
+            icon: () => <TypeIcon type={StationType.CQ} />,
             on: settings.showCQ,
             onChange: setShowCQ,
         },

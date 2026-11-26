@@ -196,7 +196,7 @@ export const SpotMap = ({ spots, location }) => {
     useSpotHighlightEffects(map, ready, selectedSpot, location);
     useSpotLayer(map, ready, spots, setSelectedSpot);
 
-    //the Spots toggle button
+    //the Spot toggle and type filter
     useEffect(() => {
         if (!map || !ready) return;
 
@@ -205,7 +205,9 @@ export const SpotMap = ({ spots, location }) => {
             "visibility",
             settings.showSpotMarkers ? "visible" : "none",
         );
-    }, [map, ready, settings.showSpotMarkers]);
+        //don't leave a hidden spot selected
+        if (!settings.showSpotMarkers) setSelectedSpot(undefined);
+    }, [map, ready, settings.showSpotMarkers, setSelectedSpot]);
 
     //selected spot ring / dot
     useSelectedSpotMarker(map, ready, selectedSpot);

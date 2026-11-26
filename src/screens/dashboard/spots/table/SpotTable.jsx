@@ -43,11 +43,13 @@ import { IconChevronRight, IconInbox, IconTrash } from "@tabler/icons-react";
 import { modals } from "@mantine/modals";
 import { useSpotData } from "@/contexts/SpotDataContext";
 import { CallsignCell } from "./CallsignCell";
+import { useTypeFilter } from "@/hooks/useTypeFilter";
 
 export const SpotTable = ({ onCollapse }) => {
-    const { filteredSpots, filter, clearSpots } = useSpotData();
+    const { filter, clearSpots } = useSpotData();
+    const { shownSpots, spotsHidden } = useTypeFilter();
 
-    const spots = filteredSpots;
+    const spots = shownSpots;
     const totalSpots = spots.length;
     const hoverSelect = useRef(false);
 
@@ -188,14 +190,18 @@ export const SpotTable = ({ onCollapse }) => {
                     <EmptyState
                         icon={<IconInbox size={40} stroke={1.5} />}
                         title={
-                            filter.hasFilter()
-                                ? "No Spots Match Filter"
-                                : "No spots yet"
+                            spotsHidden
+                                ? "Spots Are Hidden"
+                                : filter.hasFilter()
+                                  ? "No Spots Match Filter"
+                                  : "No spots yet"
                         }
                         description={
-                            filter.hasFilter()
-                                ? ""
-                                : "Spots will appear here as they arrive."
+                            spotsHidden
+                                ? "Set Type to All or Spot in the filters."
+                                : filter.hasFilter()
+                                  ? ""
+                                  : "Spots will appear here as they arrive."
                         }
                     />
                 </Paper>

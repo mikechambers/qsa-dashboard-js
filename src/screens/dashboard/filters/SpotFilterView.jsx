@@ -31,7 +31,7 @@ import {
     Input,
     Text,
     Button,
-    Checkbox,
+    // Checkbox, //for Omit Duplicates, commented out below
     ActionIcon,
 } from "@mantine/core";
 import { SpotFilter } from "../../../models/SpotFilter";
@@ -45,12 +45,15 @@ import { IconChevronUp } from "@tabler/icons-react";
 import { kilometersToMiles, milesToKilometers } from "@/utils/geo";
 import { MIN_SNR } from "@/consts/config";
 import { FilterIcon } from "./FilterIcon";
+import { TypeFilter } from "./TypeFilter";
+import { useTypeFilter } from "@/hooks/useTypeFilter";
 
 const bandValues = [ALL_CASES, ...Band.cases];
 const modeValues = [ALL_CASES, ...Mode.cases];
 
 export const SpotFilterView = () => {
-    const { filter, setFilter, filteredSpots, spots } = useSpotData();
+    const { filter, setFilter, spots } = useSpotData();
+    const types = useTypeFilter();
     const { settings, setShowFilters } = useSettings();
 
     const distanceValues =
@@ -85,7 +88,7 @@ export const SpotFilterView = () => {
         settings.unitType == UnitType.METRIC
             ? filter.distance
             : Math.round(kilometersToMiles(filter.distance));
-    const isFiltered = filteredSpots.length !== spots.length;
+    const isFiltered = types.shownSpots.length !== spots.length;
     return (
         <Paper withBorder>
             <Group align="flex-end" gap="lg" pos="relative">
@@ -95,7 +98,9 @@ export const SpotFilterView = () => {
                         mih={30}
                         style={{ alignSelf: "flex-start" }}
                     >
-                        <FilterIcon active={filter.hasFilter()} />
+                        <FilterIcon
+                            active={filter.hasFilter() || types.isFiltered}
+                        />
                         <Text size="sm" fw={600}>
                             Filters
                         </Text>
@@ -105,11 +110,11 @@ export const SpotFilterView = () => {
                         c={isFiltered ? "orange" : "dimmed"}
                         fw={isFiltered ? 600 : undefined}
                     >
-                        {filteredSpots.length} of {spots.length} spots
+                        {types.shownSpots.length} of {spots.length} spots
                     </Text>
                 </Stack>
 
-                <Group align="flex-start" gap="xl">
+                <Group align="flex-start" gap="lg">
                     <TextInput
                         size="xs"
                         label="Receiving Station"
@@ -146,6 +151,8 @@ export const SpotFilterView = () => {
                         onChange={(v) => setFilter(filter.with({ mode: v }))}
                         allowDeselect={false}
                     />
+
+                    {types.available && <TypeFilter />}
 
                     <Stack gap={4} w={200}>
                         <Input.Label size="xs" w={200}>
@@ -186,6 +193,7 @@ export const SpotFilterView = () => {
                             mb="md"
                         />
                     </Stack>
+                    {/*
                     <Checkbox
                         mt={30}
                         size="xs"
@@ -200,11 +208,15 @@ export const SpotFilterView = () => {
                         label="Omit Duplicates"
                         style={{ alignSelf: "flex-end" }}
                     />
+                    */}
                 </Group>
                 <Button
                     variant="default"
                     size="xs"
-                    onClick={() => setFilter(new SpotFilter())}
+                    onClick={() => {
+                        setFilter(new SpotFilter());
+                        types.reset();
+                    }}
                     style={{ alignSelf: "flex-end" }}
                 >
                     Reset
