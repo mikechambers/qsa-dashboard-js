@@ -96,7 +96,7 @@ export const StationCard = ({
     open,
     toggle,
 }) => {
-    const { name, phrase } = STATION_TYPE_INFO[type];
+    const { name, phrase, taggedPhrase } = STATION_TYPE_INFO[type];
 
     const bar = (
         <SignalBar
@@ -147,7 +147,10 @@ export const StationCard = ({
         );
     }
 
-    const description = [status ?? phrase, typeNote].filter(Boolean).join(" · ");
+    const usualPhrase = typeNote ? (taggedPhrase ?? phrase) : phrase;
+    const description = [status ?? usualPhrase, typeNote]
+        .filter(Boolean)
+        .join(" · ");
 
     return (
         <div className={classes.card}>

@@ -50,6 +50,8 @@ export const STATION_TYPE_INFO = Object.freeze({
         plural: "CQ",
         description: "Calling CQ",
         phrase: "Calling anyone",
+        //used when there is a tag such as POTA, to leave room for it
+        taggedPhrase: "Calling",
     },
 });
 
