@@ -22,7 +22,11 @@
  */
 
 import { describe, it, expect, beforeAll } from "vitest";
-import { createDecoder, decodeDate } from "@/utils/wsjtxDecoder";
+import {
+    applyStatus,
+    createDecoder,
+    decodeDate,
+} from "@/utils/wsjtxDecoder";
 import { loadCallsignLookup } from "@/utils/callsignLookup";
 import { Band } from "@/enums/Band";
 
@@ -96,6 +100,31 @@ describe("createDecoder", () => {
         expect(d.band).toBeUndefined();
         expect(d.location).toBeUndefined();
         expect(d.distance).toBeUndefined();
+    });
+});
+
+describe("applyStatus", () => {
+    it("fills in a decode that arrived before the status", () => {
+        const early = createDecoder().handle(decode("CQ K1ABC FN42"));
+        expect(early.band).toBeUndefined();
+
+        const filled = applyStatus(early, status);
+        expect(filled.frequency).toBe(
+            status.dialFrequency + early.raw.deltaFrequency,
+        );
+        expect(filled.band).toBe(Band.B20M);
+        expect(filled.distance).toBeGreaterThan(0);
+        expect(filled.id).toBe(early.id);
+    });
+
+    it("leaves other decodes alone", () => {
+        const early = createDecoder().handle(decode("CQ K1ABC FN42"));
+        expect(applyStatus(early, { ...status, id: "other" })).toBe(early);
+
+        const filled = applyStatus(early, status);
+        expect(applyStatus(filled, { ...status, dialFrequency: 1 })).toBe(
+            filled,
+        );
     });
 });
 

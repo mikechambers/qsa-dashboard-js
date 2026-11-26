@@ -21,7 +21,7 @@
  * SOFTWARE.
  */
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { LngLatBounds, setWorkerUrl } from "maplibre-gl";
 import workerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
 import "maplibre-gl/dist/maplibre-gl.css";
@@ -58,7 +58,7 @@ import { useSelectedSpot } from "../../../contexts/SelectedSpotContext";
 import { useSpotHighlightEffects } from "./useSpotHighlightEffects";
 import { useDistanceBands } from "./useDistanceBands";
 import { useSpotData } from "@/contexts/SpotDataContext";
-import { SPOT_PATH } from "./config";
+import { SELECTED_STATION_PATH, SPOT_PATH } from "./config";
 
 //setup work for map library to do stuff on another threads
 setWorkerUrl(workerUrl);
@@ -113,43 +113,17 @@ const fitPath = (map, [fromLng, fromLat], [toLng, toLat]) => {
 
 export const SpotMap = ({ spots, location }) => {
     const { settings, setShowSpotDetail } = useSettings();
-    const { selectedSpot, setSelectedSpot, focusRequest } = useSelectedSpot();
+    const {
+        selectedSpot,
+        setSelectedSpot,
+        focusRequest,
+        station,
+        hoverStation,
+        pinStation,
+        unpinStation,
+        stationFocus,
+    } = useSelectedSpot();
     const { furthestSpot } = useSpotData();
-
-    //WSJT-X station shown in the popup, as { call, pinned }. The popup shows
-    //either a spot or a station, whichever was hovered last. Clicking a
-    //station pins it, so it stays while the mouse moves to the Reply button
-    const [station, setStation] = useState({});
-
-    const hoverStation = useCallback(
-        (call) => {
-            if (!call) return;
-            setStation((prev) =>
-                prev.pinned ? prev : { call, pinned: false },
-            );
-            setSelectedSpot(undefined);
-        },
-        [setSelectedSpot],
-    );
-
-    //with no call, clears the station
-    const pinStation = useCallback(
-        (call) => {
-            setStation(call ? { call, pinned: true } : {});
-            if (call) setSelectedSpot(undefined);
-        },
-        [setSelectedSpot],
-    );
-
-    //a hovered spot replaces the station, unless it is pinned
-    useEffect(() => {
-        if (selectedSpot?.id) setStation((prev) => (prev.pinned ? prev : {}));
-    }, [selectedSpot?.id]);
-
-    //clicking a spot in the table always shows it
-    useEffect(() => {
-        if (focusRequest) setStation({});
-    }, [focusRequest]);
 
     const mapContainer = useRef(null);
 
@@ -175,6 +149,8 @@ export const SpotMap = ({ spots, location }) => {
         addStationLineLayers(map);
         addSpotLayer(map);
         addConnectionLineLayer(map);
+        //spots and stations each have a line, as both can be selected
+        addConnectionLineLayer(map, SELECTED_STATION_PATH);
         addConnectionPointLayer(map);
         addStationLayer(map);
     }, [ready]);
@@ -220,6 +196,14 @@ export const SpotMap = ({ spots, location }) => {
 
         fitPath(map, location.coordinates, to);
     }, [focusRequest]);
+
+    //the same for a station clicked in the table
+    useEffect(() => {
+        const to = stationFocus?.coordinates;
+        if (!map || !ready || !location || !to) return;
+
+        fitPath(map, location.coordinates, to);
+    }, [stationFocus]);
 
     //hovering a table row selects a spot, but if it is off the map there is
     //nothing to see. Once the mouse rests on the row for a moment, bring the
@@ -274,11 +258,7 @@ export const SpotMap = ({ spots, location }) => {
             <SpotPopup
                 spot={selectedSpot}
                 stationCall={station.call}
-                onUnpin={
-                    station.pinned
-                        ? () => setStation({ ...station, pinned: false })
-                        : undefined
-                }
+                onUnpin={station.pinned ? unpinStation : undefined}
                 open={settings.showSpotDetail}
                 onOpenChange={setShowSpotDetail}
             />

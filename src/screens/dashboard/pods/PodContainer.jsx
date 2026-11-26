@@ -34,6 +34,7 @@ import { ElapsedTimePod } from "./ElapsedTimePod";
 import { FurthestSpotPod } from "./FurthestSpotPod";
 import { MostRecentSpotPod } from "./MostRecentSpotPod";
 import { BandsPod } from "./BandsPod";
+import { TILE_WIDTH, WIDE_TILE_WIDTH } from "./bandTile";
 import { WsjtxPod } from "./WsjtxPod";
 import { ALL_CASES } from "@/consts";
 import { ChartContainer } from "./charts/ChartContainer";
@@ -41,6 +42,10 @@ import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { Breakpoint } from "@/enums/Breakpoint";
 import { Platform } from "@/enums/Platform";
 import { PLATFORM } from "@/utils/platform";
+import { useActiveStations } from "@/hooks/useActiveStations";
+import { useTypeFilter } from "@/hooks/useTypeFilter";
+import { StationType } from "@/enums/StationType";
+import { getTableRows } from "@/utils/tableRows";
 
 export const PodContainer = () => {
     const {
@@ -64,11 +69,32 @@ export const PodContainer = () => {
         [filter, spots],
     );
 
-    //width the tiles need (92px each, 6px gaps, plus the Paper's padding and
-    //border), capped at 350 so that with many bands they scroll instead
-    const bandCount = new Set(bandSpots.map((s) => s.band).filter(Boolean))
-        .size;
-    const bandsMinWidth = Math.min(Math.max(bandCount, 1) * 98 + 20, 350);
+    //it counts the types being viewed, the same as the table. The web version
+    //only has spots
+    const { available, show } = useTypeFilter();
+    const stations = useActiveStations();
+    const bandRows = getTableRows(
+        bandSpots,
+        stations,
+        available ? show : { [StationType.SPOT]: true },
+    );
+    const hasStations =
+        available && (show[StationType.HEARD] || show[StationType.CQ]);
+
+    //width the tiles need (the tile, 6px gaps, plus the Paper's padding and
+    //border), capped at 350 so that with many bands they scroll instead.
+    //Counts the bands of every type, so that changing the type filter doesn't
+    //move the pod to another row and shift the page
+    const bandCount = new Set(
+        [...bandSpots, ...stations.map((s) => s.decode)]
+            .map((item) => item.band)
+            .filter(Boolean),
+    ).size;
+    const tileWidth = available ? WIDE_TILE_WIDTH : TILE_WIDTH;
+    const bandsMinWidth = Math.min(
+        Math.max(bandCount, 1) * (tileWidth + 6) + 20,
+        350,
+    );
 
     const uniqueStationsSubValue = `in ${uniqueCountries.length} ${uniqueCountries.length === 1 ? "country" : "countries"}`;
 
@@ -107,7 +133,9 @@ export const PodContainer = () => {
                     }}
                 >
                     <BandsPod
-                        spots={bandSpots}
+                        rows={bandRows}
+                        noun={hasStations ? "stations" : "spots"}
+                        tileWidth={tileWidth}
                         unitType={settings.unitType}
                         selectedBand={
                             filter.band === ALL_CASES ? null : filter.band

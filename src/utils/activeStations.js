@@ -90,11 +90,11 @@ export function getActiveStations(
 export const isMappable = (decode) =>
     Boolean(decode.location) && decode.locationSource !== "country";
 
-//the stations to draw, given the map filters ({ [StationType]: boolean }).
+//the stations to show, given the type filter ({ [StationType]: boolean }).
 //Stations calling us or being worked are always shown
+export const getShownStations = (stations, show) =>
+    stations.filter((s) => s.working || s.callingYou || show[s.type]);
+
+//the stations to draw on the map
 export const getMapStations = (stations, show) =>
-    stations.filter(
-        (s) =>
-            isMappable(s.decode) &&
-            (s.working || s.callingYou || show[s.type]),
-    );
+    getShownStations(stations, show).filter((s) => isMappable(s.decode));

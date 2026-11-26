@@ -33,7 +33,7 @@ import { getStationIconId } from "./stationIcons";
 const hashCall = (call) =>
     [...call].reduce((hash, c) => (hash * 31 + c.charCodeAt(0)) | 0, 0);
 
-const getStationMapCoordinates = ({ call, location }) =>
+export const getStationMapCoordinates = ({ call, location }) =>
     ADD_SPOT_JITTER
         ? getJitteredCoordinates(location, hashCall(call))
         : location.coordinates;

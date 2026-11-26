@@ -28,7 +28,14 @@ import { getStationIconURL } from "./stationIcons";
 //the map symbol for a type, for use in buttons
 export const TypeIcon = ({ type, size = 1 }) =>
     type === StationType.SPOT ? (
-        <svg width={16 * size} height={16 * size} viewBox="0 0 16 16" aria-hidden="true">
+        <svg
+            width={16 * size}
+            height={16 * size}
+            viewBox="0 0 16 16"
+            aria-hidden="true"
+            //don't let a narrow row squeeze it away
+            style={{ flexShrink: 0 }}
+        >
             <circle cx="8" cy="8" r="7" fill={STATION_COLORS[type]} />
         </svg>
     ) : (
@@ -37,5 +44,6 @@ export const TypeIcon = ({ type, size = 1 }) =>
             alt=""
             width={20 * size}
             height={25 * size}
+            style={{ flexShrink: 0 }}
         />
     );

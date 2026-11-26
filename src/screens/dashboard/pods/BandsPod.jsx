@@ -21,7 +21,7 @@
  * SOFTWARE.
  */
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ActionIcon, Box, Group, Text } from "@mantine/core";
 import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
 import { useInterval } from "@mantine/hooks";
@@ -33,28 +33,36 @@ import { getColorForBand } from "../spots/BandBadge";
 
 import classes from "./BandsPod.module.css";
 
-const TILE_WIDTH = 92;
 const TILE_HEIGHT = 72;
 const GAP = 6;
 
-//one number per band: how many spots, when it was last heard, average snr,
-//and the furthest distance. Most spots first, ties go to the most recently heard.
-const getBandStats = (spots) => {
+//one number per band: how many rows, when it was last heard, average snr,
+//and the furthest distance. Most rows first, ties go to the most recently heard.
+//rows are from getTableRows
+const getBandStats = (rows) => {
     const stats = new Map();
 
-    for (const spot of spots) {
-        if (!spot.band) continue;
+    for (const row of rows) {
+        if (!row.band) continue;
 
-        let s = stats.get(spot.band);
+        let s = stats.get(row.band);
         if (!s) {
-            s = { band: spot.band, count: 0, snrTotal: 0, last: 0, furthest: 0 };
-            stats.set(spot.band, s);
+            s = {
+                band: row.band,
+                count: 0,
+                spots: 0,
+                snrTotal: 0,
+                last: 0,
+                furthest: 0,
+            };
+            stats.set(row.band, s);
         }
 
         s.count++;
-        s.snrTotal += spot.snr ?? 0;
-        s.last = Math.max(s.last, new Date(spot.date).getTime() || 0);
-        s.furthest = Math.max(s.furthest, spot.distance ?? 0);
+        if (row.spot) s.spots++;
+        s.snrTotal += (row.spot ?? row.decode).snr ?? 0;
+        s.last = Math.max(s.last, new Date(row.date).getTime() || 0);
+        s.furthest = Math.max(s.furthest, row.distance ?? 0);
     }
 
     return [...stats.values()].sort((a, b) => b.count - a.count || b.last - a.last);
@@ -74,10 +82,14 @@ const compactDistance = (km, unitType) => {
     };
 };
 
-const BandTile = ({ stat, unitType, selected, onClick }) => {
+const BandTile = ({ stat, noun, width, unitType, selected, onClick }) => {
     const color = `var(--mantine-color-${getColorForBand(stat.band)}-6)`;
     const snr = Math.round(stat.snrTotal / stat.count);
     const furthest = compactDistance(stat.furthest, unitType);
+    //spots are their report of us, and decodes are ours of them, so there is
+    //no one average for a mix of the two
+    const mixed = stat.spots > 0 && stat.spots < stat.count;
+    const average = mixed ? "" : ` avg ${snr} dB,`;
     const ago = timeAgo(new Date(stat.last)).replace(/ ago$/, "");
 
     return (
@@ -88,7 +100,7 @@ const BandTile = ({ stat, unitType, selected, onClick }) => {
             onClick={onClick}
             className={classes.tile}
             data-selected={selected || undefined}
-            w={TILE_WIDTH}
+            w={width}
             h={TILE_HEIGHT}
             px={6}
             py={5}
@@ -102,7 +114,7 @@ const BandTile = ({ stat, unitType, selected, onClick }) => {
                 "--band-color": color,
                 lineHeight: 1.15,
             }}
-            title={`${stat.band.toLowerCase()}: ${stat.count} spots, last heard ${ago === "now" ? "now" : `${ago} ago`}, avg ${snr} dB, furthest ${furthest.text} ${furthest.unit}`}
+            title={`${stat.band.toLowerCase()}: ${stat.count} ${noun}, last heard ${ago === "now" ? "now" : `${ago} ago`},${average} furthest ${furthest.text} ${furthest.unit}`}
         >
             <Group gap={4} wrap="nowrap">
                 <Box
@@ -124,7 +136,7 @@ const BandTile = ({ stat, unitType, selected, onClick }) => {
                     {compactCount(stat.count)}
                 </Text>
                 <Text fz={10} c="dimmed">
-                    spots
+                    {noun}
                 </Text>
             </Group>
             <Text
@@ -144,7 +156,14 @@ const BandTile = ({ stat, unitType, selected, onClick }) => {
 //fit: no scrollbar, but an arrow at the edge shows there is more, and clicking
 //it scrolls over.
 //clicking a tile filters to that band, clicking it again clears the filter
-export const BandsPod = ({ spots, unitType, selectedBand, onSelectBand }) => {
+export const BandsPod = ({
+    rows,
+    noun,
+    tileWidth,
+    unitType,
+    selectedBand,
+    onSelectBand,
+}) => {
     //times in the tiles are relative, so redraw every so often
     const [, setTick] = useState(0);
     const interval = useInterval(() => setTick((t) => t + 1), 15000);
@@ -153,7 +172,8 @@ export const BandsPod = ({ spots, unitType, selectedBand, onSelectBand }) => {
         return interval.stop;
     }, []);
 
-    const bands = useMemo(() => getBandStats(spots), [spots]);
+    //not memoized: rows is a new array each render, as stations expire with time
+    const bands = getBandStats(rows);
 
     //is there more to scroll to on either side?
     const scroller = useRef(null);
@@ -171,7 +191,7 @@ export const BandsPod = ({ spots, unitType, selectedBand, onSelectBand }) => {
         );
     };
 
-    //the pod can change size and the number of tiles changes with the spots
+    //the pod can change size and the number of tiles changes with the rows
     useEffect(() => {
         updateMore();
 
@@ -234,6 +254,8 @@ export const BandsPod = ({ spots, unitType, selectedBand, onSelectBand }) => {
                     <BandTile
                         key={stat.band}
                         stat={stat}
+                        noun={noun}
+                        width={tileWidth}
                         unitType={unitType}
                         selected={stat.band === selectedBand}
                         onClick={() =>

@@ -39,6 +39,8 @@ export const STATION_PATH = "STATION_PATH";
 //lines from home to stations calling us (dashed) and being worked (solid)
 export const STATION_LINE_PATH = "STATION_LINE_PATH";
 export const STATION_CALLING_LAYER = "STATION_CALLING_LAYER";
+//line from home to the selected station
+export const SELECTED_STATION_PATH = "SELECTED_STATION_PATH";
 export const STATION_LINE_COLOR = "#c2255c";
 //colors for the type of station. Not signal strength colors, so they aren't
 //mistaken for spots

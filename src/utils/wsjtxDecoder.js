@@ -50,6 +50,29 @@ export function decodeDate(msSinceMidnight, now = new Date()) {
 const toLocation = (grid) =>
     grid && isValidMaidenHeadGrid(grid) ? gridToLocation(grid) : undefined;
 
+//a decode that arrived before the first status from its WSJT-X is missing what
+//comes from the status. Returns a copy with it filled in, or the same decode if
+//there is nothing to fill in
+export function applyStatus(decode, status) {
+    if (decode.frequency !== undefined || decode.raw.id !== status.id) {
+        return decode;
+    }
+
+    const frequency = status.dialFrequency + decode.raw.deltaFrequency;
+    const home = toLocation(status.deGrid);
+
+    return new Decode({
+        ...decode,
+        frequency,
+        band: Band.fromFrequency(frequency),
+        mode: Mode.fromData(status.mode),
+        distance:
+            home && decode.location
+                ? distanceOnEarth(home, decode.location)
+                : undefined,
+    });
+}
+
 //lookupCallsign(call) returns { dxccCode, lat, lon } or undefined. It is
 //passed in because the country data is large and loaded separately
 export function createDecoder() {

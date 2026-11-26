@@ -25,6 +25,7 @@ import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { Platform } from "@/enums/Platform";
 import { PLATFORM } from "@/utils/platform";
 import { listenToDecodes } from "@/utils/wsjtx";
+import { applyStatus } from "@/utils/wsjtxDecoder";
 
 //WSJT-X sends a heartbeat every 15 seconds. Allow for a couple to go missing
 const TIMEOUT_MS = 40_000;
@@ -59,7 +60,18 @@ export function WsjtxProvider({ children }) {
             lastHeardRef.current = Date.now();
             setConnected(true);
 
-            if (message.type === "status") setStatus(message);
+            if (message.type === "status") {
+                setStatus(message);
+
+                //decodes that got here before the first status have no band yet
+                const apply = (d) => applyStatus(d, message);
+                batchRef.current = batchRef.current.map(apply);
+                setDecodes((prev) => {
+                    const next = prev.map(apply);
+                    //keep the same array if nothing changed, to not rerender
+                    return next.some((d, i) => d !== prev[i]) ? next : prev;
+                });
+            }
             if (decode) batchRef.current.unshift(decode);
         });
 

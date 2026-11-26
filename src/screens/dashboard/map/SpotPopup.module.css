@@ -54,6 +54,40 @@
     animation: pop-in 480ms cubic-bezier(0.34, 1.56, 0.64, 1) 60ms backwards;
 }
 
+/* the selected heard / CQ station: its marker, larger. The tip is at the
+   marker's position, 28/30 of the way down the image (see stationIcons.js),
+   and it grows from there */
+.pin {
+    position: absolute;
+    width: 34px;
+    height: 42px;
+    max-width: none;
+    left: -17px;
+    top: -39px;
+    transform-origin: 50% 93%;
+    animation: pin-in 380ms cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+}
+
+@keyframes pin-in {
+    from {
+        transform: scale(0.7);
+    }
+    to {
+        transform: scale(1);
+    }
+}
+
+@keyframes pin-out {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: scale(0.7);
+    }
+}
+
 @keyframes pop-in {
     from {
         opacity: 0;
@@ -63,6 +97,10 @@
         opacity: 1;
         transform: translate(-50%, -50%) scale(1);
     }
+}
+
+.out .pin {
+    animation: pin-out 200ms ease-in forwards;
 }
 
 /* added to the marker when the spot is deselected. The hook removes the
@@ -87,6 +125,8 @@
     .dot,
     .ring,
     .body,
+    .pin,
+    .out .pin,
     .out .dot,
     .out .ring {
         animation: none;

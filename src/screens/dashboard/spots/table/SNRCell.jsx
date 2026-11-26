@@ -24,9 +24,19 @@
 import { Text, Group } from "@mantine/core";
 import { SNRBar } from "../SNRBar";
 
-export const SNRCell = ({ snr }) => {
+//arrow shows whose report it is, where the table mixes both
+export const SNRCell = ({ snr, arrow }) => {
     return (
         <Group gap={4} justify="flex-end" wrap="nowrap" p={0}>
+            {arrow && (
+                <Text
+                    size="sm"
+                    c="dimmed"
+                    title={arrow === "↑" ? "They hear you" : "You hear them"}
+                >
+                    {arrow}
+                </Text>
+            )}
             <SNRBar snr={snr} />
             <Text
                 size="sm"

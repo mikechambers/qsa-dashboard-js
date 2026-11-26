@@ -25,8 +25,9 @@ import { useEffect } from "react";
 import { useSettings } from "@/contexts/SettingsContext";
 import { StationType } from "@/enums/StationType";
 import { useActiveStations } from "@/hooks/useActiveStations";
-import { getMapStations } from "@/utils/activeStations";
+import { getShownStations, isMappable } from "@/utils/activeStations";
 import { useStationLayer } from "./useStationLayer";
+import { useSelectedStationMarker } from "./useSelectedStationMarker";
 
 //stations heard by WSJT-X. Draws nothing in the web version, as there are no
 //decodes. A separate component so that new decodes don't rerender the whole
@@ -40,16 +41,24 @@ export const StationLayer = ({
     onPin,
 }) => {
     const { settings } = useSettings();
-    const stations = getMapStations(useActiveStations(), {
+    const shown = getShownStations(useActiveStations(), {
         [StationType.CQ]: settings.showCQ,
         [StationType.HEARD]: settings.showHeard,
     });
+    //some can be in the table and card, but not on the map
+    const stations = shown.filter((s) => isMappable(s.decode));
 
     useStationLayer(map, ready, stations, location, onHover, onPin);
+    useSelectedStationMarker(
+        map,
+        ready,
+        stations.find((s) => s.decode.call === selectedCall),
+        location,
+    );
 
     //don't show an expired station again if it comes back later
     const expired =
-        selectedCall && !stations.some((s) => s.decode.call === selectedCall);
+        selectedCall && !shown.some((s) => s.decode.call === selectedCall);
 
     useEffect(() => {
         if (expired) onPin(undefined);

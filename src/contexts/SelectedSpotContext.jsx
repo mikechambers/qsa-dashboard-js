@@ -21,7 +21,13 @@
  * SOFTWARE.
  */
 
-import { createContext, useCallback, useContext, useState } from "react";
+import {
+    createContext,
+    useCallback,
+    useContext,
+    useEffect,
+    useState,
+} from "react";
 import { useSpotData } from "./SpotDataContext";
 
 const SelectedSpotContext = createContext(null);
@@ -38,11 +44,56 @@ export function SelectedSpotProvider({ children }) {
 
     const selectedSpot = filteredSpots.find((s) => s.id === selectedId);
 
+    //forget a selected spot once a filter hides it (or it is cleared), so it
+    //doesn't come back selected when the filter is changed or reset
+    if (selectedId !== undefined && !selectedSpot) setSelectedId(undefined);
+
     //only need to create once
     const setSelectedSpot = useCallback((spot) => setSelectedId(spot?.id), []);
 
+    //WSJT-X station shown in the card, as { call, pinned }. The card shows
+    //either a spot or a station, whichever was hovered last. Clicking a
+    //station pins it, so it stays while the mouse moves to the Reply button
+    const [station, setStation] = useState({});
+
+    //like focusRequest, to bring a station clicked in the table into view
+    const [stationFocus, setStationFocus] = useState(null);
+
+    const hoverStation = useCallback((call) => {
+        if (!call) return;
+        setStation((prev) => (prev.pinned ? prev : { call, pinned: false }));
+        setSelectedId(undefined);
+    }, []);
+
+    //with no call, clears the station
+    const pinStation = useCallback((call) => {
+        setStation(call ? { call, pinned: true } : {});
+        if (call) setSelectedId(undefined);
+    }, []);
+
+    const unpinStation = useCallback(
+        () => setStation((prev) => ({ ...prev, pinned: false })),
+        [],
+    );
+
+    //pin a station and show it on the map. coordinates is optional
+    const focusStation = useCallback(
+        (call, coordinates) => {
+            pinStation(call);
+            setStationFocus((r) => ({ coordinates, n: (r?.n ?? 0) + 1 }));
+        },
+        [pinStation],
+    );
+
+    //a hovered spot replaces the station, unless it is pinned
+    useEffect(() => {
+        if (selectedSpot?.id) setStation((prev) => (prev.pinned ? prev : {}));
+    }, [selectedSpot?.id]);
+
     const focusSpot = useCallback((spot) => {
         if (!spot) return;
+        //clicking a spot in the table always shows it
+        setStation({});
         setSelectedId(spot.id);
         setFocusRequest((r) => ({ id: spot.id, n: (r?.n ?? 0) + 1 }));
     }, []);
@@ -54,6 +105,12 @@ export function SelectedSpotProvider({ children }) {
                 setSelectedSpot,
                 focusSpot,
                 focusRequest,
+                station,
+                hoverStation,
+                pinStation,
+                unpinStation,
+                focusStation,
+                stationFocus,
             }}
         >
             {children}

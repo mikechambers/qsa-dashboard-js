@@ -26,6 +26,8 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter, Route, Routes, Navigate } from "react-router";
 import App from "./App";
 import { ABOUT_PATH, DASHBOARD_PATH, SETTINGS_PATH } from "@/consts/config";
+import { Platform } from "@/enums/Platform";
+import { PLATFORM } from "@/utils/platform";
 import { AboutScreen } from "@/screens/about/AboutScreen";
 
 //loaded on first visit, so their code stays out of the initial bundle
@@ -33,6 +35,10 @@ const ConfigScreen = lazy(() => import("@/screens/config/ConfigScreen"));
 const DashboardScreen = lazy(
     () => import("@/screens/dashboard/DashboardScreen"),
 );
+
+//the desktop app opens on the dashboard (which goes to settings if there is
+//no callsign yet). The web version opens on About
+const START_PATH = PLATFORM === Platform.DESKTOP ? DASHBOARD_PATH : ABOUT_PATH;
 
 const root = document.getElementById("root");
 
@@ -43,7 +49,7 @@ ReactDOM.createRoot(root).render(
                 <Route path="/" element={<App />}>
                     <Route
                         index
-                        element={<Navigate to={ABOUT_PATH} replace />}
+                        element={<Navigate to={START_PATH} replace />}
                     />
                     <Route path={SETTINGS_PATH} element={<ConfigScreen />} />
                     <Route path={ABOUT_PATH} element={<AboutScreen />} />
