@@ -23,6 +23,7 @@
     "@mantine/modals": "^9.8.1",
     "@tabler/icons-react": "^3.52.0",
     "@tanstack/react-virtual": "^3.14.26",
+    "@tauri-apps/api": "^2.12.5",
     "@turf/circle": "^7.4.0",
     "@turf/great-circle": "^7.4.0",
     "embla-carousel": "^8.6.0",
@@ -35,6 +36,7 @@
     "recharts": "^3.11.0"
   },
   "devDependencies": {
+    "@tauri-apps/cli": "^2.12.6",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.1.2",

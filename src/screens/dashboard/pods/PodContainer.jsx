@@ -38,6 +38,8 @@ import { ALL_CASES } from "@/consts";
 import { ChartContainer } from "./charts/ChartContainer";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { Breakpoint } from "@/enums/Breakpoint";
+import { Platform } from "@/enums/Platform";
+import { PLATFORM } from "@/utils/platform";
 
 export const PodContainer = () => {
     const {
@@ -116,12 +118,13 @@ export const PodContainer = () => {
 
                 {/* not rendered at all on phones, since a hidden chart
                     has no size and warns about it */}
-                {!compact && (
-                    <ChartContainer
-                        spots={filteredSpots}
-                        unitType={settings.unitType}
-                    />
-                )}
+                {!compact ||
+                    (PLATFORM === Platform.DESKTOP && (
+                        <ChartContainer
+                            spots={filteredSpots}
+                            unitType={settings.unitType}
+                        />
+                    ))}
             </Group>
         </div>
     );
