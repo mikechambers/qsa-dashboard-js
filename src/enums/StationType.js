@@ -24,7 +24,7 @@
 //what a station on the map or in the detail card is doing
 const StationTypes = {
     CQ: "CQ", //calling anyone (WSJT-X)
-    RESPONSE: "RESPONSE", //calling us (WSJT-X)
+    HEARD: "HEARD", //any other station we decode (WSJT-X)
     SPOT: "SPOT", //heard our signal (PSK Reporter)
 };
 

@@ -22,17 +22,30 @@
  */
 
 import { useEffect } from "react";
+import { useSettings } from "@/contexts/SettingsContext";
+import { StationType } from "@/enums/StationType";
 import { useActiveStations } from "@/hooks/useActiveStations";
-import { isMappable } from "@/utils/activeStations";
+import { getMapStations } from "@/utils/activeStations";
 import { useStationLayer } from "./useStationLayer";
 
-//stations calling CQ or calling us, as heard by WSJT-X. Draws nothing in the
-//web version, as there are no decodes. A separate component so that new decodes
-//don't rerender the whole map. The details are shown in SpotPopup
-export const StationLayer = ({ map, ready, selectedCall, onHover, onPin }) => {
-    const stations = useActiveStations().filter((s) => isMappable(s.decode));
+//stations heard by WSJT-X. Draws nothing in the web version, as there are no
+//decodes. A separate component so that new decodes don't rerender the whole
+//map. The details are shown in SpotPopup
+export const StationLayer = ({
+    map,
+    ready,
+    location,
+    selectedCall,
+    onHover,
+    onPin,
+}) => {
+    const { settings } = useSettings();
+    const stations = getMapStations(useActiveStations(), {
+        [StationType.CQ]: settings.showCQ,
+        [StationType.HEARD]: settings.showHeard,
+    });
 
-    useStationLayer(map, ready, stations, onHover, onPin);
+    useStationLayer(map, ready, stations, location, onHover, onPin);
 
     //don't show an expired station again if it comes back later
     const expired =

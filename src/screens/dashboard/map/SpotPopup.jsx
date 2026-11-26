@@ -71,8 +71,18 @@ const reportNote = (report) => {
     return `Their report of you: ${source}, ${timeAgo(report.date)}`;
 };
 
-//card for a station calling CQ or calling us
-const CallingStation = ({ station, onUnpin, open, toggle }) => {
+//what a station heard by WSJT-X is doing, for the top of its card
+const describeStation = ({ decode, callingYou, working }, myCall) => {
+    if (working) return "You're working them";
+    if (callingYou) return "Calling you";
+    if (myCall && decode.toCall === myCall) return "To you";
+    if (decode.toCall) return `To ${decode.toCall}`;
+
+    //CQs have their own phrase
+};
+
+//card for a station heard by WSJT-X
+const HeardStation = ({ station, onUnpin, open, toggle }) => {
     const { settings } = useSettings();
     const { spots } = useSpotData();
     const { decodes, status } = useWsjtx();
@@ -89,6 +99,7 @@ const CallingStation = ({ station, onUnpin, open, toggle }) => {
     return (
         <StationCard
             type={type}
+            status={describeStation(station, status?.deCall)}
             typeNote={type === StationType.CQ ? decode.cqModifier : undefined}
             call={decode.call}
             country={decode.dxcc?.shortName}
@@ -175,11 +186,11 @@ const SpotStation = ({ spot, open, toggle }) => {
 };
 
 //detail card, always at the top right of the map. Shows the selected spot or
-//calling station, and can be collapsed to a single line.
+//heard station, and can be collapsed to a single line.
 export const SpotPopup = ({
     spot,
     stationCall,
-    onUnpin, //set when the calling station is pinned
+    onUnpin, //set when the heard station is pinned
     open,
     onOpenChange,
 }) => {
@@ -206,7 +217,7 @@ export const SpotPopup = ({
     let content;
     if (station) {
         content = (
-            <CallingStation
+            <HeardStation
                 station={station}
                 onUnpin={onUnpin}
                 open={open}

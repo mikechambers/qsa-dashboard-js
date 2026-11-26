@@ -35,11 +35,7 @@ import classes from "./SpotPopup.module.css";
 
 const TYPES = {
     [StationType.CQ]: { tag: "CQ", shortTag: "CQ", phrase: "Calling anyone" },
-    [StationType.RESPONSE]: {
-        tag: "Response",
-        shortTag: "Resp",
-        phrase: "Calling you",
-    },
+    [StationType.HEARD]: { tag: "Heard", shortTag: "Heard" },
     [StationType.SPOT]: {
         tag: "Spot",
         shortTag: "Spot",
@@ -86,10 +82,11 @@ const SignalBlock = ({ label, report }) => (
     </div>
 );
 
-//the detail card contents for a spot or a calling station. showYouHear is
+//the detail card contents for a spot or a heard station. showYouHear is
 //false where we can't know how we hear them (web version)
 export const StationCard = ({
     type,
+    status, //replaces the usual phrase, e.g. "Calling you"
     typeNote, //added to the phrase, e.g. "DX" or "POTA" for CQs
     call,
     country,
@@ -168,7 +165,7 @@ export const StationCard = ({
                 <Group gap={6} wrap="nowrap">
                     {typeTag(tag)}
                     <Text size="xs" c="dimmed" style={{ whiteSpace: "nowrap" }}>
-                        {[phrase, typeNote].filter(Boolean).join(" · ")}
+                        {[status ?? phrase, typeNote].filter(Boolean).join(" · ")}
                     </Text>
                 </Group>
                 <Group gap={4} wrap="nowrap">

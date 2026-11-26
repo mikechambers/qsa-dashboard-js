@@ -70,11 +70,11 @@ export function useSpotLayer(map, ready, spots, onSpotHighlight) {
 
         //select a spot on hover (mouse) or click / tap (mouse and touch)
         const onSelect = (e) => {
-            //a calling station's ring is on top of the spot, so it wins
-            const rings =
+            //a station's marker is on top of the spot, so it wins
+            const markers =
                 map.getLayer(STATION_PATH) &&
                 map.queryRenderedFeatures(e.point, { layers: [STATION_PATH] });
-            if (rings?.length) return;
+            if (markers?.length) return;
 
             const id = e.features[0]?.properties.spotId;
             const s = spotsRef.current.find((spot) => spot.id === id);

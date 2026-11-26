@@ -131,6 +131,25 @@ export function SettingsProvider({ children }) {
         getInitialValueInEffect: false,
     });
 
+    //which markers are on the map. Not in the config screen
+    const [showSpotMarkers, setShowSpotMarkers] = useLocalStorage({
+        key: getSettingKey("showSpotMarkers"),
+        defaultValue: true,
+        getInitialValueInEffect: false,
+    });
+
+    const [showHeard, setShowHeard] = useLocalStorage({
+        key: getSettingKey("showHeard"),
+        defaultValue: true,
+        getInitialValueInEffect: false,
+    });
+
+    const [showCQ, setShowCQ] = useLocalStorage({
+        key: getSettingKey("showCQ"),
+        defaultValue: true,
+        getInitialValueInEffect: false,
+    });
+
     const [elevationValues, setElevationValues] = useLocalStorage({
         key: getSettingKey("elevationValues"),
         defaultValue: [
@@ -156,6 +175,9 @@ export function SettingsProvider({ children }) {
         showFilters,
         showSpots,
         showSpotDetail,
+        showSpotMarkers,
+        showHeard,
+        showCQ,
     };
 
     return (
@@ -175,6 +197,9 @@ export function SettingsProvider({ children }) {
                 setShowFilters,
                 setShowSpots,
                 setShowSpotDetail,
+                setShowSpotMarkers,
+                setShowHeard,
+                setShowCQ,
                 setDemoMode,
             }}
         >

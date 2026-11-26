@@ -30,7 +30,11 @@ import {
     CIRCLE_RADIUS,
     CIRCLE_STROKE,
     STATION_PATH,
+    STATION_LINE_PATH,
+    STATION_CALLING_LAYER,
+    STATION_LINE_COLOR,
 } from "./config";
+import { addStationIcons, ICON_PADDING } from "./stationIcons";
 
 //adds the layers to draw the spot graphics on
 //doesn't draw to them yet.
@@ -95,8 +99,42 @@ export function addConnectionPointLayer(map) {
     });
 }
 
-//adds the layer for stations calling (CQ, or us). Hollow rings, unlike spots
+//adds the lines from home to stations calling us or being worked. Added before
+//the spots, so they are drawn underneath
+export function addStationLineLayers(map) {
+    map.addSource(STATION_LINE_PATH, {
+        type: "geojson",
+        data: EMPTY_FEATURE_COLLECTION,
+    });
+
+    //dashes can't vary by feature, so there is a layer for each kind of line
+    map.addLayer({
+        id: STATION_CALLING_LAYER,
+        source: STATION_LINE_PATH,
+        type: "line",
+        filter: ["!", ["get", "working"]],
+        layout: { "line-cap": "round" },
+        paint: {
+            "line-color": STATION_LINE_COLOR,
+            "line-width": 2,
+            "line-dasharray": [1, 3],
+        },
+    });
+
+    map.addLayer({
+        id: `${STATION_LINE_PATH}_WORKING`,
+        source: STATION_LINE_PATH,
+        type: "line",
+        filter: ["get", "working"],
+        layout: { "line-cap": "round" },
+        paint: { "line-color": STATION_LINE_COLOR, "line-width": 3 },
+    });
+}
+
+//adds the layer for the stations WSJT-X is hearing
 export function addStationLayer(map) {
+    addStationIcons(map);
+
     map.addSource(STATION_PATH, {
         type: "geojson",
         data: EMPTY_FEATURE_COLLECTION,
@@ -105,14 +143,16 @@ export function addStationLayer(map) {
     map.addLayer({
         id: STATION_PATH,
         source: STATION_PATH,
-        type: "circle",
-        paint: {
-            "circle-radius": CIRCLE_RADIUS + 1,
-            "circle-color": ["get", "color"],
-            //faint fill, so the middle of the ring is still clickable
-            "circle-opacity": 0.2,
-            "circle-stroke-width": CIRCLE_STROKE + 1,
-            "circle-stroke-color": ["get", "color"],
+        type: "symbol",
+        layout: {
+            "icon-image": ["get", "icon"],
+            //the tip of the teardrop is on the station
+            "icon-anchor": "bottom",
+            "icon-offset": [0, ICON_PADDING],
+            "icon-allow-overlap": true,
+            "icon-ignore-placement": true,
+            //higher is drawn on top
+            "symbol-sort-key": ["get", "order"],
         },
     });
 }

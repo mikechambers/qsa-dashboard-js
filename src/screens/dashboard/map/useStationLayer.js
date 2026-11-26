@@ -22,9 +22,12 @@
  */
 
 import { useEffect, useRef } from "react";
+import greatCircle from "@turf/great-circle";
 import { getJitteredCoordinates } from "@/utils/geo";
 import { ADD_SPOT_JITTER } from "@/consts/config";
-import { STATION_COLORS, STATION_PATH } from "./config";
+import { StationType } from "@/enums/StationType";
+import { STATION_LINE_PATH, STATION_PATH } from "./config";
+import { getStationIconId } from "./stationIcons";
 
 //turns a callsign into a number, so a station is always jittered the same way
 const hashCall = (call) =>
@@ -35,10 +38,25 @@ const getStationMapCoordinates = ({ call, location }) =>
         ? getJitteredCoordinates(location, hashCall(call))
         : location.coordinates;
 
-//hook that draws the calling stations ({ type, decode }). onHover is called
-//with the callsign under the mouse. onClick is called with the callsign clicked
-//(or tapped), or undefined for a click anywhere else
-export function useStationLayer(map, ready, stations, onHover, onClick) {
+//which is drawn on top where they overlap
+const getOrder = ({ type, working, callingYou }) => {
+    if (working) return 3;
+    if (callingYou) return 2;
+    return type === StationType.CQ ? 1 : 0;
+};
+
+//hook that draws the stations from getActiveStations, with lines from home to
+//those calling us or being worked. onHover is called with the callsign under
+//the mouse. onClick is called with the callsign clicked (or tapped), or
+//undefined for a click anywhere else
+export function useStationLayer(
+    map,
+    ready,
+    stations,
+    location,
+    onHover,
+    onClick,
+) {
     const hoverRef = useRef(onHover);
     const clickRef = useRef(onClick);
 
@@ -47,9 +65,12 @@ export function useStationLayer(map, ready, stations, onHover, onClick) {
         clickRef.current = onClick;
     }, [onHover, onClick]);
 
-    //only redraw when a station is added, removed, moves or changes type
+    //only redraw when a station is added, removed, moves or changes
     const key = stations
-        .map((s) => `${s.decode.call}:${s.decode.location.grid}:${s.type}`)
+        .map(
+            ({ type, decode, working, callingYou }) =>
+                `${decode.call}:${decode.location.grid}:${type}:${working}:${callingYou}`,
+        )
         .join(",");
 
     useEffect(() => {
@@ -57,19 +78,39 @@ export function useStationLayer(map, ready, stations, onHover, onClick) {
 
         map.getSource(STATION_PATH)?.setData({
             type: "FeatureCollection",
-            features: stations.map(({ type, decode }) => ({
+            features: stations.map((station) => ({
                 type: "Feature",
                 geometry: {
                     type: "Point",
-                    coordinates: getStationMapCoordinates(decode),
+                    coordinates: getStationMapCoordinates(station.decode),
                 },
                 properties: {
-                    call: decode.call,
-                    color: STATION_COLORS[type],
+                    call: station.decode.call,
+                    icon: getStationIconId(station.type),
+                    order: getOrder(station),
                 },
             })),
         });
     }, [map, ready, key]);
+
+    useEffect(() => {
+        if (!map || !ready) return;
+
+        const lines = location
+            ? stations.filter((s) => s.working || s.callingYou)
+            : [];
+
+        map.getSource(STATION_LINE_PATH)?.setData({
+            type: "FeatureCollection",
+            features: lines.map(({ decode, working }) =>
+                greatCircle(
+                    location.coordinates,
+                    getStationMapCoordinates(decode),
+                    { npoints: 64, properties: { working } },
+                ),
+            ),
+        });
+    }, [map, ready, key, location?.id]);
 
     useEffect(() => {
         if (!map || !ready) return;

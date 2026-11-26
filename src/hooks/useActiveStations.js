@@ -24,12 +24,12 @@
 import { useEffect, useState } from "react";
 import { useWsjtx } from "@/contexts/WsjtxContext";
 import { Band } from "@/enums/Band";
-import { getActiveStations } from "@/utils/activeStations";
+import { getActiveStations, getWorkingCall } from "@/utils/activeStations";
 
 //how often to check for expired stations
 const REFRESH_MS = 5000;
 
-//stations calling CQ or calling us right now, on the band WSJT-X is on
+//stations WSJT-X is hearing right now, on the band it is on
 export function useActiveStations() {
     const { connected, status, decodes } = useWsjtx();
 
@@ -47,5 +47,6 @@ export function useActiveStations() {
     return getActiveStations(decodes, {
         band: status && Band.fromFrequency(status.dialFrequency),
         myCall: status?.deCall,
+        workingCall: getWorkingCall(status),
     });
 }

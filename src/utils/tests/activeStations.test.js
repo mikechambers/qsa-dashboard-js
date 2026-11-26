@@ -25,6 +25,8 @@ import { describe, expect, it } from "vitest";
 import {
     STATION_EXPIRY_MS,
     getActiveStations,
+    getMapStations,
+    getWorkingCall,
     isMappable,
 } from "../activeStations";
 import { DecodeKind } from "@/enums/DecodeKind";
@@ -52,30 +54,63 @@ describe("getActiveStations", () => {
         expect(calls(decodes)).toEqual([decodes[0]]);
     });
 
-    it("tells CQs from stations calling us", () => {
+    it("tells CQs from other stations", () => {
         const decodes = [
             decode(),
             decode({
                 call: "DL2XYZ",
                 kind: DecodeKind.REPORT,
-                toCall: "W6MSH",
+                toCall: "N1XYZ",
             }),
         ];
-        const types = getActiveStations(decodes, {
-            now: NOW,
-            myCall: "W6MSH",
-        }).map((s) => s.type);
+        const types = getActiveStations(decodes, { now: NOW }).map(
+            (s) => s.type,
+        );
 
-        expect(types).toEqual([StationType.CQ, StationType.RESPONSE]);
+        expect(types).toEqual([StationType.CQ, StationType.HEARD]);
     });
 
-    it("drops a station that has since started working someone else", () => {
+    it("marks stations calling us, until they sign off", () => {
+        const to = (call, kind) => decode({ call, kind, toCall: "W6MSH" });
+        const decodes = [
+            to("DL2XYZ", DecodeKind.GRID),
+            to("G4ABC", DecodeKind.SEVENTY_THREE),
+            to("F5ABC", DecodeKind.RR73),
+        ];
+        const flags = getActiveStations(decodes, {
+            now: NOW,
+            myCall: "W6MSH",
+        }).map((s) => s.callingYou);
+
+        expect(flags).toEqual([true, false, false]);
+    });
+
+    it("marks the station being worked, and keeps it if it fades", () => {
+        const old = decode({
+            toCall: "W6MSH",
+            kind: DecodeKind.REPORT,
+            receivedAt: new Date(NOW - STATION_EXPIRY_MS - 1),
+        });
+        const [station] = getActiveStations([old], {
+            now: NOW,
+            myCall: "W6MSH",
+            workingCall: "K1ABC",
+        });
+
+        expect(station).toMatchObject({ working: true, callingYou: false });
+    });
+
+    it("uses only the latest thing a station said", () => {
         const decodes = [
             decode({ kind: DecodeKind.REPORT, toCall: "N1XYZ" }),
             decode(),
         ];
 
-        expect(calls(decodes, { myCall: "W6MSH" })).toEqual([]);
+        expect(calls(decodes)).toEqual([decodes[0]]);
+    });
+
+    it("leaves out our own call", () => {
+        expect(calls([decode()], { myCall: "K1ABC" })).toEqual([]);
     });
 
     it("expires old calls", () => {
@@ -111,5 +146,51 @@ describe("isMappable", () => {
         expect(isMappable({ location, locationSource: "history" })).toBe(true);
         expect(isMappable({ location, locationSource: "country" })).toBe(false);
         expect(isMappable({})).toBe(false);
+    });
+});
+
+describe("getWorkingCall", () => {
+    const status = { txEnabled: true, dxCall: "K1ABC", txMessage: "" };
+
+    it("is the DX call while Tx is on", () => {
+        expect(getWorkingCall(status)).toBe("K1ABC");
+        expect(
+            getWorkingCall({
+                ...status,
+                txEnabled: false,
+                transmitting: true,
+            }),
+        ).toBe("K1ABC");
+    });
+
+    it("is nothing while Tx is off", () => {
+        expect(getWorkingCall({ ...status, txEnabled: false })).toBe(undefined);
+        expect(getWorkingCall(null)).toBe(undefined);
+    });
+
+    it("is nothing while calling CQ", () => {
+        expect(
+            getWorkingCall({ ...status, txMessage: "CQ W6MSH CM87" }),
+        ).toBe(undefined);
+    });
+});
+
+describe("getMapStations", () => {
+    const station = (values) => ({
+        type: StationType.HEARD,
+        decode: { location: {}, locationSource: "message" },
+        ...values,
+    });
+
+    it("hides filtered types, but not stations with a line", () => {
+        const stations = [
+            station(),
+            station({ type: StationType.CQ }),
+            station({ callingYou: true }),
+            station({ working: true }),
+        ];
+        const show = { [StationType.HEARD]: false, [StationType.CQ]: true };
+
+        expect(getMapStations(stations, show)).toEqual(stations.slice(1));
     });
 });

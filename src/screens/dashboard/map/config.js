@@ -36,11 +36,15 @@ export const CONNECTION_LINE_PATH = "CONNECTION_LINE_PATH";
 export const SPOT_PATH = "SPOT_PATH";
 export const CONNECTION_POINT = "CONNECTION_POINT";
 export const STATION_PATH = "STATION_PATH";
+//lines from home to stations calling us (dashed) and being worked (solid)
+export const STATION_LINE_PATH = "STATION_LINE_PATH";
+export const STATION_CALLING_LAYER = "STATION_CALLING_LAYER";
+export const STATION_LINE_COLOR = "#c2255c";
 //colors for the type of station. Not signal strength colors, so they aren't
 //mistaken for spots
 export const STATION_COLORS = {
-    [StationType.CQ]: "#ae3ec9",
-    [StationType.RESPONSE]: "#1864ab",
+    [StationType.CQ]: "#9c36b5",
+    [StationType.HEARD]: "#2f63a6",
     [StationType.SPOT]: "#495057",
 };
 export const DISTANCE_RANGE_PATH = "DISTANCE_RANGE_PATH";

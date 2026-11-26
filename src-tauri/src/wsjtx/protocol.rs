@@ -33,6 +33,8 @@ pub enum Message {
     de_call: String,
     de_grid: String,
     dx_grid: String,
+    // what will be sent next. Empty for versions that don't say
+    tx_message: String,
   },
   Decode {
     is_new: bool,
@@ -145,6 +147,19 @@ impl<'a> Reader<'a> {
   }
 }
 
+// Tx Message comes near the end of Status, after fields we don't use. Returns
+// None if the packet stops before it
+fn tx_message(r: &mut Reader) -> Option<String> {
+  r.bool()?; // Tx watchdog
+  r.string()?; // sub mode
+  r.bool()?; // fast mode
+  r.array::<1>()?; // special operation mode
+  r.u32()?; // frequency tolerance
+  r.u32()?; // T/R period
+  r.string()?; // configuration name
+  r.string()
+}
+
 // Returns the WSJT-X instance id and the message
 pub fn parse(packet: &[u8]) -> Option<(String, Message)> {
   let mut r = Reader { data: packet };
@@ -179,6 +194,7 @@ pub fn parse(packet: &[u8]) -> Option<(String, Message)> {
       de_call: r.string()?,
       de_grid: r.string()?,
       dx_grid: r.string()?,
+      tx_message: tx_message(&mut r).unwrap_or_default(),
     },
     2 => Message::Decode {
       is_new: r.bool()?,
@@ -252,6 +268,43 @@ mod tests {
         off_air: false,
       }
     );
+  }
+
+  #[test]
+  fn reads_the_tx_message_when_there_is_one() {
+    let short = [
+      &14_074_000u64.to_be_bytes()[..],
+      &string("FT8"),
+      &string("K1ABC"),
+      &string("-12"),
+      &string("FT8"),
+      &[1, 0, 0],
+      &1500u32.to_be_bytes(),
+      &1500u32.to_be_bytes(),
+      &string("W6MSH"),
+      &string("CM87"),
+      &string("FN42"),
+    ]
+    .concat();
+    let full = [
+      &short[..],
+      &[0],
+      &string(""),
+      &[0, 0],
+      &u32::MAX.to_be_bytes(),
+      &15u32.to_be_bytes(),
+      &string("Default"),
+      &string("CQ W6MSH CM87"),
+    ]
+    .concat();
+
+    let tx = |body: &[u8]| match parse(&packet(1, body)) {
+      Some((_, Message::Status { tx_message, .. })) => tx_message,
+      other => panic!("not a status: {other:?}"),
+    };
+
+    assert_eq!(tx(&full), "CQ W6MSH CM87");
+    assert_eq!(tx(&short), "");
   }
 
   #[test]

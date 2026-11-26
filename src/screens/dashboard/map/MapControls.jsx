@@ -24,11 +24,50 @@
 import { ActionIcon, Stack, Tooltip } from "@mantine/core";
 import { IconCircleDashed, IconSunMoon } from "@tabler/icons-react";
 import { useSettings } from "@/contexts/SettingsContext";
+import { useWsjtx } from "@/contexts/WsjtxContext";
+import { StationType } from "@/enums/StationType";
+import { STATION_COLORS } from "./config";
+import { getStationIconURL } from "./stationIcons";
 
-//small stack of on / off buttons for the map overlays. They flip the same
+const MapToggle = ({ label, on, onChange, children, ...props }) => (
+    <Tooltip label={label} position="right" withArrow>
+        <ActionIcon
+            variant="default"
+            size="lg"
+            //on = normal icon, off = just a lighter icon
+            c={on ? undefined : "gray.5"}
+            aria-label={label}
+            aria-pressed={on}
+            onClick={() => onChange(!on)}
+            {...props}
+        >
+            {children}
+        </ActionIcon>
+    </Tooltip>
+);
+
+const SpotIcon = () => (
+    <svg width="16" height="16" aria-hidden="true">
+        <circle cx="8" cy="8" r="7" fill={STATION_COLORS[StationType.SPOT]} />
+    </svg>
+);
+
+const StationIcon = ({ type }) => (
+    <img src={getStationIconURL(type)} alt="" width={20} height={25} />
+);
+
+//small stack of on / off buttons for the map. The overlays flip the same
 //settings as the config screen, so the two always agree.
 export const MapControls = () => {
-    const { settings, setShowGreyline, setShowDistanceOverlay } = useSettings();
+    const {
+        settings,
+        setShowGreyline,
+        setShowDistanceOverlay,
+        setShowSpotMarkers,
+        setShowHeard,
+        setShowCQ,
+    } = useSettings();
+    const { available } = useWsjtx();
 
     const toggles = [
         {
@@ -48,24 +87,64 @@ export const MapControls = () => {
         },
     ];
 
+    //show or hide each kind of marker. Only on desktop, as the web version
+    //only has spots
+    const markers = [
+        {
+            label: "Spots (heard you)",
+            icon: SpotIcon,
+            on: settings.showSpotMarkers,
+            onChange: setShowSpotMarkers,
+        },
+        {
+            label: "Heard (you hear them)",
+            icon: () => <StationIcon type={StationType.HEARD} />,
+            on: settings.showHeard,
+            onChange: setShowHeard,
+        },
+        {
+            label: "Calling CQ",
+            icon: () => <StationIcon type={StationType.CQ} />,
+            on: settings.showCQ,
+            onChange: setShowCQ,
+        },
+    ];
+
     return (
         <Stack gap={6} pos="absolute" left={20} top={80} style={{ zIndex: 1 }}>
             {toggles.map(({ label, icon: Icon, on, onChange, disabled }) => (
-                <Tooltip key={label} label={label} position="right" withArrow>
-                    <ActionIcon
-                        variant="default"
-                        size="lg"
-                        //on = normal icon, off = just a lighter icon
-                        c={on ? undefined : "gray.5"}
-                        aria-label={label}
-                        aria-pressed={on}
-                        disabled={disabled}
-                        onClick={() => onChange(!on)}
-                    >
-                        <Icon size={18} />
-                    </ActionIcon>
-                </Tooltip>
+                <MapToggle
+                    key={label}
+                    label={label}
+                    on={on}
+                    onChange={onChange}
+                    disabled={disabled}
+                >
+                    <Icon size={18} />
+                </MapToggle>
             ))}
+
+            {available &&
+                markers.map(({ label, icon: Icon, on, onChange }, i) => (
+                    <MapToggle
+                        key={label}
+                        label={label}
+                        on={on}
+                        onChange={onChange}
+                        //a gap sets them apart from the overlays
+                        mt={i === 0 ? 8 : undefined}
+                    >
+                        <span
+                            style={{
+                                display: "flex",
+                                //images can't be recolored, so fade them
+                                opacity: on ? 1 : 0.3,
+                            }}
+                        >
+                            <Icon />
+                        </span>
+                    </MapToggle>
+                ))}
         </Stack>
     );
 };

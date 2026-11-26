@@ -21,26 +21,34 @@
  * SOFTWARE.
  */
 
-//works out which stations are calling right now, either CQ or us
+//works out which stations we are hearing right now, and which of them are
+//calling us or being worked
 
 import { DecodeKind } from "@/enums/DecodeKind";
 import { StationType } from "@/enums/StationType";
 
-//a calling station transmits every 30 seconds, so this allows for one missed
-//decode before it drops off
+//a station in a contact transmits every 30 seconds, so this allows for one
+//missed decode before it drops off
 export const STATION_EXPIRY_MS = 75_000;
 
-const getType = (decode, myCall) => {
-    if (decode.kind === DecodeKind.CQ) return StationType.CQ;
-    if (myCall && decode.toCall === myCall) return StationType.RESPONSE;
-};
+//messages that end a contact, so aren't calling us
+const SIGN_OFFS = [DecodeKind.RR73, DecodeKind.SEVENTY_THREE];
 
-//decodes must be newest first. Returns { type, decode } for each station still
-//calling CQ or calling myCall. If band is set, only stations heard on it are
-//returned
+//the station WSJT-X is working, from its status
+export function getWorkingCall(status) {
+    if (!status || !(status.txEnabled || status.transmitting)) return;
+
+    //while calling CQ, the DX call can be left over from the last contact
+    if (/^CQ\b/.test(status.txMessage ?? "")) return;
+
+    return status.dxCall || undefined;
+}
+
+//decodes must be newest first. Returns { type, decode, callingYou, working }
+//for each station heard. If band is set, only stations heard on it are returned
 export function getActiveStations(
     decodes,
-    { now = Date.now(), band, myCall } = {},
+    { now = Date.now(), band, myCall, workingCall } = {},
 ) {
     const seen = new Set();
     const active = [];
@@ -48,18 +56,30 @@ export function getActiveStations(
     for (const decode of decodes) {
         const { call } = decode;
 
-        if (!call || seen.has(call)) continue;
+        if (!call || call === myCall || seen.has(call)) continue;
         if (band && decode.band !== band) continue;
 
-        //only the latest thing a station said counts. If they have moved on
-        //to working someone else, they drop off
+        //only the latest thing a station said counts
         seen.add(call);
 
-        const type = getType(decode, myCall);
-        if (!type) continue;
-        if (now - decode.receivedAt.getTime() > STATION_EXPIRY_MS) continue;
+        //the station being worked stays, even if it fades for a while
+        const working = call === workingCall;
+        const age = now - decode.receivedAt.getTime();
+        if (!working && age > STATION_EXPIRY_MS) continue;
 
-        active.push({ type, decode });
+        active.push({
+            type:
+                decode.kind === DecodeKind.CQ
+                    ? StationType.CQ
+                    : StationType.HEARD,
+            decode,
+            callingYou:
+                !working &&
+                Boolean(myCall) &&
+                decode.toCall === myCall &&
+                !SIGN_OFFS.includes(decode.kind),
+            working,
+        });
     }
 
     return active;
@@ -69,3 +89,12 @@ export function getActiveStations(
 //so those are left off
 export const isMappable = (decode) =>
     Boolean(decode.location) && decode.locationSource !== "country";
+
+//the stations to draw, given the map filters ({ [StationType]: boolean }).
+//Stations calling us or being worked are always shown
+export const getMapStations = (stations, show) =>
+    stations.filter(
+        (s) =>
+            isMappable(s.decode) &&
+            (s.working || s.callingYou || show[s.type]),
+    );

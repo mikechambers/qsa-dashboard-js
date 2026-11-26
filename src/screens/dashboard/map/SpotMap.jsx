@@ -41,6 +41,7 @@ import { useSpotLayer } from "./useSpotLayer";
 import { useSelectedSpotMarker } from "./useSelectedSpotMarker";
 import { SpotPopup } from "./SpotPopup";
 import { StationLayer } from "./StationLayer";
+import { MapLineKey } from "./MapLineKey";
 
 import { addGreylineLayers } from "./greylineLayers";
 import { useGreyline } from "./useGreyline";
@@ -49,6 +50,7 @@ import {
     addConnectionLineLayer,
     addConnectionPointLayer,
     addStationLayer,
+    addStationLineLayers,
     addSpotLayer,
 } from "./spotLayers";
 
@@ -56,6 +58,7 @@ import { useSelectedSpot } from "../../../contexts/SelectedSpotContext";
 import { useSpotHighlightEffects } from "./useSpotHighlightEffects";
 import { useDistanceBands } from "./useDistanceBands";
 import { useSpotData } from "@/contexts/SpotDataContext";
+import { SPOT_PATH } from "./config";
 
 //setup work for map library to do stuff on another threads
 setWorkerUrl(workerUrl);
@@ -113,8 +116,8 @@ export const SpotMap = ({ spots, location }) => {
     const { selectedSpot, setSelectedSpot, focusRequest } = useSelectedSpot();
     const { furthestSpot } = useSpotData();
 
-    //calling station shown in the popup, as { call, pinned }. The popup shows
-    //either a spot or a calling station, whichever was hovered last. Clicking a
+    //WSJT-X station shown in the popup, as { call, pinned }. The popup shows
+    //either a spot or a station, whichever was hovered last. Clicking a
     //station pins it, so it stays while the mouse moves to the Reply button
     const [station, setStation] = useState({});
 
@@ -169,6 +172,7 @@ export const SpotMap = ({ spots, location }) => {
         //todo: could just pass in ready to these also, or dont pass into
         //use greyLine and the calls below
         addGreylineLayers(map, settings);
+        addStationLineLayers(map);
         addSpotLayer(map);
         addConnectionLineLayer(map);
         addConnectionPointLayer(map);
@@ -191,6 +195,17 @@ export const SpotMap = ({ spots, location }) => {
     useGreyline(map, ready, settings);
     useSpotHighlightEffects(map, ready, selectedSpot, location);
     useSpotLayer(map, ready, spots, setSelectedSpot);
+
+    //the Spots toggle button
+    useEffect(() => {
+        if (!map || !ready) return;
+
+        map.setLayoutProperty(
+            SPOT_PATH,
+            "visibility",
+            settings.showSpotMarkers ? "visible" : "none",
+        );
+    }, [map, ready, settings.showSpotMarkers]);
 
     //selected spot ring / dot
     useSelectedSpotMarker(map, ready, selectedSpot);
@@ -267,10 +282,12 @@ export const SpotMap = ({ spots, location }) => {
             />
 
             <MapControls />
+            <MapLineKey />
 
             <StationLayer
                 map={map}
                 ready={ready}
+                location={location}
                 selectedCall={station.call}
                 onHover={hoverStation}
                 onPin={pinStation}
