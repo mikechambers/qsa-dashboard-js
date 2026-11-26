@@ -62,7 +62,7 @@ export const HeaderContainer = ({ callsign, grid }) => {
 
                 <ClockContainer breakpoint={breakpoint} />
                 <Group wrap="nowrap" gap={16}>
-                    <WsjtxStatus compact={compact} />
+                    <WsjtxStatus />
                     <ConnectionStatusBadge breakpoint={breakpoint} />
                     <ControlContainer compact={compact} />
                     {/* 

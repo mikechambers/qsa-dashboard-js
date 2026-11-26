@@ -21,6 +21,7 @@
  * SOFTWARE.
  */
 
+import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import { Platform } from "@/enums/Platform";
 import { PLATFORM } from "./platform";
@@ -38,6 +39,14 @@ export function listenToWsjtx(onMessage) {
     return () => {
         unlisten.then((off) => off());
     };
+}
+
+//asks WSJT-X to reply to a CQ, as if the decode was double clicked there.
+//This can make the radio transmit, so only call it when the user asks
+export function sendReply(decode) {
+    const { id, ...fields } = decode.raw;
+
+    return invoke("wsjtx_reply", { id, decode: fields });
 }
 
 //like listenToWsjtx, but also turns decodes into Decode objects.

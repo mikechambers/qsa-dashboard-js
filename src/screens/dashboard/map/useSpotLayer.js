@@ -23,7 +23,7 @@
 
 import { useEffect, useRef } from "react";
 import { getCSSColorForSNR } from "@/utils/view";
-import { SPOT_PATH } from "./config";
+import { SPOT_PATH, STATION_PATH } from "./config";
 import { ADD_SPOT_JITTER } from "@/consts/config";
 import { getSpotMapCoordinates } from "./spotCoordinates";
 
@@ -70,6 +70,12 @@ export function useSpotLayer(map, ready, spots, onSpotHighlight) {
 
         //select a spot on hover (mouse) or click / tap (mouse and touch)
         const onSelect = (e) => {
+            //a calling station's ring is on top of the spot, so it wins
+            const rings =
+                map.getLayer(STATION_PATH) &&
+                map.queryRenderedFeatures(e.point, { layers: [STATION_PATH] });
+            if (rings?.length) return;
+
             const id = e.features[0]?.properties.spotId;
             const s = spotsRef.current.find((spot) => spot.id === id);
             if (s) highlightRef.current(s);

@@ -1,10 +1,10 @@
-// Decodes WSJT-X UDP packets. The format is documented in the WSJT-X source,
+// Reads and writes WSJT-X UDP packets. The format is documented in the WSJT-X source,
 // in Network/NetworkMessage.hpp. All numbers are big endian.
 //
 // New fields are only ever added to the end of a message, so reading the fields
 // we know about and ignoring the rest is safe.
 
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
 const MAGIC: u32 = 0xadbccbda;
 
@@ -54,6 +54,44 @@ pub enum Message {
   },
   // WSJT-X is shutting down
   Close,
+}
+
+// The decode being replied to. WSJT-X looks for a matching line in its Band
+// Activity window, so these must be the values it sent us
+#[derive(Clone, Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Reply {
+  pub time: u32,
+  pub snr: i32,
+  pub delta_time: f64,
+  pub delta_frequency: u32,
+  pub mode: String,
+  pub message: String,
+  pub low_confidence: bool,
+}
+
+fn put_string(packet: &mut Vec<u8>, value: &str) {
+  packet.extend((value.len() as u32).to_be_bytes());
+  packet.extend(value.as_bytes());
+}
+
+// Builds a Reply message, which acts like double clicking the decode in WSJT-X.
+// It only does this for CQ and QRZ messages
+pub fn reply_packet(id: &str, reply: &Reply) -> Vec<u8> {
+  let mut packet = Vec::new();
+  packet.extend(MAGIC.to_be_bytes());
+  packet.extend(2u32.to_be_bytes()); // schema
+  packet.extend(4u32.to_be_bytes()); // message type: Reply
+  put_string(&mut packet, id);
+  packet.extend(reply.time.to_be_bytes());
+  packet.extend(reply.snr.to_be_bytes());
+  packet.extend(reply.delta_time.to_be_bytes());
+  packet.extend(reply.delta_frequency.to_be_bytes());
+  put_string(&mut packet, &reply.mode);
+  put_string(&mut packet, &reply.message);
+  packet.push(u8::from(reply.low_confidence));
+  packet.push(0); // keyboard modifiers: none
+  packet
 }
 
 // Reads values off the front of a packet. Each method returns None if the
@@ -214,6 +252,26 @@ mod tests {
         off_air: false,
       }
     );
+  }
+
+  #[test]
+  fn builds_a_reply() {
+    let reply = Reply {
+      time: 45_000,
+      snr: -12,
+      delta_time: 0.2,
+      delta_frequency: 1500,
+      mode: "~".into(),
+      message: "CQ K1ABC FN42".into(),
+      low_confidence: false,
+    };
+
+    // a decode without its leading "is new" flag and trailing "off air" flag,
+    // followed by low confidence and modifiers
+    let body = decode_body();
+    let expected = packet(4, &[&body[1..body.len() - 2], &[0, 0]].concat());
+
+    assert_eq!(reply_packet("WSJT-X", &reply), expected);
   }
 
   #[test]

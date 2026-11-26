@@ -108,33 +108,62 @@
     border: 1px solid var(--mantine-color-default-border);
     border-radius: var(--mantine-radius-md);
     padding: 12px 14px 10px 26px;
-    width: 320px;
+    width: 340px;
     box-shadow: var(--mantine-shadow-md);
 }
 
-/* signal strength color, same bar as the spot detail used to have */
+/* signal strength colors: how they hear you above how you hear them */
 .bar {
     position: absolute;
     left: 10px;
     top: 10px;
     bottom: 10px;
-    width: 4px;
-    border-radius: 2px;
+    width: 5px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
 }
 
-/* row of three stats under the header */
-.tiles {
+.bar > div {
+    flex: 1;
+    border-radius: 3px;
+}
+
+/* what kind of station this is: CQ, response or spot */
+.typeTag {
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    padding: 2px 7px;
+    border-radius: 5px;
+}
+
+/* the two signal reports, side by side */
+.signals {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    margin-top: 12px;
-    padding: 10px 0;
-    border-top: 1px solid var(--mantine-color-default-border);
-    border-bottom: 1px solid var(--mantine-color-default-border);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin-top: 8px;
 }
 
-.tile + .tile {
-    padding-left: 12px;
-    border-left: 1px solid var(--mantine-color-default-border);
+.signal {
+    background: var(--mantine-color-default-hover);
+    border-radius: var(--mantine-radius-md);
+    padding: 8px 10px;
+}
+
+.signalLine {
+    height: 4px;
+    border-radius: 2px;
+    margin-top: 4px;
+}
+
+.facts {
+    padding-top: 8px;
+    border-top: 1px solid var(--mantine-color-default-border);
 }
 
 .tileLabel {

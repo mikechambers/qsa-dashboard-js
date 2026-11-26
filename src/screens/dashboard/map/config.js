@@ -22,6 +22,7 @@
  */
 
 import { Platform } from "@/enums/Platform";
+import { StationType } from "@/enums/StationType";
 import { PLATFORM } from "@/utils/platform";
 
 //empty featurecollection to use to clear layers
@@ -34,6 +35,14 @@ export const LOCATION_COLOR = "#1c7ed6";
 export const CONNECTION_LINE_PATH = "CONNECTION_LINE_PATH";
 export const SPOT_PATH = "SPOT_PATH";
 export const CONNECTION_POINT = "CONNECTION_POINT";
+export const STATION_PATH = "STATION_PATH";
+//colors for the type of station. Not signal strength colors, so they aren't
+//mistaken for spots
+export const STATION_COLORS = {
+    [StationType.CQ]: "#ae3ec9",
+    [StationType.RESPONSE]: "#1864ab",
+    [StationType.SPOT]: "#495057",
+};
 export const DISTANCE_RANGE_PATH = "DISTANCE_RANGE_PATH";
 export const FURTHEST_RANGE_PATH = "FURTHEST_RANGE_PATH";
 export const DISTANCE_LABEL_PATH = "DISTANCE_LABEL_PATH";

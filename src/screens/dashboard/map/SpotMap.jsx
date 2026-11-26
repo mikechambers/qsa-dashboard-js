@@ -21,7 +21,7 @@
  * SOFTWARE.
  */
 
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { LngLatBounds, setWorkerUrl } from "maplibre-gl";
 import workerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
 import "maplibre-gl/dist/maplibre-gl.css";
@@ -40,6 +40,7 @@ import { useHomeMarker } from "./useHomeMarker";
 import { useSpotLayer } from "./useSpotLayer";
 import { useSelectedSpotMarker } from "./useSelectedSpotMarker";
 import { SpotPopup } from "./SpotPopup";
+import { StationLayer } from "./StationLayer";
 
 import { addGreylineLayers } from "./greylineLayers";
 import { useGreyline } from "./useGreyline";
@@ -47,6 +48,7 @@ import { useGreyline } from "./useGreyline";
 import {
     addConnectionLineLayer,
     addConnectionPointLayer,
+    addStationLayer,
     addSpotLayer,
 } from "./spotLayers";
 
@@ -62,7 +64,7 @@ setWorkerUrl(workerUrl);
 const HOVER_FIT_DELAY_MS = 350;
 
 //rough size of the area the popup card covers, at the top right of the map
-const POPUP_AREA = { width: 340, openHeight: 190, closedHeight: 56 };
+const POPUP_AREA = { width: 360, openHeight: 260, closedHeight: 56 };
 
 //is the point on screen, and not hidden behind the popup?
 const isInView = (map, [lng, lat], detailOpen) => {
@@ -111,6 +113,41 @@ export const SpotMap = ({ spots, location }) => {
     const { selectedSpot, setSelectedSpot, focusRequest } = useSelectedSpot();
     const { furthestSpot } = useSpotData();
 
+    //calling station shown in the popup, as { call, pinned }. The popup shows
+    //either a spot or a calling station, whichever was hovered last. Clicking a
+    //station pins it, so it stays while the mouse moves to the Reply button
+    const [station, setStation] = useState({});
+
+    const hoverStation = useCallback(
+        (call) => {
+            if (!call) return;
+            setStation((prev) =>
+                prev.pinned ? prev : { call, pinned: false },
+            );
+            setSelectedSpot(undefined);
+        },
+        [setSelectedSpot],
+    );
+
+    //with no call, clears the station
+    const pinStation = useCallback(
+        (call) => {
+            setStation(call ? { call, pinned: true } : {});
+            if (call) setSelectedSpot(undefined);
+        },
+        [setSelectedSpot],
+    );
+
+    //a hovered spot replaces the station, unless it is pinned
+    useEffect(() => {
+        if (selectedSpot?.id) setStation((prev) => (prev.pinned ? prev : {}));
+    }, [selectedSpot?.id]);
+
+    //clicking a spot in the table always shows it
+    useEffect(() => {
+        if (focusRequest) setStation({});
+    }, [focusRequest]);
+
     const mapContainer = useRef(null);
 
     const startCoordinates = location?.coordinates ?? [-122.38, 37.58];
@@ -135,6 +172,7 @@ export const SpotMap = ({ spots, location }) => {
         addSpotLayer(map);
         addConnectionLineLayer(map);
         addConnectionPointLayer(map);
+        addStationLayer(map);
     }, [ready]);
 
     //todo: refactor others to combine initialization
@@ -218,11 +256,25 @@ export const SpotMap = ({ spots, location }) => {
             </ActionIcon>
             <SpotPopup
                 spot={selectedSpot}
+                stationCall={station.call}
+                onUnpin={
+                    station.pinned
+                        ? () => setStation({ ...station, pinned: false })
+                        : undefined
+                }
                 open={settings.showSpotDetail}
                 onOpenChange={setShowSpotDetail}
             />
 
             <MapControls />
+
+            <StationLayer
+                map={map}
+                ready={ready}
+                selectedCall={station.call}
+                onHover={hoverStation}
+                onPin={pinStation}
+            />
 
             <SNRLegend
                 selectedSpot={selectedSpot}

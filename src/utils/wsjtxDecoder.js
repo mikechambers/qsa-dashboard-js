@@ -74,9 +74,8 @@ export function createDecoder() {
             if (event.type !== "decode") return;
 
             const status = statuses.get(event.id);
-            const { kind, from, to, cqModifier, grid } = parseWsjtxMessage(
-                event.message,
-            );
+            const { kind, from, to, cqModifier, grid, report } =
+                parseWsjtxMessage(event.message);
             const call = from ?? undefined;
 
             if (call && grid) grids.set(call, grid);
@@ -113,10 +112,12 @@ export function createDecoder() {
             return new Decode({
                 id: sequence,
                 date: decodeDate(event.time, now),
+                receivedAt: now,
                 kind,
                 call,
                 toCall: to ?? undefined,
                 cqModifier,
+                report,
                 text: event.message,
                 snr: event.snr,
                 frequency,

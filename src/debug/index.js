@@ -657,6 +657,33 @@ const HAND_SPOTS = [
     }),
 );
 
-export const MOCK_SPOTS = [...OLDER, ...HAND_SPOTS].map((data) =>
+// ---- spots matching the WSJT-X test recording (210703_133430.wav) -----------
+// So spots can be paired with decodes. F5RXL, EA2BFM and DL8YHR are calling CQ
+// in the recording. HA0DU, EA3AGB and HA5WA call K1JT, so show as responses
+// when "My Call" in WSJT-X is set to K1JT.
+// [seconds ago, receiver call, snr, receiver grid, receiver dxcc]
+
+const WSJTX_TEST_SPOTS = [
+    [55, "F5RXL", -14, "IN94", 227],
+    [50, "EA2BFM", -7, "IN83", 281],
+    [45, "DL8YHR", -19, "JO41", DXCC.DE],
+    [40, "HA0DU", -11, "KN07", 239],
+    [35, "EA3AGB", -15, "JN11", 281],
+    [30, "HA5WA", -3, "JN97", 239],
+].map(([ago, call, snr, grid, dxcc], i) =>
+    toData({
+        sequence: OLDER.length + HAND_SPOTS.length + i + 1,
+        date: new Date(NOW - ago * SECOND),
+        mode: "FT8",
+        band: "20M",
+        frequency: 14074500 + i * 300,
+        snr,
+        call,
+        grid,
+        dxcc,
+    }),
+);
+
+export const MOCK_SPOTS = [...OLDER, ...HAND_SPOTS, ...WSJTX_TEST_SPOTS].map((data) =>
     Spot.fromData(data, ADD_SPOT_JITTER),
 );

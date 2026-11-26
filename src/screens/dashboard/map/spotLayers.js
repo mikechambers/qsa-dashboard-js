@@ -29,6 +29,7 @@ import {
     CONNECTION_POINT,
     CIRCLE_RADIUS,
     CIRCLE_STROKE,
+    STATION_PATH,
 } from "./config";
 
 //adds the layers to draw the spot graphics on
@@ -90,6 +91,28 @@ export function addConnectionPointLayer(map) {
             "circle-radius": 4,
             "circle-color": LOCATION_COLOR,
             "circle-stroke-width": 0,
+        },
+    });
+}
+
+//adds the layer for stations calling (CQ, or us). Hollow rings, unlike spots
+export function addStationLayer(map) {
+    map.addSource(STATION_PATH, {
+        type: "geojson",
+        data: EMPTY_FEATURE_COLLECTION,
+    });
+
+    map.addLayer({
+        id: STATION_PATH,
+        source: STATION_PATH,
+        type: "circle",
+        paint: {
+            "circle-radius": CIRCLE_RADIUS + 1,
+            "circle-color": ["get", "color"],
+            //faint fill, so the middle of the ring is still clickable
+            "circle-opacity": 0.2,
+            "circle-stroke-width": CIRCLE_STROKE + 1,
+            "circle-stroke-color": ["get", "color"],
         },
     });
 }

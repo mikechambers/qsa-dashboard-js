@@ -34,6 +34,7 @@ import { ElapsedTimePod } from "./ElapsedTimePod";
 import { FurthestSpotPod } from "./FurthestSpotPod";
 import { MostRecentSpotPod } from "./MostRecentSpotPod";
 import { BandsPod } from "./BandsPod";
+import { WsjtxPod } from "./WsjtxPod";
 import { ALL_CASES } from "@/consts";
 import { ChartContainer } from "./charts/ChartContainer";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
@@ -74,6 +75,7 @@ export const PodContainer = () => {
     return (
         <div className={classes.summary}>
             <Group gap="md">
+                <WsjtxPod />
                 <Paper withBorder radius="md">
                     <Group gap={compact ? 6 : 20} align="stretch">
                         <FurthestSpotPod spot={furthestSpot} />
@@ -116,15 +118,14 @@ export const PodContainer = () => {
                     />
                 </Paper>
 
-                {/* not rendered at all on phones, since a hidden chart
-                    has no size and warns about it */}
-                {!compact ||
-                    (PLATFORM === Platform.DESKTOP && (
-                        <ChartContainer
-                            spots={filteredSpots}
-                            unitType={settings.unitType}
-                        />
-                    ))}
+                {/* web only, and not on phones. Not rendered at all there, since
+                    a hidden chart has no size and warns about it */}
+                {!compact && PLATFORM !== Platform.DESKTOP && (
+                    <ChartContainer
+                        spots={filteredSpots}
+                        unitType={settings.unitType}
+                    />
+                )}
             </Group>
         </div>
     );

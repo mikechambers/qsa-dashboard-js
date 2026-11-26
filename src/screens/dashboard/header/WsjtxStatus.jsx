@@ -21,14 +21,13 @@
  * SOFTWARE.
  */
 
-import { Group, Text, Tooltip } from "@mantine/core";
+import { Tooltip } from "@mantine/core";
 import { IconBroadcast, IconBroadcastOff } from "@tabler/icons-react";
 import { useWsjtx } from "@/contexts/WsjtxContext";
-import { Band } from "@/enums/Band";
 
-//WSJT-X connection indicator, plus band, mode and DX call. Desktop only
-export const WsjtxStatus = ({ compact = false }) => {
-    const { available, connected, status } = useWsjtx();
+//WSJT-X connection indicator. Desktop only
+export const WsjtxStatus = () => {
+    const { available, connected } = useWsjtx();
 
     if (!available) return null;
 
@@ -36,27 +35,13 @@ export const WsjtxStatus = ({ compact = false }) => {
     const color = connected ? "green" : "red";
     const label = connected ? "WSJT-X connected" : "WSJT-X not connected";
 
-    //show the frequency if it is outside the amateur bands
-    const band =
-        status &&
-        (Band.fromFrequency(status.dialFrequency) ??
-            `${(status.dialFrequency / 1_000_000).toFixed(3)} MHz`);
-
     return (
-        <Group gap={6} wrap="nowrap">
-            <Tooltip label={label}>
-                <Icon
-                    size={28}
-                    color={`var(--mantine-color-${color}-6)`}
-                    aria-label={label}
-                />
-            </Tooltip>
-            {!compact && status && (
-                <Text size="sm" ff="monospace" style={{ whiteSpace: "nowrap" }}>
-                    {band} {status.mode}
-                    {status.dxCall && ` · DX ${status.dxCall}`}
-                </Text>
-            )}
-        </Group>
+        <Tooltip label={label}>
+            <Icon
+                size={28}
+                color={`var(--mantine-color-${color}-6)`}
+                aria-label={label}
+            />
+        </Tooltip>
     );
 };

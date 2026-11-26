@@ -25,11 +25,15 @@
 //we are the receiver. Anything we couldn't work out is undefined.
 export default class Decode {
     id;
-    date;
+    date; //time WSJT-X stamped on it
+    //when we got it. Use this for how fresh a decode is, as playing back a
+    //recording gives decodes with the original time
+    receivedAt;
     kind; //DecodeKind
     call; //who transmitted
     toCall;
     cqModifier;
+    report; //SNR in the message, for report messages
     text; //message as decoded
     snr; //how well we hear them
     frequency; //Hz
