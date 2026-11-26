@@ -184,6 +184,28 @@ To change how much detail is included, edit `MAXZOOM` in `scripts/fetch-map.sh`.
 
 Fonts and icons come from [basemaps-assets](https://github.com/protomaps/basemaps-assets), pinned to a specific commit (`ASSETS_COMMIT` in the same script), so they only change if you update it.
 
+### App icons
+
+All of the icons are built from one file, `design/icon.svg`. To change the icon, edit that file and then run:
+
+```
+$ npm run icons
+```
+
+This replaces the desktop app icons in `src-tauri/icons` and the website icon, `public/favicon.svg`. Don't edit those by hand, as they are overwritten.
+
+The macOS icons (`icon.icns` and `icon.png`) are given a transparent margin by the script, so they match the size of other icons in the Dock. The artwork needs a `viewBox` on its `<svg>` tag for this to work.
+
+#### Seeing the new icon in the desktop app
+
+The icon is compiled into the app, but changing the icon files alone does not trigger a rebuild, so you may still see the old one. To force a rebuild, update the timestamp on the Tauri config file:
+
+```
+$ touch src-tauri/tauri.conf.json
+```
+
+If `npx tauri dev` is running it will rebuild right away. Otherwise the new icon is picked up the next time you run or build the app.
+
 ## Questions, Feature Requests, Feedback
 
 If you have any questions, feature requests, issues or need help please post on the [issues page](https://github.com/mikechambers/qsa-dashboard-js/issues).
