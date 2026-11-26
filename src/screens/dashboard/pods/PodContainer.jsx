@@ -46,17 +46,16 @@ import { useActiveStations } from "@/hooks/useActiveStations";
 import { useTypeFilter } from "@/hooks/useTypeFilter";
 import { StationType } from "@/enums/StationType";
 import { getTableRows } from "@/utils/tableRows";
+import { getSummary } from "@/utils/summary";
 
 export const PodContainer = () => {
     const {
-        furthestSpot,
-        uniqueStations,
-        uniqueCountries,
         mostRecentSpot,
         filteredSpots,
         spots,
         filter,
         setFilter,
+        activeCallsign,
     } = useSpotData();
     const { settings } = useSettings();
     //phones only get the essentials: no session timer, bands or charts
@@ -73,13 +72,14 @@ export const PodContainer = () => {
     //only has spots
     const { available, show } = useTypeFilter();
     const stations = useActiveStations();
-    const bandRows = getTableRows(
-        bandSpots,
-        stations,
-        available ? show : { [StationType.SPOT]: true },
+    const viewedTypes = available ? show : { [StationType.SPOT]: true };
+    const bandRows = getTableRows(bandSpots, stations, viewedTypes);
+
+    //the summary is of the same rows as the table
+    const summary = getSummary(
+        getTableRows(filteredSpots, stations, viewedTypes),
+        activeCallsign,
     );
-    const hasStations =
-        available && (show[StationType.HEARD] || show[StationType.CQ]);
 
     //width the tiles need (the tile, 6px gaps, plus the Paper's padding and
     //border), capped at 350 so that with many bands they scroll instead.
@@ -96,7 +96,7 @@ export const PodContainer = () => {
         350,
     );
 
-    const uniqueStationsSubValue = `in ${uniqueCountries.length} ${uniqueCountries.length === 1 ? "country" : "countries"}`;
+    const uniqueStationsSubValue = `in ${summary.countryCount} ${summary.countryCount === 1 ? "country" : "countries"}`;
 
     return (
         <div className={classes.summary}>
@@ -104,13 +104,13 @@ export const PodContainer = () => {
                 <WsjtxPod />
                 <Paper withBorder radius="md">
                     <Group gap={compact ? 6 : 20} align="stretch">
-                        <FurthestSpotPod spot={furthestSpot} />
+                        <FurthestSpotPod row={summary.furthest} />
                         <Divider orientation="vertical" />
-                        <MostRecentSpotPod spot={mostRecentSpot} />
+                        <MostRecentSpotPod row={summary.mostRecent} />
                         <Divider orientation="vertical" />
                         <SummaryBase
                             label="Stations"
-                            value={uniqueStations}
+                            value={summary.stationCount}
                             subvalue={uniqueStationsSubValue}
                         />
 
@@ -134,7 +134,6 @@ export const PodContainer = () => {
                 >
                     <BandsPod
                         rows={bandRows}
-                        noun={hasStations ? "stations" : "spots"}
                         tileWidth={tileWidth}
                         unitType={settings.unitType}
                         selectedBand={

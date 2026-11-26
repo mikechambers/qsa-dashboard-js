@@ -23,6 +23,6 @@
 
 import { SpotPod } from "./SpotPod";
 
-export const MostRecentSpotPod = ({ spot }) => {
-    return <SpotPod spot={spot} title="Most Recent" />;
+export const MostRecentSpotPod = ({ row }) => {
+    return <SpotPod row={row} title="Most Recent" />;
 };

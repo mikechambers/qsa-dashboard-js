@@ -27,22 +27,36 @@ import { useSettings } from "@/contexts/SettingsContext";
 import { SummaryBase } from "@/screens/dashboard/pods/PodBase";
 import { convertAndFormatDistance } from "@/utils/view";
 
-export const SpotPod = ({ spot, title }) => {
-    const { setSelectedSpot } = useSelectedSpot();
+//row is from getTableRows: a spot, or a heard / CQ station
+export const SpotPod = ({ row, title }) => {
+    const { setSelectedSpot, pinStation } = useSelectedSpot();
     const { settings } = useSettings();
 
-    const { d, unit } = spot
-        ? convertAndFormatDistance(spot.distance, settings.unitType)
-        : {};
+    const { d, unit } =
+        row?.distance !== undefined
+            ? convertAndFormatDistance(row.distance, settings.unitType)
+            : {};
 
-    const subvalue = spot?.receiverCall
-        ? `${spot?.receiverCall} · ${spot?.receiverDXCC?.countryCode?.toUpperCase()} · ${spot.snr} dB`
+    const subvalue = row?.call
+        ? [
+              row.call,
+              row.countryCode?.toUpperCase(),
+              `${(row.spot ?? row.decode).snr} dB`,
+          ]
+              .filter(Boolean)
+              .join(" · ")
         : "";
 
     //const theme = MAP_DISTANCE_RING_PALETTE[settings.displayMode];
 
     const onSpotClick = () => {
-        setSelectedSpot(spot);
+        if (row?.decode) {
+            pinStation(row.call);
+        } else {
+            //a pinned station would otherwise stay in the card
+            pinStation();
+            setSelectedSpot(row?.spot);
+        }
     };
 
     return (

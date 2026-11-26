@@ -84,29 +84,6 @@ export function SpotDataProvider({ children }) {
         );
     }, [filteredSpots]);
 
-    const uniqueStations = useMemo(() => {
-        const me = activeCallsign.toUpperCase();
-
-        const calls = new Set();
-        for (const s of filteredSpots) {
-            if (s.receiverCall && s.receiverCall !== me)
-                calls.add(s.receiverCall);
-            if (s.senderCall && s.senderCall !== me) calls.add(s.senderCall);
-        }
-        return calls.size;
-    }, [filteredSpots, activeCallsign]);
-
-    const uniqueCountries = useMemo(() => {
-        const calls = new Set();
-
-        for (const s of filteredSpots) {
-            const c = s.receiverDXCC?.countryCode;
-            if (c) calls.add(c);
-        }
-
-        return [...calls];
-    }, [filteredSpots]);
-
     const updateState = () => {
         if (settings.demoMode) return;
 
@@ -254,8 +231,6 @@ export function SpotDataProvider({ children }) {
                 setFilter,
                 status,
                 furthestSpot,
-                uniqueStations,
-                uniqueCountries,
                 mostRecentSpot,
                 activeCallsign,
                 setActiveCallsign,

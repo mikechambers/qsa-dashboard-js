@@ -1,8 +1,8 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "qsa-dashboard",
-  "version": "0.1.0",
-  "identifier": "com.tauri.dev",
+  "version": "0.85.0",
+  "identifier": "com.mikechambers.qsadashboard",
   "build": {
     "frontendDist": "../dist",
     "devUrl": "http://127.0.0.1:5173",
@@ -13,8 +13,8 @@
     "windows": [
       {
         "title": "QSA Dashboard",
-        "width": 800,
-        "height": 600,
+        "width": 1340,
+        "height": 860,
         "resizable": true,
         "fullscreen": false
       }
@@ -23,7 +23,9 @@
       "csp": null,
       "assetProtocol": {
         "enable": true,
-        "scope": ["$RESOURCE/map/**/*"]
+        "scope": [
+          "$RESOURCE/map/**/*"
+        ]
       }
     }
   },

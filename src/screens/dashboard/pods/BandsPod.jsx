@@ -82,13 +82,16 @@ const compactDistance = (km, unitType) => {
     };
 };
 
-const BandTile = ({ stat, noun, width, unitType, selected, onClick }) => {
+const BandTile = ({ stat, width, unitType, selected, onClick }) => {
     const color = `var(--mantine-color-${getColorForBand(stat.band)}-6)`;
     const snr = Math.round(stat.snrTotal / stat.count);
     const furthest = compactDistance(stat.furthest, unitType);
     //spots are their report of us, and decodes are ours of them, so there is
     //no one average for a mix of the two
     const mixed = stat.spots > 0 && stat.spots < stat.count;
+    //spots are reports (a station can have several), heard and CQ rows are
+    //stations, and a mix of the two is neither
+    const noun = mixed ? "entries" : stat.spots ? "spots" : "stations";
     const average = mixed ? "" : ` avg ${snr} dB,`;
     const ago = timeAgo(new Date(stat.last)).replace(/ ago$/, "");
 
@@ -158,7 +161,6 @@ const BandTile = ({ stat, noun, width, unitType, selected, onClick }) => {
 //clicking a tile filters to that band, clicking it again clears the filter
 export const BandsPod = ({
     rows,
-    noun,
     tileWidth,
     unitType,
     selectedBand,
@@ -254,7 +256,6 @@ export const BandsPod = ({
                     <BandTile
                         key={stat.band}
                         stat={stat}
-                        noun={noun}
                         width={tileWidth}
                         unitType={unitType}
                         selected={stat.band === selectedBand}

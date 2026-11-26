@@ -56,8 +56,10 @@ export async function getDesktopMapStyle(theme) {
             protomaps: {
                 type: "vector",
                 url: `pmtiles://${tilesUrl}`,
+                //target="_blank" so they open in the system browser, rather than
+                //replacing the app
                 attribution:
-                    '<a href="https://protomaps.com">Protomaps</a> © <a href="https://openstreetmap.org/copyright">OpenStreetMap</a>',
+                    '<a href="https://protomaps.com" target="_blank">Protomaps</a> © <a href="https://openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>',
             },
         },
         layers: layers("protomaps", namedFlavor(flavor), { lang: "en" }),
