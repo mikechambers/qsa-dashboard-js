@@ -26,29 +26,53 @@
 import { StationType, STATION_TYPE_LIST } from "@/enums/StationType";
 import { TableTab } from "@/enums/TableTab";
 
-const spotRow = (spot) => ({
+//a row is the same shape whether it came from a Spot or a Decode, so that
+//what shows one doesn't need to know which:
+//
+//  key, type, call, date
+//  dxcc, countryCode, location (has the grid), distance
+//  approximate: location and distance are only the middle of their country
+//  band, frequency, mode
+//  snr: of the report this row itself is, which is also in one of
+//  theyHearYou / youHearThem, as { snr, date }
+//
+//spot or decode is the original, for what only one of them can do
+
+export const spotRow = (spot) => ({
     key: `spot-${spot.sequence}`,
     type: StationType.SPOT,
     call: spot.receiverCall,
+    date: spot.date,
+    dxcc: spot.receiverDXCC,
     countryCode: spot.receiverDXCC?.countryCode,
+    location: spot.receiverLocation,
     distance: spot.distance,
+    approximate: false,
     band: spot.band,
     frequency: spot.frequency,
-    date: spot.date,
+    mode: spot.mode,
+    snr: spot.snr,
+    theyHearYou: { snr: spot.snr, date: spot.date },
     spot,
 });
 
 //station is from getActiveStations
-const stationRow = ({ type, decode }) => ({
+export const stationRow = ({ type, decode }) => ({
     key: `station-${decode.call}`,
     type,
     call: decode.call,
+    date: decode.receivedAt,
+    dxcc: decode.dxcc,
     countryCode: decode.dxcc?.countryCode,
+    location: decode.location,
     distance: decode.distance,
+    approximate: decode.locationSource === "country",
     band: decode.band,
     //without a band, there is no radio frequency to show
     frequency: decode.band ? decode.frequency : undefined,
-    date: decode.receivedAt,
+    mode: decode.mode,
+    snr: decode.snr,
+    youHearThem: { snr: decode.snr, date: decode.receivedAt },
     decode,
 });
 

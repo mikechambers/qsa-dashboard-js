@@ -26,6 +26,7 @@ import { listen } from "@tauri-apps/api/event";
 import { Platform } from "@/enums/Platform";
 import { PLATFORM } from "./platform";
 import { createDecoder } from "./wsjtxDecoder";
+import { gridStore } from "./gridStore";
 import { loadCallsignLookup } from "./callsignLookup";
 
 //calls onMessage with each message from WSJT-X (sent by the Rust listener).
@@ -54,7 +55,7 @@ export function sendReply(decode) {
 export function listenToDecodes(onMessage) {
     if (PLATFORM !== Platform.DESKTOP) return () => {};
 
-    const decoder = createDecoder();
+    const decoder = createDecoder({ grids: gridStore });
 
     //decodes arriving before this finishes won't have country info
     loadCallsignLookup()

@@ -24,7 +24,7 @@
 import { useEffect } from "react";
 import { useActiveStations } from "@/hooks/useActiveStations";
 import { useShownTypes } from "@/hooks/useTypeFilter";
-import { getShownStations, isMappable } from "@/utils/activeStations";
+import { getShownStations } from "@/utils/activeStations";
 import { useStationLayer } from "./useStationLayer";
 import { useSelectedStationMarker } from "./useSelectedStationMarker";
 
@@ -40,9 +40,7 @@ export const StationLayer = ({
     onPin,
 }) => {
     const { show } = useShownTypes();
-    const shown = getShownStations(useActiveStations(), show);
-    //some can be in the table and card, but not on the map
-    const stations = shown.filter((s) => isMappable(s.decode));
+    const stations = getShownStations(useActiveStations(), show);
 
     useStationLayer(map, ready, stations, location, onHover, onPin);
     useSelectedStationMarker(
@@ -54,7 +52,7 @@ export const StationLayer = ({
 
     //don't show an expired station again if it comes back later
     const expired =
-        selectedCall && !shown.some((s) => s.decode.call === selectedCall);
+        selectedCall && !stations.some((s) => s.decode.call === selectedCall);
 
     useEffect(() => {
         if (expired) onPin(undefined);

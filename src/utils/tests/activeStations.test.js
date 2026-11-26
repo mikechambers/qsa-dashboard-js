@@ -25,7 +25,7 @@ import { describe, expect, it } from "vitest";
 import {
     STATION_EXPIRY_MS,
     getActiveStations,
-    getMapStations,
+    getShownStations,
     getWorkingCall,
     isMappable,
 } from "../activeStations";
@@ -43,9 +43,7 @@ const decode = (values) => ({
 });
 
 const calls = (decodes, options) =>
-    getActiveStations(decodes, { now: NOW, ...options }).map(
-        (s) => s.decode,
-    );
+    getActiveStations(decodes, { now: NOW, ...options }).map((s) => s.decode);
 
 describe("getActiveStations", () => {
     it("returns each station once, using its newest decode", () => {
@@ -169,16 +167,15 @@ describe("getWorkingCall", () => {
     });
 
     it("is nothing while calling CQ", () => {
-        expect(
-            getWorkingCall({ ...status, txMessage: "CQ W6MSH CM87" }),
-        ).toBe(undefined);
+        expect(getWorkingCall({ ...status, txMessage: "CQ W6MSH CM87" })).toBe(
+            undefined,
+        );
     });
 });
 
-describe("getMapStations", () => {
+describe("getShownStations", () => {
     const station = (values) => ({
         type: StationType.HEARD,
-        decode: { location: {}, locationSource: "message" },
         ...values,
     });
 
@@ -191,6 +188,6 @@ describe("getMapStations", () => {
         ];
         const show = { [StationType.HEARD]: false, [StationType.CQ]: true };
 
-        expect(getMapStations(stations, show)).toEqual(stations.slice(1));
+        expect(getShownStations(stations, show)).toEqual(stations.slice(1));
     });
 });

@@ -24,6 +24,7 @@
 import { useEffect, useRef, useState } from "react";
 import { ActionIcon, Box, Group, Text } from "@mantine/core";
 import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
+import { StationType } from "@/enums/StationType";
 import { useInterval } from "@mantine/hooks";
 
 import { UnitType } from "@/enums/UnitType";
@@ -59,8 +60,8 @@ const getBandStats = (rows) => {
         }
 
         s.count++;
-        if (row.spot) s.spots++;
-        s.snrTotal += (row.spot ?? row.decode).snr ?? 0;
+        if (row.type === StationType.SPOT) s.spots++;
+        s.snrTotal += row.snr ?? 0;
         s.last = Math.max(s.last, new Date(row.date).getTime() || 0);
         s.furthest = Math.max(s.furthest, row.distance ?? 0);
     }

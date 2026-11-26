@@ -21,8 +21,6 @@
  * SOFTWARE.
  */
 
-import { isMappable } from "@/utils/activeStations";
-
 //the numbers at the top of the dashboard. rows are from getTableRows (newest
 //first), and myCall isn't counted as a station
 export function getSummary(rows, myCall = "") {
@@ -40,8 +38,7 @@ export function getSummary(rows, myCall = "") {
         if (row.countryCode) countries.add(row.countryCode);
 
         //the distance to the middle of a country is too rough to be a record
-        if (row.distance === undefined) continue;
-        if (row.decode && !isMappable(row.decode)) continue;
+        if (row.distance === undefined || row.approximate) continue;
         if (!furthest || row.distance > furthest.distance) furthest = row;
     }
 

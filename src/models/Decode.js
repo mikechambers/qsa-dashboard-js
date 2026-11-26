@@ -40,7 +40,9 @@ export default class Decode {
     band;
     mode;
     location;
-    locationSource; //"message", "history" or "country" (approximate)
+    //"message", "history" (decoded earlier), "spot" (from PSK Reporter) or
+    //"country" (approximate)
+    locationSource;
     dxcc;
     distance; //km
     lowConfidence;

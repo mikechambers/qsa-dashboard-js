@@ -30,6 +30,7 @@ import Location from "@/models/Location";
 import { Band } from "@/enums/Band";
 import { Mode } from "@/enums/Mode";
 import { getDXCCEntity, gridToLocation } from "./geo";
+import { createGridStore } from "./gridStore";
 import { isValidMaidenHeadGrid } from "./radio";
 import { parseWsjtxMessage } from "./wsjtxMessage";
 
@@ -74,10 +75,10 @@ export function applyStatus(decode, status) {
 }
 
 //lookupCallsign(call) returns { dxccCode, lat, lon } or undefined. It is
-//passed in because the country data is large and loaded separately
-export function createDecoder() {
+//passed in because the country data is large and loaded separately.
+//Grids decoded are added to the grid store
+export function createDecoder({ grids = createGridStore() } = {}) {
     const statuses = new Map(); //WSJT-X instance id -> latest status
-    const grids = new Map(); //callsign -> grid heard earlier
     let lookupCallsign = () => undefined;
     let sequence = 0;
 
@@ -101,19 +102,14 @@ export function createDecoder() {
                 parseWsjtxMessage(event.message);
             const call = from ?? undefined;
 
-            if (call && grid) grids.set(call, grid);
+            grids.addHeard(call, grid);
 
             const info = call ? lookupCallsign(call) : undefined;
 
-            //best location we have: this message, an earlier one, or
-            //failing that the middle of their country
+            //where this message says they are, otherwise the middle of their
+            //country. Grids from elsewhere are filled in later (gridStore)
             let location = toLocation(grid);
             let locationSource = location && "message";
-
-            if (!location && call) {
-                location = toLocation(grids.get(call));
-                locationSource = location && "history";
-            }
 
             if (!location && info?.lat !== undefined) {
                 location = new Location({

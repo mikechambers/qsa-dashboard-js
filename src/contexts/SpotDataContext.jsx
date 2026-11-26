@@ -42,6 +42,7 @@ import {
 import { useSettings } from "./SettingsContext";
 import { MOCK_SPOTS } from "@/debug";
 import { Mode } from "@/enums/Mode";
+import { gridStore } from "@/utils/gridStore";
 
 const SpotDataContext = createContext(null);
 
@@ -103,6 +104,19 @@ export function SpotDataProvider({ children }) {
         }
     };
 
+    //demo spots don't arrive as messages, so add their grids here. Oldest
+    //first, so the newest wins
+    useEffect(() => {
+        if (!settings.demoMode) return;
+
+        for (const spot of MOCK_SPOTS.toReversed()) {
+            gridStore.addReported(
+                spot.receiverCall,
+                spot.receiverLocation?.grid,
+            );
+        }
+    }, [settings.demoMode]);
+
     //one once per page to connect
     useEffect(() => {
         const clientId = `qsa-dashboard-w6msh-${crypto.randomUUID()}`;
@@ -132,6 +146,10 @@ export function SpotDataProvider({ children }) {
                 return;
             }
 
+            gridStore.addReported(
+                spot.receiverCall,
+                spot.receiverLocation?.grid,
+            );
             batchRef.current.push(spot);
         });
 

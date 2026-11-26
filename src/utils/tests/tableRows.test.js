@@ -79,6 +79,55 @@ describe("getTableRows", () => {
         expect(new Set(keys).size).toBe(keys.length);
     });
 
+    it("gives spots and stations the same details", () => {
+        const dxcc = { countryCode: "fr" };
+        const location = { grid: "JN18" };
+        const [fromSpot, fromStation] = getTableRows(
+            [
+                {
+                    sequence: 1,
+                    receiverCall: "A",
+                    date: at(2),
+                    receiverDXCC: dxcc,
+                    receiverLocation: location,
+                    snr: -5,
+                    mode: "FT8",
+                },
+            ],
+            [
+                {
+                    type: StationType.HEARD,
+                    decode: {
+                        call: "B",
+                        receivedAt: at(1),
+                        dxcc,
+                        location,
+                        locationSource: "country",
+                        snr: -9,
+                        mode: "FT8",
+                    },
+                },
+            ],
+            show(true, true, true),
+        );
+
+        const shared = { dxcc, countryCode: "fr", location, mode: "FT8" };
+        expect(fromSpot).toMatchObject({
+            ...shared,
+            snr: -5,
+            approximate: false,
+            theyHearYou: { snr: -5, date: at(2) },
+        });
+        expect(fromStation).toMatchObject({
+            ...shared,
+            snr: -9,
+            approximate: true,
+            youHearThem: { snr: -9, date: at(1) },
+        });
+        expect(fromSpot.youHearThem).toBeUndefined();
+        expect(fromStation.theyHearYou).toBeUndefined();
+    });
+
     it("has no frequency without a band", () => {
         const [row] = getTableRows(
             [],

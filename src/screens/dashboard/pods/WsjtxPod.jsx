@@ -26,16 +26,14 @@ import { useWsjtx } from "@/contexts/WsjtxContext";
 import { Band } from "@/enums/Band";
 import { StationType } from "@/enums/StationType";
 import { useActiveStations } from "@/hooks/useActiveStations";
-import { STATION_EXPIRY_MS, isMappable } from "@/utils/activeStations";
+import { STATION_EXPIRY_MS } from "@/utils/activeStations";
 import { formatFrequency } from "@/utils/view";
 import { SummaryBase } from "./PodBase";
 
 //what WSJT-X is doing: frequency, who we are working and CQs. Desktop only
 export const WsjtxPod = () => {
     const { available, connected, status, decodes } = useWsjtx();
-    const cqs = useActiveStations()
-        .filter((s) => s.type === StationType.CQ)
-        .map((s) => s.decode);
+    const cqs = useActiveStations().filter((s) => s.type === StationType.CQ);
 
     if (!available) return null;
 
@@ -71,11 +69,7 @@ export const WsjtxPod = () => {
                 <SummaryBase
                     label="CQ calls"
                     value={connected ? cqs.length : undefined}
-                    subvalue={
-                        connected
-                            ? `${cqs.filter(isMappable).length} on map · ${recent} decodes`
-                            : ""
-                    }
+                    subvalue={connected ? `${recent} decodes` : ""}
                 />
             </Group>
         </Paper>

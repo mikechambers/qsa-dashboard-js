@@ -25,7 +25,14 @@ import { useEffect, useState } from "react";
 import { useWsjtx } from "@/contexts/WsjtxContext";
 import { Band } from "@/enums/Band";
 import { ActiveStationsContext } from "@/hooks/useActiveStations";
-import { getActiveStations, getWorkingCall } from "@/utils/activeStations";
+import {
+    getActiveStations,
+    getWorkingCall,
+    isMappable,
+} from "@/utils/activeStations";
+import { gridToLocation } from "@/utils/geo";
+import { gridStore, withKnownGrid } from "@/utils/gridStore";
+import { isValidMaidenHeadGrid } from "@/utils/radio";
 
 //how often to check for expired stations
 const REFRESH_MS = 5000;
@@ -44,14 +51,27 @@ export function ActiveStationsProvider({ children }) {
         return () => clearInterval(timer);
     }, [connected]);
 
+    //our own grid, as set in WSJT-X
+    const home =
+        status?.deGrid && isValidMaidenHeadGrid(status.deGrid)
+            ? gridToLocation(status.deGrid)
+            : undefined;
+
     //not memoized on purpose. Stations expire with time, and a new array each
     //tick also rerenders what uses it, which keeps ages like "20s ago" current
+    //a station we have no grid for isn't shown anywhere, even one calling us
+    //or being worked. WSJT-X covers those
     const stations = connected
         ? getActiveStations(decodes, {
               band: status && Band.fromFrequency(status.dialFrequency),
               myCall: status?.deCall,
               workingCall: getWorkingCall(status),
           })
+              .map((station) => ({
+                  ...station,
+                  decode: withKnownGrid(station.decode, gridStore, home),
+              }))
+              .filter((station) => isMappable(station.decode))
         : [];
 
     return (

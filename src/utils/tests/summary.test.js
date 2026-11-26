@@ -35,6 +35,7 @@ const station = (call, distance, countryCode, locationSource = "message") => ({
     call,
     distance,
     countryCode,
+    approximate: locationSource === "country",
     decode: { location: {}, locationSource },
 });
 

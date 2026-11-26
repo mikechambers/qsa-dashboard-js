@@ -85,8 +85,8 @@ export function getActiveStations(
     return active;
 }
 
-//stations we can put on the map. The middle of a country isn't where they are,
-//so those are left off
+//whether we know where a station is. The middle of its country isn't good
+//enough to put it on the map
 export const isMappable = (decode) =>
     Boolean(decode.location) && decode.locationSource !== "country";
 
@@ -94,7 +94,3 @@ export const isMappable = (decode) =>
 //Stations calling us or being worked are always shown
 export const getShownStations = (stations, show) =>
     stations.filter((s) => s.working || s.callingYou || show[s.type]);
-
-//the stations to draw on the map
-export const getMapStations = (stations, show) =>
-    getShownStations(stations, show).filter((s) => isMappable(s.decode));

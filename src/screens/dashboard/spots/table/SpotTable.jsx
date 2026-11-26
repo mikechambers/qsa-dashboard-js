@@ -332,7 +332,7 @@ export const SpotTable = ({ onCollapse }) => {
                             )}
                             {virtualItems.map((virtualRow) => {
                                 const row = rows[virtualRow.index];
-                                const { spot, decode } = row;
+                                const { spot } = row;
                                 const selected = spot
                                     ? selectedSpot === spot
                                     : station.call === row.call;
@@ -348,6 +348,8 @@ export const SpotTable = ({ onCollapse }) => {
                                               myCall: status?.deCall,
                                           })
                                         : undefined;
+
+                                const theyHearYou = row.theyHearYou ?? report;
 
                                 return (
                                     <Table.Tr
@@ -369,7 +371,7 @@ export const SpotTable = ({ onCollapse }) => {
                                             }
                                             focusStation(
                                                 row.call,
-                                                decode.location?.coordinates,
+                                                row.location?.coordinates,
                                             );
                                         }}
                                         id={
@@ -418,9 +420,9 @@ export const SpotTable = ({ onCollapse }) => {
                                         </Table.Td>
 
                                         <Table.Td ta="right">
-                                            {spot && (
+                                            {theyHearYou && (
                                                 <SNRCell
-                                                    snr={spot.snr}
+                                                    snr={theyHearYou.snr}
                                                     arrow={
                                                         available
                                                             ? "↑"
@@ -428,15 +430,9 @@ export const SpotTable = ({ onCollapse }) => {
                                                     }
                                                 />
                                             )}
-                                            {report && (
+                                            {row.youHearThem && (
                                                 <SNRCell
-                                                    snr={report.snr}
-                                                    arrow="↑"
-                                                />
-                                            )}
-                                            {decode && (
-                                                <SNRCell
-                                                    snr={decode.snr}
+                                                    snr={row.youHearThem.snr}
                                                     arrow="↓"
                                                 />
                                             )}

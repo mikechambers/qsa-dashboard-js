@@ -38,11 +38,7 @@ export const SpotPod = ({ row, title }) => {
             : {};
 
     const subvalue = row?.call
-        ? [
-              row.call,
-              row.countryCode?.toUpperCase(),
-              `${(row.spot ?? row.decode).snr} dB`,
-          ]
+        ? [row.call, row.countryCode?.toUpperCase(), `${row.snr} dB`]
               .filter(Boolean)
               .join(" · ")
         : "";

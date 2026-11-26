@@ -28,6 +28,7 @@ import {
     decodeDate,
 } from "@/utils/wsjtxDecoder";
 import { loadCallsignLookup } from "@/utils/callsignLookup";
+import { createGridStore } from "@/utils/gridStore";
 import { Band } from "@/enums/Band";
 
 const status = {
@@ -77,13 +78,14 @@ describe("createDecoder", () => {
         expect(d.raw.message).toBe("CQ K1ABC FN42");
     });
 
-    it("remembers a grid heard earlier", () => {
-        const decoder = setup();
-        decoder.handle(decode("CQ K1ABC FN42"));
-        const d = decoder.handle(decode("W6MSH K1ABC -10"));
+    it("adds grids it decodes to the grid store", () => {
+        const grids = createGridStore();
+        createDecoder({ grids }).handle(decode("CQ K1ABC FN42"));
 
-        expect(d.locationSource).toBe("history");
-        expect(d.location.grid).toBe("FN42");
+        expect(grids.find("K1ABC")).toEqual({
+            grid: "FN42",
+            source: "history",
+        });
     });
 
     it("falls back to the country", () => {

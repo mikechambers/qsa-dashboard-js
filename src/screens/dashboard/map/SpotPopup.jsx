@@ -35,6 +35,7 @@ import {
     formatFrequency,
     formatTime,
 } from "@/utils/view";
+import { spotRow, stationRow } from "@/utils/tableRows";
 import { getShortTimeZoneName, timeAgo } from "@/utils/date";
 
 import { ReplyButton } from "./ReplyButton";
@@ -81,16 +82,33 @@ const describeStation = ({ decode, callingYou, working }, myCall) => {
     //CQs have their own phrase
 };
 
+//what the card shows the same way for every row (see tableRows)
+const cardProps = (row, unitType) => ({
+    type: row.type,
+    call: row.call,
+    country: row.dxcc?.shortName,
+    mode: row.mode,
+    band: row.band,
+    distance:
+        row.distance !== undefined
+            ? convertAndFormatDistance(row.distance, unitType)
+            : undefined,
+    //"" for a row with no frequency, which the card leaves off
+    frequency: formatFrequency(row.frequency),
+    details: formatDetails(row.location?.grid, row.dxcc),
+});
+
 //card for a station heard by WSJT-X
 const HeardStation = ({ station, onUnpin, open, toggle }) => {
     const { settings } = useSettings();
     const { spots } = useSpotData();
     const { decodes, status } = useWsjtx();
-    const { type, decode } = station;
+    const { decode } = station;
+    const row = stationRow(station);
 
     const theyHearYou = getTheyHearYou({
-        call: decode.call,
-        band: decode.band,
+        call: row.call,
+        band: row.band,
         decodes,
         spots,
         myCall: status?.deCall,
@@ -98,34 +116,19 @@ const HeardStation = ({ station, onUnpin, open, toggle }) => {
 
     return (
         <StationCard
-            type={type}
+            {...cardProps(row, settings.unitType)}
             status={describeStation(station, status?.deCall)}
-            typeNote={type === StationType.CQ ? decode.cqModifier : undefined}
-            call={decode.call}
-            country={decode.dxcc?.shortName}
-            mode={decode.mode}
-            band={decode.band}
-            distance={
-                decode.distance !== undefined
-                    ? convertAndFormatDistance(
-                          decode.distance,
-                          settings.unitType,
-                      )
-                    : undefined
-            }
-            //without a band, there is no radio frequency to show
-            frequency={
-                decode.band ? formatFrequency(decode.frequency) : undefined
+            typeNote={
+                row.type === StationType.CQ ? decode.cqModifier : undefined
             }
             theyHearYou={theyHearYou}
-            youHearThem={{ snr: decode.snr, date: decode.receivedAt }}
-            details={formatDetails(decode.location?.grid, decode.dxcc)}
-            time={formatClock(decode.receivedAt, settings.timeMode)}
-            age={timeAgo(decode.receivedAt)}
+            youHearThem={row.youHearThem}
+            time={formatClock(row.date, settings.timeMode)}
+            age={timeAgo(row.date)}
             note={reportNote(theyHearYou)}
             //WSJT-X only accepts replies to CQs
             action={
-                type === StationType.CQ && (
+                row.type === StationType.CQ && (
                     <ReplyButton
                         key={decode.call}
                         decode={decode}
@@ -145,9 +148,11 @@ const SpotStation = ({ spot, open, toggle }) => {
     const { settings } = useSettings();
     const { available, decodes } = useWsjtx();
 
+    const row = spotRow(spot);
+
     const youHearThem = getYouHearThem({
-        call: spot.receiverCall,
-        band: spot.band,
+        call: row.call,
+        band: row.band,
         decodes,
     });
 
@@ -160,24 +165,11 @@ const SpotStation = ({ spot, open, toggle }) => {
 
     return (
         <StationCard
-            type={StationType.SPOT}
-            call={spot.receiverCall}
-            country={spot.receiverDXCC?.shortName}
-            mode={spot.mode}
-            band={spot.band}
-            distance={convertAndFormatDistance(
-                spot.distance,
-                settings.unitType,
-            )}
-            frequency={formatFrequency(spot.frequency)}
-            theyHearYou={{ snr: spot.snr, date: spot.date }}
+            {...cardProps(row, settings.unitType)}
+            theyHearYou={row.theyHearYou}
             youHearThem={youHearThem}
             showYouHear={available}
-            details={formatDetails(
-                spot.receiverLocation?.grid,
-                spot.receiverDXCC,
-            )}
-            time={formatWhen(spot.date, settings.timeMode)}
+            time={formatWhen(row.date, settings.timeMode)}
             note={note}
             open={open}
             toggle={toggle}
