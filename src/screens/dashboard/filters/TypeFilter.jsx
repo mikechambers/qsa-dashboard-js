@@ -24,36 +24,20 @@
 import { Group, Select } from "@mantine/core";
 import { IconCheck } from "@tabler/icons-react";
 import { ALL_CASES } from "@/consts";
-import { useSettings } from "@/contexts/SettingsContext";
-import { StationType } from "@/enums/StationType";
+import { STATION_TYPE_INFO, STATION_TYPE_LIST } from "@/enums/StationType";
+import { useShownTypes } from "@/hooks/useTypeFilter";
 import { TypeIcon } from "../map/TypeIcon";
 
 //which types to show: all of them, or just spots, heard stations or stations
 //calling CQ
 export const TypeFilter = () => {
-    const { settings, setShowSpotMarkers, setShowHeard, setShowCQ } =
-        useSettings();
+    const { show, setShow } = useShownTypes();
 
-    const types = [
-        {
-            label: "Spot",
-            type: StationType.SPOT,
-            on: settings.showSpotMarkers,
-            set: setShowSpotMarkers,
-        },
-        {
-            label: "Heard",
-            type: StationType.HEARD,
-            on: settings.showHeard,
-            set: setShowHeard,
-        },
-        {
-            label: "CQ",
-            type: StationType.CQ,
-            on: settings.showCQ,
-            set: setShowCQ,
-        },
-    ];
+    const types = STATION_TYPE_LIST.map((type) => ({
+        type,
+        label: STATION_TYPE_INFO[type].name,
+        on: show[type],
+    }));
 
     const choices = [ALL_CASES, ...types.map((t) => t.label)];
 
@@ -93,7 +77,14 @@ export const TypeFilter = () => {
             w={120}
             onChange={(v) => {
                 if (!choices.includes(v)) return;
-                types.forEach((t) => t.set(v === ALL_CASES || v === t.label));
+                setShow(
+                    Object.fromEntries(
+                        types.map((t) => [
+                            t.type,
+                            v === ALL_CASES || v === t.label,
+                        ]),
+                    ),
+                );
             }}
             allowDeselect={false}
         />

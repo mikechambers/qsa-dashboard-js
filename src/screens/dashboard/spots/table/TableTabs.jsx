@@ -22,15 +22,18 @@
  */
 
 import { SegmentedControl, Stack, Group, Text } from "@mantine/core";
-import { StationType } from "@/enums/StationType";
+import { STATION_TYPE_INFO, STATION_TYPE_LIST } from "@/enums/StationType";
 import { TableTab } from "@/enums/TableTab";
 import { TypeIcon } from "../../map/TypeIcon";
 
+//All, then one for each type
 const TABS = [
     { value: TableTab.ALL, name: "All" },
-    { value: TableTab.SPOTS, name: "Spots", type: StationType.SPOT },
-    { value: TableTab.HEARD, name: "Heard", type: StationType.HEARD },
-    { value: TableTab.CQ, name: "CQ", type: StationType.CQ },
+    ...STATION_TYPE_LIST.map((type) => ({
+        value: type,
+        name: STATION_TYPE_INFO[type].plural,
+        type,
+    })),
 ];
 
 //counts is the number of rows for each tab

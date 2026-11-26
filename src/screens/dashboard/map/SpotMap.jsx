@@ -29,6 +29,8 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import { IconCurrentLocation } from "@tabler/icons-react";
 import { ActionIcon } from "@mantine/core";
 import { useSettings } from "@/contexts/SettingsContext";
+import { StationType } from "@/enums/StationType";
+import { useShownTypes } from "@/hooks/useTypeFilter";
 import { SNRLegend } from "./SNRKey";
 import { MapControls } from "./MapControls";
 
@@ -124,6 +126,7 @@ export const SpotMap = ({ spots, location }) => {
         stationFocus,
     } = useSelectedSpot();
     const { furthestSpot } = useSpotData();
+    const spotsShown = useShownTypes().show[StationType.SPOT];
 
     const mapContainer = useRef(null);
 
@@ -179,11 +182,11 @@ export const SpotMap = ({ spots, location }) => {
         map.setLayoutProperty(
             SPOT_PATH,
             "visibility",
-            settings.showSpotMarkers ? "visible" : "none",
+            spotsShown ? "visible" : "none",
         );
         //don't leave a hidden spot selected
-        if (!settings.showSpotMarkers) setSelectedSpot(undefined);
-    }, [map, ready, settings.showSpotMarkers, setSelectedSpot]);
+        if (!spotsShown) setSelectedSpot(undefined);
+    }, [map, ready, spotsShown, setSelectedSpot]);
 
     //selected spot ring / dot
     useSelectedSpotMarker(map, ready, selectedSpot);

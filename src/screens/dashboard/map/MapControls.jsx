@@ -25,7 +25,8 @@ import { ActionIcon, Stack, Tooltip } from "@mantine/core";
 import { IconCircleDashed, IconSunMoon } from "@tabler/icons-react";
 import { useSettings } from "@/contexts/SettingsContext";
 import { useWsjtx } from "@/contexts/WsjtxContext";
-import { StationType } from "@/enums/StationType";
+import { STATION_TYPE_INFO, STATION_TYPE_LIST } from "@/enums/StationType";
+import { useShownTypes } from "@/hooks/useTypeFilter";
 import { TypeIcon } from "./TypeIcon";
 
 const MapToggle = ({ label, on, onChange, children, ...props }) => (
@@ -48,14 +49,8 @@ const MapToggle = ({ label, on, onChange, children, ...props }) => (
 //small stack of on / off buttons for the map. The overlays flip the same
 //settings as the config screen, so the two always agree.
 export const MapControls = () => {
-    const {
-        settings,
-        setShowGreyline,
-        setShowDistanceOverlay,
-        setShowSpotMarkers,
-        setShowHeard,
-        setShowCQ,
-    } = useSettings();
+    const { settings, setShowGreyline, setShowDistanceOverlay } = useSettings();
+    const { show, setTypeShown } = useShownTypes();
     const { available } = useWsjtx();
 
     const toggles = [
@@ -78,26 +73,12 @@ export const MapControls = () => {
 
     //show or hide each kind of marker. Only on desktop, as the web version
     //only has spots
-    const markers = [
-        {
-            label: "Spots (heard you)",
-            icon: () => <TypeIcon type={StationType.SPOT} />,
-            on: settings.showSpotMarkers,
-            onChange: setShowSpotMarkers,
-        },
-        {
-            label: "Heard (you hear them)",
-            icon: () => <TypeIcon type={StationType.HEARD} />,
-            on: settings.showHeard,
-            onChange: setShowHeard,
-        },
-        {
-            label: "Calling CQ",
-            icon: () => <TypeIcon type={StationType.CQ} />,
-            on: settings.showCQ,
-            onChange: setShowCQ,
-        },
-    ];
+    const markers = STATION_TYPE_LIST.map((type) => ({
+        label: STATION_TYPE_INFO[type].description,
+        icon: () => <TypeIcon type={type} />,
+        on: show[type],
+        onChange: (on) => setTypeShown(type, on),
+    }));
 
     return (
         <Stack gap={6} pos="absolute" left={20} top={80} style={{ zIndex: 1 }}>

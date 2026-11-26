@@ -31,3 +31,26 @@ const StationTypes = {
 export const StationType = Object.freeze({
     ...StationTypes,
 });
+
+//what the UI calls each type, in the order they are listed
+export const STATION_TYPE_INFO = Object.freeze({
+    [StationType.SPOT]: {
+        name: "Spot",
+        plural: "Spots",
+        description: "Spots (heard you)",
+        phrase: "Heard your signal",
+    },
+    [StationType.HEARD]: {
+        name: "Heard",
+        plural: "Heard",
+        description: "Heard (you hear them)",
+    },
+    [StationType.CQ]: {
+        name: "CQ",
+        plural: "CQ",
+        description: "Calling CQ",
+        phrase: "Calling anyone",
+    },
+});
+
+export const STATION_TYPE_LIST = Object.freeze(Object.keys(STATION_TYPE_INFO));

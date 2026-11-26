@@ -23,7 +23,7 @@
 
 //the rows of the table: PSK Reporter spots and stations heard by WSJT-X
 
-import { StationType } from "@/enums/StationType";
+import { StationType, STATION_TYPE_LIST } from "@/enums/StationType";
 import { TableTab } from "@/enums/TableTab";
 
 const spotRow = (spot) => ({
@@ -75,17 +75,16 @@ export function getTabCounts(spots, stations) {
 //the tab matching the type filter. undefined for a mix that no tab has (which
 //the map buttons can pick)
 export function getSelectedTab(show) {
-    const types = [StationType.SPOT, StationType.HEARD, StationType.CQ];
-    const on = types.filter((type) => show[type]);
+    const on = STATION_TYPE_LIST.filter((type) => show[type]);
 
-    if (on.length === types.length) return TableTab.ALL;
+    if (on.length === STATION_TYPE_LIST.length) return TableTab.ALL;
     if (on.length === 1) return on[0];
 }
 
 //the type filter that picking a tab sets
 export const getTabFilter = (tab) =>
     Object.fromEntries(
-        [StationType.SPOT, StationType.HEARD, StationType.CQ].map((type) => [
+        STATION_TYPE_LIST.map((type) => [
             type,
             tab === TableTab.ALL || tab === type,
         ]),

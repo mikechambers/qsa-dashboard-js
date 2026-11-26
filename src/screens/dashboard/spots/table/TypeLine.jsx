@@ -22,16 +22,10 @@
  */
 
 import { Group, Text } from "@mantine/core";
-import { StationType } from "@/enums/StationType";
+import { STATION_TYPE_INFO } from "@/enums/StationType";
 import { shortAge } from "@/utils/tableRows";
 import { STATION_COLORS } from "../../map/config";
 import { TypeIcon } from "../../map/TypeIcon";
-
-const LABELS = {
-    [StationType.SPOT]: "Spot",
-    [StationType.HEARD]: "Heard",
-    [StationType.CQ]: "CQ",
-};
 
 //under the callsign: what the row is, and how old
 export const TypeLine = ({ type, date }) => (
@@ -43,7 +37,7 @@ export const TypeLine = ({ type, date }) => (
             c={STATION_COLORS[type]}
             style={{ whiteSpace: "nowrap" }}
         >
-            {LABELS[type]} · {shortAge(date)}
+            {STATION_TYPE_INFO[type].name} · {shortAge(date)}
         </Text>
     </Group>
 );

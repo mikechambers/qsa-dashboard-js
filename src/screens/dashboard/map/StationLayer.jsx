@@ -22,9 +22,8 @@
  */
 
 import { useEffect } from "react";
-import { useSettings } from "@/contexts/SettingsContext";
-import { StationType } from "@/enums/StationType";
 import { useActiveStations } from "@/hooks/useActiveStations";
+import { useShownTypes } from "@/hooks/useTypeFilter";
 import { getShownStations, isMappable } from "@/utils/activeStations";
 import { useStationLayer } from "./useStationLayer";
 import { useSelectedStationMarker } from "./useSelectedStationMarker";
@@ -40,11 +39,8 @@ export const StationLayer = ({
     onHover,
     onPin,
 }) => {
-    const { settings } = useSettings();
-    const shown = getShownStations(useActiveStations(), {
-        [StationType.CQ]: settings.showCQ,
-        [StationType.HEARD]: settings.showHeard,
-    });
+    const { show } = useShownTypes();
+    const shown = getShownStations(useActiveStations(), show);
     //some can be in the table and card, but not on the map
     const stations = shown.filter((s) => isMappable(s.decode));
 

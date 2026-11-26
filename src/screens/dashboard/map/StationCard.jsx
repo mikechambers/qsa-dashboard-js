@@ -23,7 +23,7 @@
 
 import { ActionIcon, Group, Stack, Text } from "@mantine/core";
 import { IconPinFilled } from "@tabler/icons-react";
-import { StationType } from "@/enums/StationType";
+import { STATION_TYPE_INFO } from "@/enums/StationType";
 import { getCSSColorForSNR } from "@/utils/view";
 
 import { BandBadge } from "../spots/BandBadge";
@@ -32,16 +32,6 @@ import { CallsignField } from "../spots/detail/CallsignField";
 import { STATION_COLORS } from "./config";
 
 import classes from "./SpotPopup.module.css";
-
-const TYPES = {
-    [StationType.CQ]: { tag: "CQ", shortTag: "CQ", phrase: "Calling anyone" },
-    [StationType.HEARD]: { tag: "Heard", shortTag: "Heard" },
-    [StationType.SPOT]: {
-        tag: "Spot",
-        shortTag: "Spot",
-        phrase: "Heard your signal",
-    },
-};
 
 const UNKNOWN_COLOR = "var(--mantine-color-default-border)";
 const signalColor = (report) =>
@@ -106,7 +96,7 @@ export const StationCard = ({
     open,
     toggle,
 }) => {
-    const { tag, shortTag, phrase } = TYPES[type];
+    const { name, phrase } = STATION_TYPE_INFO[type];
 
     const bar = (
         <SignalBar
@@ -116,12 +106,12 @@ export const StationCard = ({
         />
     );
 
-    const typeTag = (label) => (
+    const typeTag = (
         <span
             className={classes.typeTag}
             style={{ background: STATION_COLORS[type] }}
         >
-            {label}
+            {name}
         </span>
     );
 
@@ -132,7 +122,7 @@ export const StationCard = ({
                 {bar}
                 <Group justify="space-between" wrap="nowrap" gap="xs">
                     <Group gap="xs" wrap="nowrap">
-                        {typeTag(shortTag)}
+                        {typeTag}
                         <CallsignField callsign={call} />
                     </Group>
                     <Group gap="xs" wrap="nowrap">
@@ -163,7 +153,7 @@ export const StationCard = ({
 
             <Group justify="space-between" wrap="nowrap" gap={6}>
                 <Group gap={6} wrap="nowrap">
-                    {typeTag(tag)}
+                    {typeTag}
                     <Text size="xs" c="dimmed" style={{ whiteSpace: "nowrap" }}>
                         {[status ?? phrase, typeNote].filter(Boolean).join(" · ")}
                     </Text>
