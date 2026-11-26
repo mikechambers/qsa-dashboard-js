@@ -21,7 +21,7 @@
  * SOFTWARE.
  */
 
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
 
 import "./styles/global.css";
 import "@mantine/core/styles.css";
@@ -40,6 +40,7 @@ import "@fontsource/roboto-mono/500.css";
 import "@fontsource/roboto-mono/600.css";
 import { DisplayMode } from "./enums/DisplayMode";
 import { ModalsProvider } from "@mantine/modals";
+import { listenToWsjtx } from "./utils/wsjtx";
 
 const theme = createTheme({
     fontFamilyMonospace: "'Roboto Mono', monospace, monospace",
@@ -66,6 +67,9 @@ const theme = createTheme({
 });
 
 export default function App() {
+    //for now, just log what WSJT-X sends (desktop only)
+    useEffect(() => listenToWsjtx((data) => console.log("wsjtx", data)), []);
+
     return (
         <SettingsProvider>
             <SpotDataProvider>
