@@ -36,6 +36,8 @@ import { ClockContainer } from "./ClockContainer";
 import { ControlContainer } from "./ControlContainer";
 import { WsjtxStatus } from "./WsjtxStatus";
 import { Breakpoint } from "@/enums/Breakpoint";
+import { Platform } from "@/enums/Platform";
+import { PLATFORM } from "@/utils/platform";
 import { GithubIcon } from "@/screens/icons/GithubIcon";
 
 export const HeaderContainer = ({ callsign, grid }) => {
@@ -64,7 +66,10 @@ export const HeaderContainer = ({ callsign, grid }) => {
                 <Group wrap="nowrap" gap={16}>
                     <WsjtxStatus />
                     <ConnectionStatusBadge breakpoint={breakpoint} />
-                    <ControlContainer compact={compact} />
+                    {/* the desktop app has these in its menu */}
+                    {PLATFORM !== Platform.DESKTOP && (
+                        <ControlContainer compact={compact} />
+                    )}
                     {/* 
                     <ActionIcon
                         variant="subtle"

@@ -1,3 +1,4 @@
+mod menu;
 mod wsjtx;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -6,7 +7,10 @@ pub fn run() {
     .manage(wsjtx::Connection::default())
     // opens links to other sites in the system browser
     .plugin(tauri_plugin_opener::init())
-    .invoke_handler(tauri::generate_handler![wsjtx::listener::wsjtx_reply])
+    .invoke_handler(tauri::generate_handler![
+      menu::set_menu_state,
+      wsjtx::listener::wsjtx_reply
+    ])
     .setup(|app| {
       if cfg!(debug_assertions) {
         app.handle().plugin(
@@ -15,6 +19,7 @@ pub fn run() {
             .build(),
         )?;
       }
+      menu::setup(app.handle())?;
       wsjtx::start(app.handle().clone());
       Ok(())
     })

@@ -41,6 +41,7 @@ import "@fontsource/roboto-mono/600.css";
 import { DisplayMode } from "./enums/DisplayMode";
 import { ModalsProvider } from "@mantine/modals";
 import { WsjtxProvider } from "./contexts/WsjtxContext";
+import { useDesktopMenu } from "./hooks/useDesktopMenu";
 
 const theme = createTheme({
     fontFamilyMonospace: "'Roboto Mono', monospace, monospace",
@@ -80,6 +81,7 @@ export default function App() {
 
 function ThemedApp() {
     const { settings } = useSettings();
+    useDesktopMenu();
 
     const colorScheme =
         settings.displayMode === DisplayMode.DARK ? "dark" : "light";
