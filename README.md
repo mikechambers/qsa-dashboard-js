@@ -157,6 +157,33 @@ There are a couple of tests included (mostly for callsign and grid validation), 
 $ npm test
 ```
 
+### Offline maps (desktop app)
+
+The web version loads its map from [Maptoolkit](https://maptoolkit.org). The desktop app uses map files bundled with it, from [Protomaps](https://protomaps.com), so the map works offline. These files are not checked into git, so you need to download them before you first run or build the desktop app.
+
+#### Requirements
+
+- Online connection (only while downloading)
+- `git` and `bash` (on Windows, use Git Bash or WSL)
+- The [pmtiles command line tool](https://github.com/protomaps/go-pmtiles/releases) (on macOS: `brew install pmtiles`)
+
+#### Download or update the maps
+
+1. Pick a recent build date from [maps.protomaps.com/builds](https://maps.protomaps.com/builds). Only recent builds are kept.
+2. Run the script with that date, in `YYYYMMDD` format:
+
+```
+$ npm run fetch-map -- 20261125
+```
+
+3. Restart the desktop app, or rebuild it, to pick up the new files.
+
+The files are saved to `src-tauri/resources/map`. Running the script again replaces the tiles.
+
+To change how much detail is included, edit `MAXZOOM` in `scripts/fetch-map.sh`. The default is 6, and each additional level roughly doubles the size of the tiles.
+
+Fonts and icons come from [basemaps-assets](https://github.com/protomaps/basemaps-assets), pinned to a specific commit (`ASSETS_COMMIT` in the same script), so they only change if you update it.
+
 ## Questions, Feature Requests, Feedback
 
 If you have any questions, feature requests, issues or need help please post on the [issues page](https://github.com/mikechambers/qsa-dashboard-js/issues).

@@ -29,11 +29,11 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import { IconCurrentLocation } from "@tabler/icons-react";
 import { ActionIcon } from "@mantine/core";
 import { useSettings } from "@/contexts/SettingsContext";
-import { DisplayMode } from "@/enums/DisplayMode";
 import { SNRLegend } from "./SNRKey";
 import { MapControls } from "./MapControls";
 
 import { DEFAULT_ZOOM } from "./config";
+import { getMapStyle } from "./mapStyle";
 
 import { useMapInstance } from "./useMapInstance";
 import { useHomeMarker } from "./useHomeMarker";
@@ -117,9 +117,7 @@ export const SpotMap = ({ spots, location }) => {
 
     //initialize map. Switching style based on light / dark mode
     const { map, ready } = useMapInstance(mapContainer, {
-        style: `https://styles.maptoolkit.org/${
-            settings.displayMode === DisplayMode.DARK ? "dark" : "light"
-        }.json`,
+        getStyle: () => getMapStyle(settings.displayMode),
         center: startCoordinates,
         zoom: DEFAULT_ZOOM,
     });

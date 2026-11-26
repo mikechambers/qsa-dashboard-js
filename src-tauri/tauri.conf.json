@@ -20,12 +20,19 @@
       }
     ],
     "security": {
-      "csp": null
+      "csp": null,
+      "assetProtocol": {
+        "enable": true,
+        "scope": ["$RESOURCE/map/**/*"]
+      }
     }
   },
   "bundle": {
     "active": true,
     "targets": "all",
+    "resources": {
+      "resources/map/": "map/"
+    },
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",

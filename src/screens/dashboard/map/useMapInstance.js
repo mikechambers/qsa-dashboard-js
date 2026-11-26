@@ -25,22 +25,34 @@ import { useEffect, useState } from "react";
 import { Map } from "maplibre-gl";
 
 //initialize map instance, and set ready property once it has loaded.
-export function useMapInstance(containerRef, { style, center, zoom }) {
+//getStyle can be async, as the desktop style has to look up local file paths.
+export function useMapInstance(containerRef, { getStyle, center, zoom }) {
     const [map, setMap] = useState(null);
     const [ready, setReady] = useState(false);
 
     useEffect(() => {
-        const m = new Map({
-            container: containerRef.current,
-            style,
-            center,
-            zoom,
-        });
-        m.on("load", () => setReady(true));
-        setMap(m);
+        let m;
+        let cancelled = false;
+
+        getStyle()
+            .then((style) => {
+                //unmounted while we were waiting
+                if (cancelled) return;
+
+                m = new Map({
+                    container: containerRef.current,
+                    style,
+                    center,
+                    zoom,
+                });
+                m.on("load", () => setReady(true));
+                setMap(m);
+            })
+            .catch((e) => console.error("Error creating map", e));
 
         return () => {
-            m.remove();
+            cancelled = true;
+            m?.remove();
             setMap(null);
             setReady(false);
         };

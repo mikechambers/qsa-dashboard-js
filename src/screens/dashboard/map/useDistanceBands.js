@@ -27,6 +27,7 @@ import { UnitType } from "@/enums/UnitType";
 import { milesToKilometers } from "@/utils/geo";
 import { convertAndFormatDistance, formatNumber } from "@/utils/view";
 import {
+    DISTANCE_LABEL_FONT,
     DISTANCE_LABEL_PATH,
     DISTANCE_LABEL_SIZE,
     DISTANCE_RANGE_PATH,
@@ -213,7 +214,7 @@ export const useDistanceBands = (
                 type: "symbol",
                 layout: {
                     "text-field": ["get", "label"],
-                    "text-font": ["Noto Sans Bold"],
+                    "text-font": [DISTANCE_LABEL_FONT],
                     "text-size": DISTANCE_LABEL_SIZE,
                     "text-allow-overlap": true,
                     //furthest label wins if two sit close together

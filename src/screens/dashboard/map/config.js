@@ -21,6 +21,9 @@
  * SOFTWARE.
  */
 
+import { Platform } from "@/enums/Platform";
+import { PLATFORM } from "@/utils/platform";
+
 //empty featurecollection to use to clear layers
 export const EMPTY_FEATURE_COLLECTION = {
     type: "FeatureCollection",
@@ -35,6 +38,9 @@ export const DISTANCE_RANGE_PATH = "DISTANCE_RANGE_PATH";
 export const FURTHEST_RANGE_PATH = "FURTHEST_RANGE_PATH";
 export const DISTANCE_LABEL_PATH = "DISTANCE_LABEL_PATH";
 export const DISTANCE_LABEL_SIZE = 12;
+//the font has to exist in the map style. The offline fonts have no Bold
+export const DISTANCE_LABEL_FONT =
+    PLATFORM === Platform.DESKTOP ? "Noto Sans Medium" : "Noto Sans Bold";
 
 export const CIRCLE_RADIUS = 6;
 export const CIRCLE_STROKE = 2;
