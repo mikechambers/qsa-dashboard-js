@@ -26,6 +26,7 @@ import { SummaryBase } from "./PodBase";
 import { formatHMS } from "@/utils/view";
 import { timeAgo } from "@/utils/date";
 import { useInterval } from "@mantine/hooks";
+import { Tooltip } from "@mantine/core";
 
 let sessionStart = null;
 
@@ -47,14 +48,24 @@ export const ElapsedTimePod = ({ mostRecentSpot }) => {
         return interval.stop;
     }, []);
 
+    const onClick = () => {
+        sessionStart = Date.now();
+        setSeconds(0);
+    };
+
     const f = formatHMS(seconds);
 
     return (
-        <SummaryBase
-            label="Session"
-            value={f}
-            subvalue={subvalue}
-            useMonospace={true}
-        />
+        <Tooltip label="Click to reset" withArrow>
+            <span>
+                <SummaryBase
+                    label="Session"
+                    value={f}
+                    subvalue={subvalue}
+                    useMonospace={true}
+                    onClick={onClick}
+                />
+            </span>
+        </Tooltip>
     );
 };
