@@ -52,7 +52,7 @@ export function SpotDataProvider({ children }) {
     const [status, setStatus] = useState(
         settings.demoMode
             ? ConnectionStatus.CONNECTED
-            : ConnectionStatus.DISCONNECTED,
+            : ConnectionStatus.CONNECTING,
     );
 
     const [filter, setFilter] = useState(new SpotFilter());
@@ -63,6 +63,8 @@ export function SpotDataProvider({ children }) {
 
     const [activeCallsign, setActiveCallsign] = useState("");
     const prevCallsignRef = useRef("");
+    //there is nothing to connect for until there is a callsign
+    const hasCallsign = Boolean(activeCallsign);
 
     const clearSpots = () => {
         batchRef.current = [];
@@ -113,8 +115,11 @@ export function SpotDataProvider({ children }) {
         }
     }, [settings.demoMode]);
 
-    //one once per page to connect
+    //connects once there is first a callsign, then stays connected, so spots
+    //keep arriving while other screens are open
     useEffect(() => {
+        if (!hasCallsign) return;
+
         const clientId = `qsa-dashboard-w6msh-${crypto.randomUUID()}`;
         const client = mqtt.connect("wss://mqtt.pskreporter.info:1886", {
             clientId: clientId,
@@ -139,6 +144,16 @@ export function SpotDataProvider({ children }) {
                 }
             } catch (e) {
                 console.error("Error parsing Spot JSON. Skipping.", e);
+                return;
+            }
+
+            //one for a callsign we have switched away from can still arrive.
+            //Portable calls have a "." in place of "/" in topics
+            const normalize = (c) => c?.toUpperCase().replace(/\./g, "/");
+            if (
+                normalize(spot.senderCall) !==
+                normalize(prevCallsignRef.current)
+            ) {
                 return;
             }
 
@@ -186,7 +201,7 @@ export function SpotDataProvider({ children }) {
 
             clientRef.current = null;
         };
-    }, []);
+    }, [hasCallsign]);
 
     //re-run when the active callsign changes
     useEffect(() => {
@@ -229,9 +244,9 @@ export function SpotDataProvider({ children }) {
         return () => {
             client.off("connect", subscribe);
 
-            if (client.connected) {
-                client.unsubscribe(topic);
-            }
+            //even while disconnected, or mqtt would subscribe to it again when
+            //it reconnects
+            client.unsubscribe(topic);
         };
     }, [activeCallsign]);
 
