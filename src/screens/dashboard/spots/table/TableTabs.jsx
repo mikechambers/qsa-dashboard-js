@@ -21,17 +21,18 @@
  * SOFTWARE.
  */
 
-import { SegmentedControl, Stack, Group, Text } from "@mantine/core";
+import { SegmentedControl, Stack, Group, Text, Tooltip } from "@mantine/core";
 import { STATION_TYPE_INFO, STATION_TYPE_LIST } from "@/enums/StationType";
 import { TableTab } from "@/enums/TableTab";
 import { TypeIcon } from "../../map/TypeIcon";
 
 //All, then one for each type
 const TABS = [
-    { value: TableTab.ALL, name: "All" },
+    { value: TableTab.ALL, name: "All", description: "All" },
     ...STATION_TYPE_LIST.map((type) => ({
         value: type,
         name: STATION_TYPE_INFO[type].plural,
+        description: STATION_TYPE_INFO[type].description,
         type,
     })),
 ];
@@ -43,23 +44,27 @@ export const TableTabs = ({ value, onChange, counts }) => (
         size="xs"
         value={value}
         onChange={onChange}
-        data={TABS.map(({ value, name, type }) => ({
+        data={TABS.map(({ value, name, type, description }) => ({
             value,
             label: (
                 <Stack gap={0} align="center">
-                    <Group gap={4} wrap="nowrap" h={18}>
-                        {type && <TypeIcon type={type} size={0.55} />}
-                        <Text size="sm" fw={600}>
-                            {name}
-                        </Text>
-                    </Group>
-                    <Text
-                        size="xs"
-                        c="dimmed"
-                        style={{ fontVariantNumeric: "tabular-nums" }}
-                    >
-                        {counts[value]}
-                    </Text>
+                    <Tooltip label={description}>
+                        <span>
+                            <Group gap={4} wrap="nowrap" h={18}>
+                                {type && <TypeIcon type={type} size={0.55} />}
+                                <Text size="sm" fw={600}>
+                                    {name}
+                                </Text>
+                            </Group>
+                            <Text
+                                size="xs"
+                                c="dimmed"
+                                style={{ fontVariantNumeric: "tabular-nums" }}
+                            >
+                                {counts[value]}
+                            </Text>
+                        </span>
+                    </Tooltip>
                 </Stack>
             ),
         }))}
