@@ -6,7 +6,10 @@
   "scripts": {
     "fetch-map": "bash scripts/fetch-map.sh",
     "icons": "node scripts/make-icons.mjs",
+    "licenses": "node scripts/make-licenses.mjs",
+    "predev": "npm run licenses",
     "dev": "vite",
+    "prebuild": "npm run licenses",
     "build": "vite build",
     "lint": "oxlint",
     "preview": "vite preview",

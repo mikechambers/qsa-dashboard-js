@@ -23,6 +23,7 @@ import SCREENSHOT_DARK from "@/assets/screenshot-dark.png";
 import SCREENSHOT_DARK_THUMB from "@/assets/screenshot-dark-thumb.webp";
 import SCREENSHOT_FILTERS from "@/assets/screenshot-filters.png";
 import SCREENSHOT_FILTERS_THUMB from "@/assets/screenshot-filters-thumb.webp";
+import { ThirdPartyLicenses } from "./ThirdPartyLicenses";
 
 const REPO_URL = "https://github.com/mikechambers/qsa-dashboard-js";
 const REPORT_ISSUES_URL =
@@ -168,7 +169,7 @@ export const AboutScreen = () => {
                             for great-circle paths and distance rings.
                         </List.Item>
                         <List.Item>
-                            Map styles by{" "}
+                            Web map styles by{" "}
                             <ExternalLink href="https://maptoolkit.net">
                                 Maptoolkit
                             </ExternalLink>
@@ -186,6 +187,58 @@ export const AboutScreen = () => {
                             libraries for grid square, distance and DXCC data.
                         </List.Item>
                         <List.Item>
+                            Callsign country data from{" "}
+                            <ExternalLink href="https://www.country-files.com">
+                                Amateur Radio Country Files
+                            </ExternalLink>{" "}
+                            by Jim Reisert (AD1C), via the Ham2K library.
+                        </List.Item>
+                        <List.Item>
+                            Heard and CQ stations come from{" "}
+                            <ExternalLink href="https://wsjt.sourceforge.io">
+                                WSJT-X
+                            </ExternalLink>
+                            , by Joe Taylor (K1JT) and the WSJT development
+                            team.
+                        </List.Item>
+                        <List.Item>
+                            Desktop app built with{" "}
+                            <ExternalLink href="https://tauri.app">
+                                Tauri
+                            </ExternalLink>
+                            . Its offline map is from{" "}
+                            <ExternalLink href="https://protomaps.com">
+                                Protomaps
+                            </ExternalLink>
+                            , read with{" "}
+                            <ExternalLink href="https://github.com/protomaps/PMTiles">
+                                PMTiles
+                            </ExternalLink>
+                            , with data from{" "}
+                            <ExternalLink href="https://www.openstreetmap.org/copyright">
+                                OpenStreetMap
+                            </ExternalLink>{" "}
+                            contributors and{" "}
+                            <ExternalLink href="https://www.naturalearthdata.com">
+                                Natural Earth
+                            </ExternalLink>
+                            , icons from{" "}
+                            <ExternalLink href="https://github.com/tangrams/icons">
+                                Tangram
+                            </ExternalLink>{" "}
+                            and labels in Noto Sans.
+                        </List.Item>
+                        <List.Item>
+                            <ExternalLink href="https://tabler.io/icons">
+                                Tabler Icons
+                            </ExternalLink>{" "}
+                            and the{" "}
+                            <ExternalLink href="https://github.com/googlefonts/RobotoMono">
+                                Roboto Mono
+                            </ExternalLink>{" "}
+                            font.
+                        </List.Item>
+                        <List.Item>
                             App built with{" "}
                             <ExternalLink href="https://mantine.dev">
                                 Mantine
@@ -197,6 +250,22 @@ export const AboutScreen = () => {
                             ,{" "}
                             <ExternalLink href="https://react.dev">
                                 React
+                            </ExternalLink>
+                            ,{" "}
+                            <ExternalLink href="https://reactrouter.com">
+                                React Router
+                            </ExternalLink>
+                            ,{" "}
+                            <ExternalLink href="https://recharts.org">
+                                Recharts
+                            </ExternalLink>
+                            ,{" "}
+                            <ExternalLink href="https://tanstack.com/virtual">
+                                TanStack Virtual
+                            </ExternalLink>
+                            ,{" "}
+                            <ExternalLink href="https://www.embla-carousel.com">
+                                Embla Carousel
                             </ExternalLink>{" "}
                             and{" "}
                             <ExternalLink href="https://vite.dev">
@@ -205,6 +274,10 @@ export const AboutScreen = () => {
                             .
                         </List.Item>
                     </List>
+
+                    <Text>
+                        <ThirdPartyLicenses />
+                    </Text>
                 </Section>
 
                 <Section title="Bugs and feature requests">

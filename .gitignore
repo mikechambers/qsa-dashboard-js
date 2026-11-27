@@ -52,3 +52,6 @@ dist-ssr
 
 # offline map files, created by npm run fetch-map
 src-tauri/resources/map/
+
+# license notices, created by npm run licenses
+public/third-party-licenses.txt

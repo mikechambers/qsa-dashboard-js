@@ -362,11 +362,15 @@ If you have any questions, feature requests, issues or need help please post on 
 
 Data is obtained from a live feed of propagation submissions to [mqtt.pskreporter.info](https://www.mqtt.pskreporter.info/), from data submitted to [PSKReporter](https://pskreporter.info).
 
-Built with [React](https://react.dev), [Mantine](https://mantine.dev), [MapLibre GL JS](https://maplibre.org), [Turf.js](https://turfjs.org) for the distance rings and path lines, and the [ham2k](https://github.com/ham2k) libraries for DXCC and grid / distance calculations. Map styles in the web version are from [maptoolkit](https://www.maptoolkit.com), using [OpenStreetMap](https://www.openstreetmap.org/copyright) data.
+Built with [React](https://react.dev), [Mantine](https://mantine.dev), [MapLibre GL JS](https://maplibre.org), [Turf.js](https://turfjs.org) for the distance rings and path lines, and the [ham2k](https://github.com/ham2k) libraries for DXCC and grid / distance calculations. Callsign country data is from [Amateur Radio Country Files](https://www.country-files.com) by Jim Reisert (AD1C), via the Ham2K library. Map styles in the web version are from [maptoolkit](https://www.maptoolkit.com), using [OpenStreetMap](https://www.openstreetmap.org/copyright) data.
 
-The desktop app is built with [Tauri](https://tauri.app). Its offline map uses tiles, styles and icons from [Protomaps](https://protomaps.com), read with [PMTiles](https://github.com/protomaps/PMTiles), with data from [OpenStreetMap](https://www.openstreetmap.org/copyright) and [Natural Earth](https://www.naturalearthdata.com). Map labels use the Noto Sans font, under the [SIL Open Font License](https://openfontlicense.org).
+Also uses [MQTT.js](https://github.com/mqttjs/MQTT.js), [Vite](https://vite.dev), [React Router](https://reactrouter.com), [Recharts](https://recharts.org), [TanStack Virtual](https://tanstack.com/virtual), [Embla Carousel](https://www.embla-carousel.com), [Tabler Icons](https://tabler.io/icons) and the [Roboto Mono](https://github.com/googlefonts/RobotoMono) font.
+
+The desktop app is built with [Tauri](https://tauri.app). Its offline map uses tiles, styles and icons from [Protomaps](https://protomaps.com), read with [PMTiles](https://github.com/protomaps/PMTiles), with data from [OpenStreetMap](https://www.openstreetmap.org/copyright) and [Natural Earth](https://www.naturalearthdata.com). Some map icons are from [Tangram](https://github.com/tangrams/icons). Map labels use the Noto Sans font, under the [SIL Open Font License](https://openfontlicense.org).
 
 Heard and CQ stations come from [WSJT-X](https://wsjt.sourceforge.io), by Joe Taylor (K1JT) and the WSJT development team.
+
+The full third-party license notices are in the app, under **About → Third-party licenses**.
 
 ## License
 
