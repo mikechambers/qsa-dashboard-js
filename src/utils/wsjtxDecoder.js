@@ -78,7 +78,9 @@ export function applyStatus(decode, status) {
 //passed in because the country data is large and loaded separately.
 //Grids decoded are added to the grid store
 export function createDecoder({ grids = createGridStore() } = {}) {
-    const statuses = new Map(); //WSJT-X instance id -> latest status
+    //only one WSJT-X is supported (see listener.rs), so only the latest status
+    //is kept
+    let latestStatus;
     let lookupCallsign = () => undefined;
     let sequence = 0;
 
@@ -91,13 +93,15 @@ export function createDecoder({ grids = createGridStore() } = {}) {
         //undefined
         handle(event, now = new Date()) {
             if (event.type === "status") {
-                statuses.set(event.id, event);
+                latestStatus = event;
                 return;
             }
 
             if (event.type !== "decode") return;
 
-            const status = statuses.get(event.id);
+            //one from before WSJT-X changed doesn't apply
+            const status =
+                latestStatus?.id === event.id ? latestStatus : undefined;
             const { kind, from, to, cqModifier, grid, report } =
                 parseWsjtxMessage(event.message);
             const call = from ?? undefined;

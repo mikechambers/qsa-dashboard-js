@@ -90,8 +90,11 @@ export function WsjtxProvider({ children }) {
         if (!desktop || !wsjtxEnabled) return;
 
         const stopListening = listenToDecodes((message, decode) => {
-            if (decode) console.log("decode", decode.text, decode);
-            else console.log("wsjtx", message);
+            //not in release builds, as a busy band is a steady stream
+            if (import.meta.env.DEV) {
+                if (decode) console.log("decode", decode.text, decode);
+                else console.log("wsjtx", message);
+            }
 
             if (message.type === "close") {
                 setConnected(false);
