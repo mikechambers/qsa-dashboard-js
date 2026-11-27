@@ -209,7 +209,7 @@ export const AboutScreen = () => {
 
                 <Section title="Bugs and feature requests">
                     <Text>
-                        Found a bug or have an idea? Let me know on{" "}
+                        Found a bug or have an idea? Share it on{" "}
                         <ExternalLink href={REPORT_ISSUES_URL}>
                             the GitHub project page
                         </ExternalLink>
