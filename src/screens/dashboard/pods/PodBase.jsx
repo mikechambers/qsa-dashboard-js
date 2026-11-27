@@ -22,7 +22,9 @@
  */
 
 import { Stack, Text, Group, Box, ColorSwatch } from "@mantine/core";
+import classes from "./PodBase.module.css";
 
+//one stat. compact lays it out on one line, for the collapsed summary bar
 export const SummaryBase = ({
     value,
     unit,
@@ -32,6 +34,9 @@ export const SummaryBase = ({
     swatchColor,
     onClick,
     useMonospace,
+    compact,
+    compactSubvalue, //shorter text for the compact layout
+    title,
 }) => {
     const style = { cursor: onClick ? "pointer" : "auto" };
 
@@ -40,8 +45,39 @@ export const SummaryBase = ({
     const c = () => {
         if (onClick) onClick();
     };
+    //a button when it does something, so a click on it doesn't count as a
+    //click on the bar around it
+    if (compact) {
+        return (
+            <Box
+                component={onClick ? "button" : "span"}
+                type={onClick ? "button" : undefined}
+                className={classes.compact}
+                title={title}
+                onClick={onClick}
+            >
+                {swatchColor && (
+                    <ColorSwatch
+                        component="span"
+                        color={swatchColor}
+                        size={8}
+                    />
+                )}
+                {label && <span className={classes.dimmed}>{label}</span>}
+                <Text span size="sm" fw={600} ff={ff}>
+                    {value ?? "-"}
+                    {unit && ` ${unit}`}
+                </Text>
+                {compactSubvalue && (
+                    <span className={classes.dimmed}>{compactSubvalue}</span>
+                )}
+                {footer}
+            </Box>
+        );
+    }
+
     return (
-        <Box onClick={() => c()} style={style}>
+        <Box onClick={() => c()} style={style} title={title}>
             <Stack gap={4}>
                 <Text size="xs" tt="uppercase" lts={0.5}>
                     {label}

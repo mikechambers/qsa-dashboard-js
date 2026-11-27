@@ -21,10 +21,10 @@
  * SOFTWARE.
  */
 
-import { useMemo } from "react";
 import { ActionIcon, Box, Divider, Group, Paper } from "@mantine/core";
 import { IconChevronUp } from "@tabler/icons-react";
 import { SummaryBase } from "./PodBase";
+import { useSummaryData } from "./useSummaryData";
 import { useSpotData } from "@/contexts/SpotDataContext";
 
 import { useSettings } from "@/contexts/SettingsContext";
@@ -35,18 +35,11 @@ import { FurthestHeardPod } from "./FurthestHeardPod";
 import { MostRecentSpotPod } from "./MostRecentSpotPod";
 import { BandsPod } from "./BandsPod";
 import { WsjtxPod } from "./WsjtxPod";
-import { ALL_CASES } from "@/consts";
 import { ChartContainer } from "./charts/ChartContainer";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { Breakpoint } from "@/enums/Breakpoint";
 import { Platform } from "@/enums/Platform";
 import { PLATFORM } from "@/utils/platform";
-import { useActiveStations } from "@/hooks/useActiveStations";
-import { useFilteredStations } from "@/hooks/useStations";
-import { useTypeFilter } from "@/hooks/useTypeFilter";
-import { StationType } from "@/enums/StationType";
-import { getTableRows } from "@/utils/tableRows";
-import { getSummary } from "@/utils/summary";
 
 //width of a band tile. The wide one has room for "stations" after the count,
 //and is used on desktop so the tiles don't resize as the type filter changes
@@ -54,42 +47,13 @@ const TILE_WIDTH = 92;
 const WIDE_TILE_WIDTH = 106;
 
 export const PodContainer = () => {
-    const {
-        mostRecentSpot,
-        filteredSpots,
-        ageTick,
-        spots,
-        filter,
-        setFilter,
-        activeCallsign,
-    } = useSpotData();
+    const { mostRecentSpot, filteredSpots } = useSpotData();
     const { settings, setShowPods } = useSettings();
     //phones only get the essentials: no session timer, bands or charts
     const compact = useBreakpoint() === Breakpoint.COMPACT;
 
-    //the bands pod ignores the band filter, so the other bands stay visible
-    //(and clickable) while one is selected
-    const bandSpots = useMemo(
-        () => filter.with({ band: ALL_CASES }).filter(spots),
-        [filter, spots, ageTick],
-    );
-
-    //it counts the types being viewed, the same as the table. The web version
-    //only has spots
-    const { available, show } = useTypeFilter();
-    const stations = useFilteredStations();
-    //as for spots, the bands pod ignores the band filter
-    const bandStations = filter
-        .with({ band: ALL_CASES })
-        .filterStations(useActiveStations());
-    const viewedTypes = available ? show : { [StationType.SPOT]: true };
-    const bandRows = getTableRows(bandSpots, bandStations, viewedTypes);
-
-    //the summary is of the same rows as the table
-    const summary = getSummary(
-        getTableRows(filteredSpots, stations, viewedTypes),
-        activeCallsign,
-    );
+    const { available, bandSpots, bandStations, bandRows, summary } =
+        useSummaryData();
 
     //width the tiles need (the tile, 6px gaps, plus the Paper's padding and
     //border), capped at 350 so that with many bands they scroll instead.
@@ -165,12 +129,6 @@ export const PodContainer = () => {
                         rows={bandRows}
                         tileWidth={tileWidth}
                         unitType={settings.unitType}
-                        selectedBand={
-                            filter.band === ALL_CASES ? null : filter.band
-                        }
-                        onSelectBand={(band) =>
-                            setFilter(filter.with({ band: band ?? ALL_CASES }))
-                        }
                     />
                 </Paper>
 

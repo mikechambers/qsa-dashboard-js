@@ -30,7 +30,7 @@ import { convertAndFormatDistance } from "@/utils/view";
 //row is from getTableRows: a spot, or a heard / CQ station
 //ring is which of the map's distance rings this pod goes with, if any, to
 //show its color
-export const SpotPod = ({ row, title, ring }) => {
+export const SpotPod = ({ row, title, ring, compact }) => {
     const { pin } = useSelectedSpot();
     const { settings } = useSettings();
 
@@ -57,6 +57,9 @@ export const SpotPod = ({ row, title, ring }) => {
                 ring && MAP_DISTANCE_RING_PALETTE[settings.displayMode][ring]
             }
             subvalue={subvalue}
+            compact={compact}
+            compactSubvalue={row?.call}
+            title={compact && subvalue ? subvalue : undefined}
         />
     );
 };

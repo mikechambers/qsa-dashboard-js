@@ -25,59 +25,22 @@ import { BANDS_REFRESH_MS } from "@/consts/config";
 import { useEffect, useRef, useState } from "react";
 import { ActionIcon, Box, Group, Text } from "@mantine/core";
 import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
-import { StationType } from "@/enums/StationType";
+import { getBandStats } from "@/utils/bandStats";
 import { useInterval } from "@mantine/hooks";
 import classes from "./BandsPod.module.css";
 import { BandTile } from "./BandTile";
+import { useBandFilter } from "./useBandFilter";
 
 const TILE_HEIGHT = 72;
 const GAP = 6;
-
-//one number per band: how many rows, when it was last heard, average snr,
-//and the furthest distance. Most rows first, ties go to the most recently heard.
-//rows are from getTableRows
-const getBandStats = (rows) => {
-    const stats = new Map();
-
-    for (const row of rows) {
-        if (!row.band) continue;
-
-        let s = stats.get(row.band);
-        if (!s) {
-            s = {
-                band: row.band,
-                count: 0,
-                spots: 0,
-                snrTotal: 0,
-                last: 0,
-                furthest: 0,
-            };
-            stats.set(row.band, s);
-        }
-
-        s.count++;
-        if (row.type === StationType.SPOT) s.spots++;
-        s.snrTotal += row.snr ?? 0;
-        s.last = Math.max(s.last, new Date(row.date).getTime() || 0);
-        s.furthest = Math.max(s.furthest, row.distance ?? 0);
-    }
-
-    return [...stats.values()].sort(
-        (a, b) => b.count - a.count || b.last - a.last,
-    );
-};
 
 //a row of small tiles, one per band. Scrolls sideways when they don't all
 //fit: no scrollbar, but an arrow at the edge shows there is more, and clicking
 //it scrolls over.
 //clicking a tile filters to that band, clicking it again clears the filter
-export const BandsPod = ({
-    rows,
-    tileWidth,
-    unitType,
-    selectedBand,
-    onSelectBand,
-}) => {
+export const BandsPod = ({ rows, tileWidth, unitType }) => {
+    const { selected, toggle } = useBandFilter();
+
     //times in the tiles are relative, so redraw every so often
     const [, setTick] = useState(0);
     const interval = useInterval(() => setTick((t) => t + 1), BANDS_REFRESH_MS);
@@ -173,12 +136,8 @@ export const BandsPod = ({
                         width={tileWidth}
                         height={TILE_HEIGHT}
                         unitType={unitType}
-                        selected={stat.band === selectedBand}
-                        onClick={() =>
-                            onSelectBand(
-                                stat.band === selectedBand ? null : stat.band,
-                            )
-                        }
+                        selected={stat.band === selected}
+                        onClick={() => toggle(stat.band)}
                     />
                 ))}
             </Group>

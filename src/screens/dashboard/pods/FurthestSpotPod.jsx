@@ -23,6 +23,13 @@
 
 import { SpotPod } from "./SpotPod";
 
-export const FurthestSpotPod = ({ row }) => {
-    return <SpotPod row={row} title="Furthest Spot" ring="furthest" />;
+export const FurthestSpotPod = ({ row, compact }) => {
+    return (
+        <SpotPod
+            row={row}
+            title={compact ? "Spot" : "Furthest Spot"}
+            ring="furthest"
+            compact={compact}
+        />
+    );
 };

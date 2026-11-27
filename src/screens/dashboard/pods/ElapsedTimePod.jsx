@@ -28,6 +28,8 @@ import { timeAgo } from "@/utils/date";
 import { useInterval } from "@mantine/hooks";
 import { Tooltip } from "@mantine/core";
 
+//outside the component, so the session carries on when the summary is
+//collapsed
 let sessionStart = null;
 
 const elapsedSeconds = () => {
@@ -35,7 +37,7 @@ const elapsedSeconds = () => {
     return Math.floor((Date.now() - sessionStart) / 1000);
 };
 
-export const ElapsedTimePod = ({ mostRecentSpot }) => {
+export const ElapsedTimePod = ({ mostRecentSpot, compact }) => {
     const [seconds, setSeconds] = useState(elapsedSeconds);
     const interval = useInterval(() => setSeconds(elapsedSeconds()), 1000);
 
@@ -54,6 +56,21 @@ export const ElapsedTimePod = ({ mostRecentSpot }) => {
     };
 
     const f = formatHMS(seconds);
+
+    //on one line there is only room for the time, so the rest is on hover
+    if (compact) {
+        const last = subvalue ? `${subvalue}. ` : "";
+
+        return (
+            <SummaryBase
+                value={f}
+                title={`${last}Click to reset`}
+                useMonospace={true}
+                onClick={onClick}
+                compact
+            />
+        );
+    }
 
     return (
         <Tooltip label="Click to reset" withArrow>

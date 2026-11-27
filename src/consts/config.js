@@ -54,6 +54,9 @@ export const SETTINGS_NAMESPACE = "qsa.setting";
 
 export const STATUS_ICON_SIZE = 22;
 
+//most bands listed in the collapsed summary bar. The rest are counted in "+N"
+export const SUMMARY_BAR_MAX_BANDS = 4;
+
 export const MAP_DISTANCE_RING_PALETTE = {
     LIGHT: {
         ring: "#495057",

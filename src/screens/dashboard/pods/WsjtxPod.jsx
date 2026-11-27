@@ -38,7 +38,7 @@ const getRadioState = (status) => {
 
 //the band and mode WSJT-X is on, and whether it is decoding or
 //transmitting. Desktop only
-export const WsjtxPod = () => {
+export const WsjtxPod = ({ compact }) => {
     const { available, status } = useWsjtx();
 
     if (!available) return null;
@@ -51,6 +51,24 @@ export const WsjtxPod = () => {
         .join(" · ");
 
     const state = getRadioState(status);
+
+    if (compact) {
+        return (
+            <SummaryBase
+                value={radio || "WSJT-X -"}
+                footer={
+                    state && (
+                        <span
+                            className={`${classes.bar} ${classes.badge} ${state.className}`}
+                        >
+                            {state.label}
+                        </span>
+                    )
+                }
+                compact
+            />
+        );
+    }
 
     return (
         <Paper withBorder radius="md">

@@ -33,6 +33,13 @@
     text-transform: uppercase;
 }
 
+/* the smaller one in the collapsed summary bar */
+.badge {
+    padding: 0 6px;
+    font-size: 10px;
+    letter-spacing: 1px;
+}
+
 .decode {
     background: var(--mantine-color-yellow-4);
     color: var(--mantine-color-black);

@@ -23,9 +23,10 @@
 
 import { Box, Group, Text } from "@mantine/core";
 import { timeAgo } from "@/utils/date";
-import { getColorForBand } from "../spots/BandBadge";
+import { getBandColorVar } from "./useBandFilter";
 import { UnitType } from "@/enums/UnitType";
 import { kilometersToMiles } from "@/utils/geo";
+import { getBandNoun } from "@/utils/bandStats";
 
 import classes from "./BandsPod.module.css";
 
@@ -52,15 +53,13 @@ export const BandTile = ({
     selected,
     onClick,
 }) => {
-    const color = `var(--mantine-color-${getColorForBand(stat.band)}-6)`;
+    const color = getBandColorVar(stat.band);
     const snr = Math.round(stat.snrTotal / stat.count);
     const furthest = compactDistance(stat.furthest, unitType);
     //spots are their report of us, and decodes are ours of them, so there is
     //no one average for a mix of the two
     const mixed = stat.spots > 0 && stat.spots < stat.count;
-    //spots are reports (a station can have several), heard and CQ rows are
-    //stations, and a mix of the two is neither
-    const noun = mixed ? "entries" : stat.spots ? "spots" : "stations";
+    const noun = getBandNoun(stat);
     const average = mixed ? "" : ` avg ${snr} dB,`;
     const ago = timeAgo(new Date(stat.last)).replace(/ ago$/, "");
 
