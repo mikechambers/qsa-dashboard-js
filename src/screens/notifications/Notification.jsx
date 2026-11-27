@@ -56,6 +56,8 @@ export const Notification = ({
     title,
     message,
     showSettings,
+    showReload,
+    persistent, //no close button
     closing,
     onClose, //closed by the user
     onExpire, //closed itself
@@ -86,11 +88,15 @@ export const Notification = ({
             className={`${classes.notification} ${closing ? classes.closing : ""}`}
             onAnimationEnd={() => closing && onClosed()}
         >
-            <Group gap="sm" wrap="nowrap">
+            {/* with Reload, the buttons can drop to a second line on a narrow
+                screen */}
+            <Group gap="sm" wrap={showReload ? "wrap" : "nowrap"}>
                 <ThemeIcon variant="light" color={color} size={36} radius="xl">
                     <Icon size={20} />
                 </ThemeIcon>
-                <div className={classes.text}>
+                <div
+                    className={`${classes.text} ${showReload ? classes.keepWidth : ""}`}
+                >
                     <Text size="sm" fw={700}>
                         {title}
                     </Text>
@@ -98,21 +104,35 @@ export const Notification = ({
                         {message}
                     </Text>
                 </div>
-                {showSettings && (
-                    <Button
-                        variant="outline"
-                        color={color}
-                        size="xs"
-                        flex="none"
-                        onClick={() => {
-                            navigate(SETTINGS_PATH);
-                            onClose();
-                        }}
-                    >
-                        Open Settings
-                    </Button>
+                {(showSettings || showReload) && (
+                    <Group gap="sm" wrap="nowrap" flex="none" ml="auto">
+                        {showSettings && (
+                            <Button
+                                variant="outline"
+                                color={color}
+                                size="xs"
+                                onClick={() => {
+                                    navigate(SETTINGS_PATH);
+                                    onClose();
+                                }}
+                            >
+                                Open Settings
+                            </Button>
+                        )}
+                        {showReload && (
+                            <Button
+                                color={color}
+                                size="xs"
+                                onClick={() => window.location.reload()}
+                            >
+                                Reload
+                            </Button>
+                        )}
+                    </Group>
                 )}
-                <CloseButton aria-label="Close" onClick={onClose} />
+                {!persistent && (
+                    <CloseButton aria-label="Close" onClick={onClose} />
+                )}
             </Group>
         </Paper>
     );

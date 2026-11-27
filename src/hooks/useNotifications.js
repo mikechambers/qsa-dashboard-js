@@ -34,6 +34,8 @@ import { createContext, useContext } from "react";
 //      title,
 //      message,
 //      showSettings, //true to have an Open Settings button
+//      showReload,   //true to have a Reload button
+//      persistent,   //true to have no close button
 //  }); //returns the id
 //
 //  dismiss(id); //for when it no longer applies

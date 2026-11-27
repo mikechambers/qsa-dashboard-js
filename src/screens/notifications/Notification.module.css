@@ -51,6 +51,11 @@
     min-width: 0;
 }
 
+/* wraps what follows rather than getting narrower than this */
+.keepWidth {
+    flex-basis: 180px;
+}
+
 @keyframes slide-in {
     from {
         transform: translateY(140%);

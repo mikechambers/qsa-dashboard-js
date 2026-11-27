@@ -29,7 +29,7 @@ import "@mantine/charts/styles.css";
 
 import { MantineProvider, createTheme } from "@mantine/core";
 
-import { Outlet } from "react-router";
+import { Outlet, useLocation } from "react-router";
 import { SettingsProvider, useSettings } from "./contexts/SettingsContext";
 import { SpotDataProvider } from "./contexts/SpotDataContext";
 
@@ -46,6 +46,7 @@ import { useDesktopMenu } from "./hooks/useDesktopMenu";
 import { NotificationProvider } from "./contexts/NotificationContext";
 import { GridMismatchNotice } from "./screens/notifications/GridMismatchNotice";
 import { SecondWsjtxNotice } from "./screens/notifications/SecondWsjtxNotice";
+import { ErrorBoundary } from "./screens/ErrorBoundary";
 
 const theme = createTheme({
     fontFamilyMonospace: "'Roboto Mono', monospace, monospace",
@@ -87,6 +88,7 @@ export default function App() {
 
 function ThemedApp() {
     const { settings } = useSettings();
+    const { pathname } = useLocation();
     useDesktopMenu();
 
     const colorScheme =
@@ -97,9 +99,11 @@ function ThemedApp() {
             <ModalsProvider>
                 <NotificationProvider>
                     <div id="main">
-                        <Suspense fallback={null}>
-                            <Outlet />
-                        </Suspense>
+                        <ErrorBoundary resetKey={pathname}>
+                            <Suspense fallback={null}>
+                                <Outlet />
+                            </Suspense>
+                        </ErrorBoundary>
                     </div>
                     <GridMismatchNotice />
                     <SecondWsjtxNotice />
