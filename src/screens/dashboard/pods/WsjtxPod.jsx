@@ -21,57 +21,54 @@
  * SOFTWARE.
  */
 
-import { Divider, Group, Paper } from "@mantine/core";
+import { Box, Paper } from "@mantine/core";
 import { useWsjtx } from "@/contexts/WsjtxContext";
 import { Band } from "@/enums/Band";
-import { StationType } from "@/enums/StationType";
-import { useActiveStations } from "@/hooks/useActiveStations";
-import { STATION_EXPIRY_MS } from "@/utils/activeStations";
-import { formatFrequency } from "@/utils/view";
 import { SummaryBase } from "./PodBase";
+import classes from "./WsjtxPod.module.css";
 
-//what WSJT-X is doing: frequency, who we are working and CQs. Desktop only
+//the bar for what the radio is doing. Nothing otherwise: WSJT-X doesn't say
+//whether Monitor is on, so we don't know that it is receiving
+const getRadioState = (status) => {
+    if (status?.transmitting)
+        return { label: "Transmitting", className: classes.tx };
+    if (status?.decoding)
+        return { label: "Decoding", className: classes.decode };
+};
+
+//the band and mode WSJT-X is on, and whether it is decoding or
+//transmitting. Desktop only
 export const WsjtxPod = () => {
-    const { available, connected, status, decodes } = useWsjtx();
-    const cqs = useActiveStations().filter((s) => s.type === StationType.CQ);
+    const { available, status } = useWsjtx();
 
     if (!available) return null;
 
-    const frequency = formatFrequency(status?.dialFrequency);
     const radio = [
-        status && Band.fromFrequency(status.dialFrequency),
+        status && Band.fromFrequency(status.dialFrequency)?.toLowerCase(),
         status?.mode,
-        status?.transmitting && "TX",
     ]
         .filter(Boolean)
         .join(" · ");
 
-    const recent = decodes.filter(
-        (d) => Date.now() - d.receivedAt.getTime() <= STATION_EXPIRY_MS,
-    ).length;
+    const state = getRadioState(status);
 
     return (
         <Paper withBorder radius="md">
-            <Group gap={20} align="stretch">
+            <Box miw={{ base: 120, sm: 150 }}>
                 <SummaryBase
                     label="WSJT-X"
-                    value={frequency || undefined}
-                    unit={frequency ? "MHz" : undefined}
-                    subvalue={connected ? radio : "not connected"}
+                    value={radio || undefined}
+                    //the space is kept when there is no bar, so the pod
+                    //doesn't change size
+                    footer={
+                        <div
+                            className={`${classes.bar} ${state?.className ?? ""}`}
+                        >
+                            {state?.label}
+                        </div>
+                    }
                 />
-                <Divider orientation="vertical" />
-                <SummaryBase
-                    label="Working"
-                    value={status?.dxCall || undefined}
-                    subvalue={status?.dxCall ? status.dxGrid : ""}
-                />
-                <Divider orientation="vertical" />
-                <SummaryBase
-                    label="CQ calls"
-                    value={connected ? cqs.length : undefined}
-                    subvalue={connected ? `${recent} decodes` : ""}
-                />
-            </Group>
+            </Box>
         </Paper>
     );
 };

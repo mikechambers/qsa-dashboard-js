@@ -28,6 +28,7 @@ export const SummaryBase = ({
     unit,
     label,
     subvalue,
+    footer, //shown in place of subvalue
     swatchColor,
     onClick,
     useMonospace,
@@ -63,9 +64,11 @@ export const SummaryBase = ({
                         </Text>
                     )}
                 </Group>
-                <Text size="xs" c="dimmed">
-                    {subvalue}
-                </Text>
+                {footer ?? (
+                    <Text size="xs" c="dimmed">
+                        {subvalue}
+                    </Text>
+                )}
             </Stack>
         </Box>
     );
