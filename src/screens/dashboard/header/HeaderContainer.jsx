@@ -21,14 +21,10 @@
  * SOFTWARE.
  */
 
-import { Group, Text, Paper, ActionIcon, Title, Button } from "@mantine/core";
+import { Group, Text, Paper, Title } from "@mantine/core";
 import { ConnectionStatusBadge } from "./ConnectionStatusBadge";
-import { IconInfoCircle } from "@tabler/icons-react";
 
 import { normalizeCallsign, normalizeMaidenHeadGrid } from "@/utils/radio";
-
-import { ABOUT_PATH } from "@/consts/config";
-import { useNavigate } from "react-router";
 
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 
@@ -38,11 +34,9 @@ import { WsjtxStatus } from "./WsjtxStatus";
 import { Breakpoint } from "@/enums/Breakpoint";
 import { Platform } from "@/enums/Platform";
 import { PLATFORM } from "@/utils/platform";
-import { GithubIcon } from "@/screens/icons/GithubIcon";
 
 export const HeaderContainer = ({ callsign, grid }) => {
     const breakpoint = useBreakpoint();
-    const navigate = useNavigate();
 
     //todo: maybe normalize when we save?
     const cs = normalizeCallsign(callsign);
@@ -70,21 +64,6 @@ export const HeaderContainer = ({ callsign, grid }) => {
                     {PLATFORM !== Platform.DESKTOP && (
                         <ControlContainer compact={compact} />
                     )}
-                    {/* 
-                    <ActionIcon
-                        variant="subtle"
-                        color="gray"
-                        size="lg"
-                        component="a"
-                        href="https://github.com/mikechambers/qsa-dashboard-js"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label="View project info and source on GitHub"
-                        title="View project info and source on GitHub"
-                    >
-                        <GithubIcon size="100%" />
-                    </ActionIcon>
-                    */}
                 </Group>
             </Group>
         </Paper>

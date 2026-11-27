@@ -24,8 +24,6 @@
 import Spot from "@/models/Spot";
 import { ADD_SPOT_JITTER, MIN_SNR } from "@/consts/config";
 
-export const DEBUG = import.meta.env.VITE_DEBUG === "true";
-
 // Mock spots for the dashboard.
 //
 // Every spot is first written as a raw message in the same shape PSK Reporter

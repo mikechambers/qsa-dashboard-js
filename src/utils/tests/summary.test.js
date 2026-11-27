@@ -31,12 +31,11 @@ const spot = (call, distance, countryCode) => ({
     spot: { receiverCall: call, senderCall: "W6MSH" },
 });
 
-const station = (call, distance, countryCode, locationSource = "message") => ({
+const station = (call, distance, countryCode) => ({
     call,
     distance,
     countryCode,
-    approximate: locationSource === "country",
-    decode: { location: {}, locationSource },
+    decode: { location: {} },
 });
 
 describe("getSummary", () => {
@@ -60,9 +59,8 @@ describe("getSummary", () => {
         expect(getSummary(rows).mostRecent).toBe(rows[0]);
     });
 
-    it("skips rough and unknown distances for the furthest", () => {
+    it("skips unknown distances for the furthest", () => {
         const summary = getSummary([
-            station("VK1ABC", 12000, "au", "country"),
             station("N0CALL", undefined),
             station("F5RXL", 900, "fr"),
             spot("K1ABC", 100, "us"),

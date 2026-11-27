@@ -115,13 +115,11 @@ describe("getTableRows", () => {
         expect(fromSpot).toMatchObject({
             ...shared,
             snr: -5,
-            approximate: false,
             theyHearYou: { snr: -5, date: at(2) },
         });
         expect(fromStation).toMatchObject({
             ...shared,
             snr: -9,
-            approximate: true,
             youHearThem: { snr: -9, date: at(1) },
         });
         expect(fromSpot.youHearThem).toBeUndefined();

@@ -21,7 +21,6 @@
  * SOFTWARE.
  */
 
-import { MAP_DISTANCE_RING_PALETTE } from "@/consts/config";
 import { useSelectedSpot } from "@/contexts/SelectedSpotContext";
 import { useSettings } from "@/contexts/SettingsContext";
 import { SummaryBase } from "@/screens/dashboard/pods/PodBase";
@@ -42,8 +41,6 @@ export const SpotPod = ({ row, title }) => {
               .filter(Boolean)
               .join(" · ")
         : "";
-
-    //const theme = MAP_DISTANCE_RING_PALETTE[settings.displayMode];
 
     const onSpotClick = () => {
         if (row?.decode) {

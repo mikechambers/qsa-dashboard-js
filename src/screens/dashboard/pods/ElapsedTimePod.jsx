@@ -21,7 +21,7 @@
  * SOFTWARE.
  */
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { SummaryBase } from "./PodBase";
 import { formatHMS } from "@/utils/view";
 import { timeAgo } from "@/utils/date";

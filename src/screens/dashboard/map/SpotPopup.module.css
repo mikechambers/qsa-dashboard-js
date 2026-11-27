@@ -124,7 +124,6 @@
 @media (prefers-reduced-motion: reduce) {
     .dot,
     .ring,
-    .body,
     .pin,
     .out .pin,
     .out .dot,

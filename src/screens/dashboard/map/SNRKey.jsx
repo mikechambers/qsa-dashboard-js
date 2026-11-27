@@ -25,9 +25,6 @@ import { Text, Group, Box, Paper, Tooltip } from "@mantine/core";
 import { SignalColor } from "@/enums/SignalColors";
 
 export const SNRLegend = ({ selectedSpot }) => {
-    const snr = selectedSpot?.snr;
-    const level = SignalColor.getColorForSNR(snr);
-
     return (
         <Paper
             withBorder

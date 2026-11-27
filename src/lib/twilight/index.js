@@ -119,25 +119,6 @@ export function getSubsolarPoint(date = new Date()) {
 }
 
 /**
- * How high is the sun above the horizon at a given spot? (degrees)
- * 90 = straight up, 0 = on the horizon, negative = below.
- */
-export function getSunElevation(lat, lon, date = new Date()) {
-    const sun = getSubsolarPoint(date);
-
-    const cosDistance =
-        Math.sin(lat * RAD) * Math.sin(sun.lat * RAD) +
-        Math.cos(lat * RAD) *
-            Math.cos(sun.lat * RAD) *
-            Math.cos((lon - sun.lon) * RAD);
-
-    // Clamp to guard against tiny floating point overshoot before acos.
-    const distanceDeg = Math.acos(Math.max(-1, Math.min(1, cosDistance))) * DEG;
-
-    return 90 - distanceDeg;
-}
-
-/**
  * Points on a circle around `center`, every point `distanceDeg` degrees
  * of arc away from it. Returned as [lon, lat] pairs (GeoJSON order).
  *

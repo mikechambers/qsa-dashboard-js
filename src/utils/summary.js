@@ -37,8 +37,7 @@ export function getSummary(rows, myCall = "") {
 
         if (row.countryCode) countries.add(row.countryCode);
 
-        //the distance to the middle of a country is too rough to be a record
-        if (row.distance === undefined || row.approximate) continue;
+        if (row.distance === undefined) continue;
         if (!furthest || row.distance > furthest.distance) furthest = row;
     }
 

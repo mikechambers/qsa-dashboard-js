@@ -31,7 +31,6 @@ import { TableTab } from "@/enums/TableTab";
 //
 //  key, type, call, date
 //  dxcc, countryCode, location (has the grid), distance
-//  approximate: location and distance are only the middle of their country
 //  band, frequency, mode
 //  snr: of the report this row itself is, which is also in one of
 //  theyHearYou / youHearThem, as { snr, date }
@@ -47,7 +46,6 @@ export const spotRow = (spot) => ({
     countryCode: spot.receiverDXCC?.countryCode,
     location: spot.receiverLocation,
     distance: spot.distance,
-    approximate: false,
     band: spot.band,
     frequency: spot.frequency,
     mode: spot.mode,
@@ -66,7 +64,6 @@ export const stationRow = ({ type, decode }) => ({
     countryCode: decode.dxcc?.countryCode,
     location: decode.location,
     distance: decode.distance,
-    approximate: decode.locationSource === "country",
     band: decode.band,
     //without a band, there is no radio frequency to show
     frequency: decode.band ? decode.frequency : undefined,

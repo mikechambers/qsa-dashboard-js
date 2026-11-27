@@ -22,7 +22,7 @@
  */
 
 import { Band } from "@/enums/Band";
-import { Badge, Text } from "@mantine/core";
+import { Badge } from "@mantine/core";
 
 //need to add custom colors within mantine
 //https://mantine.dev/theming/colors/

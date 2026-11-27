@@ -7,7 +7,6 @@
     "fetch-map": "bash scripts/fetch-map.sh",
     "icons": "node scripts/make-icons.mjs",
     "dev": "vite",
-    "debug": "VITE_DEBUG=true vite",
     "build": "vite build",
     "lint": "oxlint",
     "preview": "vite preview",

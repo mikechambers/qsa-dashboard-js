@@ -21,8 +21,6 @@
  * SOFTWARE.
  */
 
-export const clamp = (v, min, max) => Math.min(max, Math.max(min, v));
-
 export const mulberry32Random = (seed) => {
     let a = seed | 0;
     return () => {

@@ -33,11 +33,9 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { BandFrequencyView } from "./BandFrequencyCell";
-import { TimeCell } from "./TimeCell";
 import { SNRCell } from "./SNRCell";
 import { DistanceCell } from "./DistanceCell";
 import { useSettings } from "@/contexts/SettingsContext";
-import { getShortTimeZoneName } from "@/utils/date";
 import { useSelectedSpot } from "@/contexts/SelectedSpotContext";
 import { IconChevronRight, IconInbox, IconTrash } from "@tabler/icons-react";
 import { modals } from "@mantine/modals";
@@ -140,8 +138,6 @@ export const SpotTable = ({ onCollapse }) => {
             labels: { confirm: "Delete Spots", cancel: "Cancel" },
             onConfirm: clearSpots,
         });
-
-    let timeZone = getShortTimeZoneName(settings.timeMode);
 
     const virtualizer = useVirtualizer({
         count: rows.length,

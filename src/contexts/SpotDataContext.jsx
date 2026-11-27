@@ -34,11 +34,7 @@ import { ConnectionStatus } from "../enums/ConnectionStatus";
 
 import Spot from "../models/Spot";
 import { SpotFilter } from "../models/SpotFilter";
-import {
-    ADD_SPOT_JITTER,
-    SPOT_BATCH_INTERVAL,
-    SPOT_LIMIT,
-} from "@/consts/config";
+import { SPOT_BATCH_INTERVAL, SPOT_LIMIT } from "@/consts/config";
 import { useSettings } from "./SettingsContext";
 import { MOCK_SPOTS } from "@/debug";
 import { Mode } from "@/enums/Mode";
