@@ -54,7 +54,7 @@ const theme = createTheme({
     components: {
         Paper: {
             defaultProps: {
-                p: "sm",
+                p: "xs",
                 radius: "sm",
                 withBorder: true,
             },
