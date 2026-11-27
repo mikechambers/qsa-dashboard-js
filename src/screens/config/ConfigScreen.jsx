@@ -34,6 +34,7 @@ import {
     Divider,
     SegmentedControl,
     Anchor,
+    Tabs,
 } from "@mantine/core";
 
 import { useForm } from "@mantine/form";
@@ -41,7 +42,7 @@ import { useSettings } from "@/contexts/SettingsContext";
 
 import { isValidCallsign, isValidMaidenHeadGrid } from "@/utils/radio";
 
-import { useNavigate } from "react-router";
+import { useNavigate, useSearchParams } from "react-router";
 import NavBar from "../nav/NavBar";
 import { WsjtxSettings } from "./WsjtxSettings";
 import { Platform } from "@/enums/Platform";
@@ -54,6 +55,25 @@ import { DisplayMode } from "@/enums/DisplayMode";
 import { ElevationValue } from "@/lib/twilight";
 
 import { DASHBOARD_PATH } from "@/consts/config";
+
+//the sections in the side list. The open one is in the url (?section=), so a
+//plain link to settings, like the one in a notification, opens the first
+const Section = {
+    STATION: "station",
+    WSJTX: "wsjtx",
+    DISPLAY: "display",
+    MAP: "map",
+};
+
+const SECTIONS = [
+    { value: Section.STATION, label: "Station" },
+    //the web version has no WSJT-X
+    ...(PLATFORM === Platform.DESKTOP
+        ? [{ value: Section.WSJTX, label: "WSJT-X" }]
+        : []),
+    { value: Section.DISPLAY, label: "Display" },
+    { value: Section.MAP, label: "Map" },
+];
 
 const greylineLayers = [
     {
@@ -87,6 +107,12 @@ const SwatchLabel = ({ text, color }) => (
 
 export default function ConfigScreen() {
     const navigate = useNavigate();
+
+    const [searchParams, setSearchParams] = useSearchParams();
+    const requested = searchParams.get("section");
+    const section = SECTIONS.some((s) => s.value === requested)
+        ? requested
+        : Section.STATION;
 
     const {
         settings,
@@ -145,9 +171,8 @@ export default function ConfigScreen() {
         <div
             className={`${screenClasses.centerScreen} ${screenClasses.screen}`}
         >
-            <form
-                className={`${classes.configForm} ${screenClasses.footerPadding}`}
-                onSubmit={form.onSubmit(onUpdateClick)}
+            <div
+                className={`${classes.settings} ${screenClasses.footerPadding}`}
             >
                 <Stack gap="lg">
                     <NavBar />
@@ -159,246 +184,316 @@ export default function ConfigScreen() {
                             </Text>
                         </Group>
                     )}
-                    <Fieldset legend="Station">
-                        <Stack gap="md">
-                            <TextInput
-                                required
-                                label="Callsign"
-                                placeholder="callsign"
-                                key={form.key("callsign")}
-                                {...form.getInputProps("callsign")}
-                            />
-                            <TextInput
-                                label="Location Grid"
-                                description="Maidenhead locator, 4 or 6 characters"
-                                placeholder="grid"
-                                key={form.key("grid")}
-                                {...form.getInputProps("grid")}
-                            />
-                            <Button type="submit" variant="filled">
-                                Update station
-                            </Button>
-                        </Stack>
-                    </Fieldset>
+                    {/* panels stay mounted, so switching sections doesn't lose
+                        what has been typed */}
+                    <Tabs
+                        orientation="vertical"
+                        variant="pills"
+                        value={section}
+                        onChange={(value) =>
+                            setSearchParams(
+                                { section: value },
+                                { replace: true },
+                            )
+                        }
+                        classNames={{
+                            root: classes.sections,
+                            list: classes.list,
+                            tab: classes.tab,
+                            tabLabel: classes.tabLabel,
+                            panel: classes.panel,
+                        }}
+                    >
+                        <Tabs.List aria-label="Settings sections">
+                            {SECTIONS.map((s) => (
+                                <Tabs.Tab key={s.value} value={s.value}>
+                                    {s.label}
+                                </Tabs.Tab>
+                            ))}
+                        </Tabs.List>
 
-                    {PLATFORM === Platform.DESKTOP && <WsjtxSettings />}
+                        <Tabs.Panel value={Section.STATION}>
+                            <form onSubmit={form.onSubmit(onUpdateClick)}>
+                                <Fieldset legend="Station">
+                                    <Stack gap="md">
+                                        <TextInput
+                                            required
+                                            label="Callsign"
+                                            placeholder="callsign"
+                                            key={form.key("callsign")}
+                                            {...form.getInputProps("callsign")}
+                                        />
+                                        <TextInput
+                                            label="Location Grid"
+                                            description="Maidenhead locator, 4 or 6 characters"
+                                            placeholder="grid"
+                                            key={form.key("grid")}
+                                            {...form.getInputProps("grid")}
+                                        />
+                                        <Button type="submit" variant="filled">
+                                            Update station
+                                        </Button>
+                                    </Stack>
+                                </Fieldset>
+                            </form>
+                        </Tabs.Panel>
 
-                    <Fieldset legend="Display">
-                        <Stack gap="md">
-                            <Stack gap={4}>
-                                <Text size="sm" fw={600}>
-                                    Theme
-                                </Text>
-                                <SegmentedControl
-                                    fullWidth
-                                    value={settings.displayMode}
-                                    onChange={setDisplayMode}
-                                    data={[
-                                        {
-                                            label: "Light",
-                                            value: DisplayMode.LIGHT,
-                                        },
-                                        {
-                                            label: "Dark",
-                                            value: DisplayMode.DARK,
-                                        },
-                                    ]}
-                                />
-                            </Stack>
+                        {PLATFORM === Platform.DESKTOP && (
+                            <Tabs.Panel value={Section.WSJTX}>
+                                <WsjtxSettings />
+                            </Tabs.Panel>
+                        )}
 
-                            <Stack gap={4}>
-                                <Text size="sm" fw={600}>
-                                    Units
-                                </Text>
-                                <SegmentedControl
-                                    fullWidth
-                                    value={settings.unitType}
-                                    onChange={setUnitType}
-                                    data={[
-                                        {
-                                            label: "Metric",
-                                            value: UnitType.METRIC,
-                                        },
-                                        {
-                                            label: "Imperial",
-                                            value: UnitType.IMPERIAL,
-                                        },
-                                    ]}
-                                />
-                            </Stack>
+                        <Tabs.Panel value={Section.DISPLAY}>
+                            <Stack gap="lg">
+                                <Fieldset legend="Display">
+                                    <Stack gap="md">
+                                        <Stack gap={4}>
+                                            <Text size="sm" fw={600}>
+                                                Theme
+                                            </Text>
+                                            <SegmentedControl
+                                                fullWidth
+                                                value={settings.displayMode}
+                                                onChange={setDisplayMode}
+                                                data={[
+                                                    {
+                                                        label: "Light",
+                                                        value: DisplayMode.LIGHT,
+                                                    },
+                                                    {
+                                                        label: "Dark",
+                                                        value: DisplayMode.DARK,
+                                                    },
+                                                ]}
+                                            />
+                                        </Stack>
 
-                            <Stack gap={4}>
-                                <Text size="sm" fw={600}>
-                                    Time Zone
-                                </Text>
-                                <SegmentedControl
-                                    fullWidth
-                                    value={settings.timeMode}
-                                    onChange={setTimeMode}
-                                    data={[
-                                        { label: "UTC", value: TimeMode.UTC },
-                                        {
-                                            label: "Local",
-                                            value: TimeMode.LOCAL,
-                                        },
-                                    ]}
-                                />
-                            </Stack>
-                        </Stack>
-                    </Fieldset>
+                                        <Stack gap={4}>
+                                            <Text size="sm" fw={600}>
+                                                Units
+                                            </Text>
+                                            <SegmentedControl
+                                                fullWidth
+                                                value={settings.unitType}
+                                                onChange={setUnitType}
+                                                data={[
+                                                    {
+                                                        label: "Metric",
+                                                        value: UnitType.METRIC,
+                                                    },
+                                                    {
+                                                        label: "Imperial",
+                                                        value: UnitType.IMPERIAL,
+                                                    },
+                                                ]}
+                                            />
+                                        </Stack>
 
-                    <Fieldset legend="Map overlays">
-                        <Stack gap="md">
-                            <Switch
-                                label="Grey Line"
-                                description="Display grey line and twilight bands"
-                                labelPosition="left"
-                                disabled={settings.elevationValues.length == 0}
-                                checked={settings.showGreyline}
-                                onChange={(e) =>
-                                    setShowGreyline(e.currentTarget.checked)
-                                }
-                                styles={{
-                                    body: { justifyContent: "space-between" },
-                                }}
-                            />
-
-                            <Divider />
-
-                            <Checkbox.Group
-                                value={settings.elevationValues}
-                                onChange={setElevationValues}
-                            >
-                                <Stack gap="md">
-                                    {greylineLayers.map((layer) => (
+                                        <Stack gap={4}>
+                                            <Text size="sm" fw={600}>
+                                                Time Zone
+                                            </Text>
+                                            <SegmentedControl
+                                                fullWidth
+                                                value={settings.timeMode}
+                                                onChange={setTimeMode}
+                                                data={[
+                                                    {
+                                                        label: "UTC",
+                                                        value: TimeMode.UTC,
+                                                    },
+                                                    {
+                                                        label: "Local",
+                                                        value: TimeMode.LOCAL,
+                                                    },
+                                                ]}
+                                            />
+                                        </Stack>
+                                    </Stack>
+                                </Fieldset>
+                                <Fieldset legend="Demo">
+                                    <Stack gap="md">
                                         <Checkbox
-                                            key={layer.value}
-                                            value={layer.value}
-                                            disabled={!settings.showGreyline}
+                                            checked={settings.demoMode}
+                                            onChange={(e) =>
+                                                setDemoMode(
+                                                    e.currentTarget.checked,
+                                                )
+                                            }
+                                            label="Add Mock Spots"
+                                            styles={{
+                                                label: { width: "100%" },
+                                                labelWrapper: { flex: 1 },
+                                            }}
+                                        />
+                                        <Text size="xs" c="dimmed">
+                                            Adds generated spot data. Change
+                                            requires{" "}
+                                            <Anchor
+                                                component="button"
+                                                type="button"
+                                                inherit
+                                                onClick={() =>
+                                                    window.location.reload()
+                                                }
+                                            >
+                                                page refresh
+                                            </Anchor>{" "}
+                                            to take effect.
+                                        </Text>
+                                    </Stack>
+                                </Fieldset>
+                            </Stack>
+                        </Tabs.Panel>
+
+                        <Tabs.Panel value={Section.MAP}>
+                            <Fieldset legend="Map overlays">
+                                <Stack gap="md">
+                                    <Switch
+                                        label="Grey Line"
+                                        description="Display grey line and twilight bands"
+                                        labelPosition="left"
+                                        disabled={
+                                            settings.elevationValues.length == 0
+                                        }
+                                        checked={settings.showGreyline}
+                                        onChange={(e) =>
+                                            setShowGreyline(
+                                                e.currentTarget.checked,
+                                            )
+                                        }
+                                        styles={{
+                                            body: {
+                                                justifyContent: "space-between",
+                                            },
+                                        }}
+                                    />
+
+                                    <Divider />
+
+                                    <Checkbox.Group
+                                        value={settings.elevationValues}
+                                        onChange={setElevationValues}
+                                    >
+                                        <Stack gap="md">
+                                            {greylineLayers.map((layer) => (
+                                                <Checkbox
+                                                    key={layer.value}
+                                                    value={layer.value}
+                                                    disabled={
+                                                        !settings.showGreyline
+                                                    }
+                                                    label={
+                                                        <Group
+                                                            gap="xs"
+                                                            wrap="nowrap"
+                                                            justify="space-between"
+                                                        >
+                                                            <span>
+                                                                {layer.label}
+                                                            </span>
+                                                            <Box
+                                                                w={24}
+                                                                h={4}
+                                                                bg={layer.color}
+                                                                style={{
+                                                                    borderRadius: 2,
+                                                                }}
+                                                            />
+                                                        </Group>
+                                                    }
+                                                    styles={{
+                                                        label: {
+                                                            width: "100%",
+                                                        },
+                                                        labelWrapper: {
+                                                            flex: 1,
+                                                        },
+                                                    }}
+                                                />
+                                            ))}
+                                        </Stack>
+                                    </Checkbox.Group>
+
+                                    <Divider />
+
+                                    <Switch
+                                        label="Distance rings"
+                                        description="Draw distance rings around your station"
+                                        labelPosition="left"
+                                        disabled={
+                                            !settings.showDistanceRings &&
+                                            !settings.showMaxDistance
+                                        }
+                                        checked={settings.showDistanceOverlay}
+                                        onChange={(e) =>
+                                            setShowDistanceOverlay(
+                                                e.currentTarget.checked,
+                                            )
+                                        }
+                                        styles={{
+                                            body: {
+                                                justifyContent: "space-between",
+                                            },
+                                        }}
+                                    />
+
+                                    <Stack gap="md">
+                                        <Checkbox
+                                            disabled={
+                                                !settings.showDistanceOverlay
+                                            }
+                                            checked={settings.showDistanceRings}
+                                            onChange={(e) =>
+                                                setShowDistanceRings(
+                                                    e.currentTarget.checked,
+                                                )
+                                            }
                                             label={
-                                                <Group
-                                                    gap="xs"
-                                                    wrap="nowrap"
-                                                    justify="space-between"
-                                                >
-                                                    <span>{layer.label}</span>
-                                                    <Box
-                                                        w={24}
-                                                        h={4}
-                                                        bg={layer.color}
-                                                        style={{
-                                                            borderRadius: 2,
-                                                        }}
-                                                    />
-                                                </Group>
+                                                <SwatchLabel
+                                                    text="Distance"
+                                                    color="gray.6"
+                                                />
                                             }
                                             styles={{
                                                 label: { width: "100%" },
                                                 labelWrapper: { flex: 1 },
                                             }}
                                         />
-                                    ))}
+                                        <Checkbox
+                                            disabled={
+                                                !settings.showDistanceOverlay
+                                            }
+                                            checked={settings.showMaxDistance}
+                                            onChange={(e) =>
+                                                setShowMaxDistance(
+                                                    e.currentTarget.checked,
+                                                )
+                                            }
+                                            label={
+                                                <SwatchLabel
+                                                    text="Max distance"
+                                                    color="teal.6"
+                                                />
+                                            }
+                                            styles={{
+                                                label: { width: "100%" },
+                                                labelWrapper: { flex: 1 },
+                                            }}
+                                        />
+                                        <Text size="xs" c="dimmed">
+                                            Note: Larger distance rings may look
+                                            distorted due to how the map
+                                            projection stretches the world.
+                                        </Text>
+                                    </Stack>
                                 </Stack>
-                            </Checkbox.Group>
-
-                            <Divider />
-
-                            <Switch
-                                label="Distance rings"
-                                description="Draw distance rings around your station"
-                                labelPosition="left"
-                                disabled={
-                                    !settings.showDistanceRings &&
-                                    !settings.showMaxDistance
-                                }
-                                checked={settings.showDistanceOverlay}
-                                onChange={(e) =>
-                                    setShowDistanceOverlay(
-                                        e.currentTarget.checked,
-                                    )
-                                }
-                                styles={{
-                                    body: { justifyContent: "space-between" },
-                                }}
-                            />
-
-                            <Stack gap="md">
-                                <Checkbox
-                                    disabled={!settings.showDistanceOverlay}
-                                    checked={settings.showDistanceRings}
-                                    onChange={(e) =>
-                                        setShowDistanceRings(
-                                            e.currentTarget.checked,
-                                        )
-                                    }
-                                    label={
-                                        <SwatchLabel
-                                            text="Distance"
-                                            color="gray.6"
-                                        />
-                                    }
-                                    styles={{
-                                        label: { width: "100%" },
-                                        labelWrapper: { flex: 1 },
-                                    }}
-                                />
-                                <Checkbox
-                                    disabled={!settings.showDistanceOverlay}
-                                    checked={settings.showMaxDistance}
-                                    onChange={(e) =>
-                                        setShowMaxDistance(
-                                            e.currentTarget.checked,
-                                        )
-                                    }
-                                    label={
-                                        <SwatchLabel
-                                            text="Max distance"
-                                            color="teal.6"
-                                        />
-                                    }
-                                    styles={{
-                                        label: { width: "100%" },
-                                        labelWrapper: { flex: 1 },
-                                    }}
-                                />
-                                <Text size="xs" c="dimmed">
-                                    Note: Larger distance rings may look
-                                    distorted due to how the map projection
-                                    stretches the world.
-                                </Text>
-                            </Stack>
-                            <Divider />
-                        </Stack>
-                    </Fieldset>
-                    <Fieldset legend="Demo">
-                        <Stack gap="md">
-                            <Checkbox
-                                checked={settings.demoMode}
-                                onChange={(e) =>
-                                    setDemoMode(e.currentTarget.checked)
-                                }
-                                label="Add Mock Spots"
-                                styles={{
-                                    label: { width: "100%" },
-                                    labelWrapper: { flex: 1 },
-                                }}
-                            />
-                            <Text size="xs" c="dimmed">
-                                Adds generated spot data. Change requires{" "}
-                                <Anchor
-                                    component="button"
-                                    type="button"
-                                    inherit
-                                    onClick={() => window.location.reload()}
-                                >
-                                    page refresh
-                                </Anchor>{" "}
-                                to take effect.
-                            </Text>
-                        </Stack>
-                    </Fieldset>
+                            </Fieldset>
+                        </Tabs.Panel>
+                    </Tabs>
                 </Stack>
-            </form>
+            </div>
         </div>
     );
 }

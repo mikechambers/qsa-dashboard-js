@@ -63,9 +63,18 @@ export const WsjtxSettings = () => {
         if (canRetry) return retry();
         if (!changed) return;
 
+        //both are required while connecting
         const next = {
-            address: isValidAddress(address) ? null : "Invalid address",
-            port: isValidPort(port) ? null : "Port must be 1 to 65535",
+            address: !address.trim()
+                ? "Address is required"
+                : isValidAddress(address)
+                  ? null
+                  : "Invalid address",
+            port: !port.trim()
+                ? "Port is required"
+                : isValidPort(port)
+                  ? null
+                  : "Port must be 1 to 65535",
         };
         setErrors(next);
         if (next.address || next.port) return;
@@ -76,7 +85,16 @@ export const WsjtxSettings = () => {
         setWsjtxPort(Number(port));
     };
 
-    //these are inside the station form, which Enter would otherwise submit
+    //the switch connects with the saved values, so don't leave a field empty or
+    //wrong beside it
+    const toggle = (on) => {
+        if (!isValidAddress(address)) setAddress(settings.wsjtxAddress);
+        if (!isValidPort(port)) setPort(String(settings.wsjtxPort));
+        setErrors({});
+        setWsjtxEnabled(on);
+    };
+
+    //Enter in a field is the same as the button
     const onKeyDown = (e) => {
         if (e.key !== "Enter") return;
 
@@ -99,7 +117,7 @@ export const WsjtxSettings = () => {
                     label="Connect to WSJT-X"
                     labelPosition="left"
                     checked={enabled}
-                    onChange={(e) => setWsjtxEnabled(e.currentTarget.checked)}
+                    onChange={(e) => toggle(e.currentTarget.checked)}
                     styles={{
                         body: { justifyContent: "space-between" },
                     }}
@@ -107,6 +125,7 @@ export const WsjtxSettings = () => {
 
                 <TextInput
                     label="Address"
+                    required={enabled}
                     description="Direct or multicast"
                     disabled={!enabled}
                     value={address}
@@ -120,6 +139,7 @@ export const WsjtxSettings = () => {
 
                 <TextInput
                     label="Port"
+                    required={enabled}
                     description="Must match the UDP server port in WSJT-X."
                     inputMode="numeric"
                     disabled={!enabled}

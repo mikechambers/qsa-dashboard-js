@@ -22,10 +22,52 @@
  */
 
 
-.configForm {
+.settings {
     display: flex;
     flex-direction: column;
     gap: 8px;
     width: 100%;
-    max-width: 300px;
+    max-width: 436px; /* the list, the gap and 300px of settings */
+}
+
+.sections {
+    align-items: flex-start;
+    gap: 16px;
+}
+
+.list {
+    flex: none;
+    width: 120px;
+    gap: 4px;
+}
+
+.tab {
+    height: 44px;
+    padding-inline: 10px;
+    font-weight: 600;
+}
+
+.tabLabel {
+    text-align: left;
+}
+
+.tab[data-active],
+.tab[data-active]:hover {
+    background: var(--mantine-color-blue-light);
+    color: var(--mantine-color-blue-light-color);
+}
+
+.panel {
+    min-width: 0; /* let the settings shrink beside the list */
+}
+
+/* phones */
+@media (max-width: 47.99em) {
+    .sections {
+        gap: 10px;
+    }
+
+    .list {
+        width: 84px;
+    }
 }
