@@ -149,6 +149,10 @@ Settings are saved in your browser's local storage.
 - The first minute in the charts is often much higher than the minutes after it (see the note under Spots / Minute)
 - Distance rings (especially large ones) can look distorted on the map due to how the map is projected
 
+## Known Issues
+
+- The desktop app supports only one WSJT-X instance at a time. If more than one sends to it, their status gets mixed up, including the state of the Reply button, which can transmit.
+
 ## Development
 
 There are a couple of tests included (mostly for callsign and grid validation), which you can run with:
