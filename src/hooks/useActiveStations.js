@@ -26,7 +26,7 @@ import { createContext, useContext } from "react";
 //filled in by ActiveStationsProvider
 export const ActiveStationsContext = createContext([]);
 
-//stations WSJT-X is hearing right now, on the band it is on
+//every station WSJT-X has heard, before any filters (see useStations)
 export function useActiveStations() {
     return useContext(ActiveStationsContext);
 }

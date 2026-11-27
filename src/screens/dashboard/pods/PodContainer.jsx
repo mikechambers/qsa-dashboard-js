@@ -31,6 +31,7 @@ import { useSettings } from "@/contexts/SettingsContext";
 import { ElapsedTimePod } from "./ElapsedTimePod";
 
 import { FurthestSpotPod } from "./FurthestSpotPod";
+import { FurthestHeardPod } from "./FurthestHeardPod";
 import { MostRecentSpotPod } from "./MostRecentSpotPod";
 import { BandsPod } from "./BandsPod";
 import { TILE_WIDTH, WIDE_TILE_WIDTH } from "./bandTile";
@@ -42,6 +43,7 @@ import { Breakpoint } from "@/enums/Breakpoint";
 import { Platform } from "@/enums/Platform";
 import { PLATFORM } from "@/utils/platform";
 import { useActiveStations } from "@/hooks/useActiveStations";
+import { useFilteredStations } from "@/hooks/useStations";
 import { useTypeFilter } from "@/hooks/useTypeFilter";
 import { StationType } from "@/enums/StationType";
 import { getTableRows } from "@/utils/tableRows";
@@ -51,6 +53,7 @@ export const PodContainer = () => {
     const {
         mostRecentSpot,
         filteredSpots,
+        ageTick,
         spots,
         filter,
         setFilter,
@@ -64,15 +67,19 @@ export const PodContainer = () => {
     //(and clickable) while one is selected
     const bandSpots = useMemo(
         () => filter.with({ band: ALL_CASES }).filter(spots),
-        [filter, spots],
+        [filter, spots, ageTick],
     );
 
     //it counts the types being viewed, the same as the table. The web version
     //only has spots
     const { available, show } = useTypeFilter();
-    const stations = useActiveStations();
+    const stations = useFilteredStations();
+    //as for spots, the bands pod ignores the band filter
+    const bandStations = filter
+        .with({ band: ALL_CASES })
+        .filterStations(useActiveStations());
     const viewedTypes = available ? show : { [StationType.SPOT]: true };
-    const bandRows = getTableRows(bandSpots, stations, viewedTypes);
+    const bandRows = getTableRows(bandSpots, bandStations, viewedTypes);
 
     //the summary is of the same rows as the table
     const summary = getSummary(
@@ -85,7 +92,7 @@ export const PodContainer = () => {
     //Counts the bands of every type, so that changing the type filter doesn't
     //move the pod to another row and shift the page
     const bandCount = new Set(
-        [...bandSpots, ...stations.map((s) => s.decode)]
+        [...bandSpots, ...bandStations.map((s) => s.decode)]
             .map((item) => item.band)
             .filter(Boolean),
     ).size;
@@ -119,7 +126,12 @@ export const PodContainer = () => {
                     <Group gap={compact ? 6 : 20} align="stretch">
                         <FurthestSpotPod row={summary.furthest} />
                         <Divider orientation="vertical" />
-                        <MostRecentSpotPod row={summary.mostRecent} />
+                        {/* only the desktop app hears stations */}
+                        {PLATFORM === Platform.DESKTOP ? (
+                            <FurthestHeardPod row={summary.furthestHeard} />
+                        ) : (
+                            <MostRecentSpotPod row={summary.mostRecent} />
+                        )}
                         <Divider orientation="vertical" />
                         <SummaryBase
                             label="Stations"

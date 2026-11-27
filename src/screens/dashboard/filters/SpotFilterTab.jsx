@@ -30,11 +30,13 @@ import { useSpotData } from "@/contexts/SpotDataContext";
 import classes from "../DashboardScreen.module.css";
 import { FilterIcon } from "./FilterIcon";
 import { useTypeFilter } from "@/hooks/useTypeFilter";
+import { useFilterCounts } from "@/hooks/useFilterCounts";
 
 //shown in place of the filters when they are collapsed. Click to open.
 export const SpotFilterTab = () => {
     const { setShowFilters } = useSettings();
-    const { filter, spots } = useSpotData();
+    const { filter } = useSpotData();
+    const { shown, total, noun } = useFilterCounts();
     const types = useTypeFilter();
 
     const isFiltered = filter.hasFilter() || types.isFiltered;
@@ -59,7 +61,7 @@ export const SpotFilterTab = () => {
                     fw={isFiltered ? 600 : undefined}
                     style={{ fontVariantNumeric: "tabular-nums" }}
                 >
-                    {types.shownSpots.length} of {spots.length} spots
+                    {shown} of {total} {noun}
                 </Text>
             </Group>
 

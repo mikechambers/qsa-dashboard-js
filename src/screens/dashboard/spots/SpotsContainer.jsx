@@ -24,14 +24,14 @@
 import { ActionIcon, Text } from "@mantine/core";
 import { IconChevronLeft } from "@tabler/icons-react";
 
-import { useTypeFilter } from "@/hooks/useTypeFilter";
+import { useFilterCounts } from "@/hooks/useFilterCounts";
 import { SpotTable } from "./table/SpotTable";
 
 import classes from "../DashboardScreen.module.css";
 
 //the spots table, or a tab to open it when it is collapsed
 export const SpotsContainer = ({ open, onOpenChange }) => {
-    const { shownSpots } = useTypeFilter();
+    const { shown, noun } = useFilterCounts();
 
     if (!open) {
         return (
@@ -60,10 +60,10 @@ export const SpotsContainer = ({ open, onOpenChange }) => {
                         fw={700}
                         style={{ fontVariantNumeric: "tabular-nums" }}
                     >
-                        {shownSpots.length}
+                        {shown}
                     </Text>
                     <Text size="sm" c="dimmed" className={classes.spotsTabLabel}>
-                        Spots
+                        {noun === "stations" ? "Stations" : "Spots"}
                     </Text>
                 </button>
             </div>

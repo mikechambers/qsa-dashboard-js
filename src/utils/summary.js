@@ -27,7 +27,8 @@ export function getSummary(rows, myCall = "") {
     const me = myCall.toUpperCase();
     const calls = new Set();
     const countries = new Set();
-    let furthest;
+    let furthest; //of the spots
+    let furthestHeard; //of the stations we hear, CQ included
 
     for (const row of rows) {
         //a spot also has the station that was heard, which isn't always us
@@ -38,11 +39,18 @@ export function getSummary(rows, myCall = "") {
         if (row.countryCode) countries.add(row.countryCode);
 
         if (row.distance === undefined) continue;
-        if (!furthest || row.distance > furthest.distance) furthest = row;
+
+        if (row.decode) {
+            if (!furthestHeard || row.distance > furthestHeard.distance)
+                furthestHeard = row;
+        } else if (!furthest || row.distance > furthest.distance) {
+            furthest = row;
+        }
     }
 
     return {
         furthest,
+        furthestHeard,
         mostRecent: rows[0],
         stationCount: calls.size,
         countryCount: countries.size,

@@ -176,3 +176,44 @@ describe("SpotFilter.filter", () => {
         expect(result).not.toBe(spots);
     });
 });
+
+describe("SpotFilter age and stations", () => {
+    const NOW = Date.UTC(2026, 0, 1, 12, 0, 0);
+    const minutesAgo = (m) => new Date(NOW - m * 60_000);
+    const station = (values) => ({
+        decode: {
+            call: "K1ABC",
+            band: "20M",
+            mode: "FT8",
+            snr: -10,
+            receivedAt: minutesAgo(1),
+            ...values,
+        },
+    });
+
+    it("filters spots and stations by age", () => {
+        const filter = new SpotFilter().with({ age: 5 });
+        const spots = [{ date: minutesAgo(4) }, { date: minutesAgo(6) }];
+        const stations = [station(), station({ receivedAt: minutesAgo(6) })];
+
+        expect(filter.filter(spots, NOW)).toEqual([spots[0]]);
+        expect(filter.filterStations(stations, NOW)).toEqual([stations[0]]);
+        expect(filter.hasFilter()).toBe(true);
+    });
+
+    it("applies the other filters to stations", () => {
+        const stations = [
+            station(),
+            station({ call: "DL2XYZ" }),
+            station({ band: "40M" }),
+            station({ snr: -20 }),
+        ];
+        const filter = new SpotFilter().with({
+            callsign: "k1",
+            band: "20M",
+            snr: -15,
+        });
+
+        expect(filter.filterStations(stations, NOW)).toEqual([stations[0]]);
+    });
+});

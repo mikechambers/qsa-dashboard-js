@@ -34,7 +34,12 @@ import { ConnectionStatus } from "../enums/ConnectionStatus";
 
 import Spot from "../models/Spot";
 import { SpotFilter } from "../models/SpotFilter";
-import { SPOT_BATCH_INTERVAL, SPOT_LIMIT } from "@/consts/config";
+import {
+    AGE_FILTER_REFRESH_MS,
+    SPOT_BATCH_INTERVAL,
+    SPOT_LIMIT,
+} from "@/consts/config";
+import { ALL_CASES } from "@/consts";
 import { useSettings } from "./SettingsContext";
 import { MOCK_SPOTS } from "@/debug";
 import { Mode } from "@/enums/Mode";
@@ -57,7 +62,23 @@ export function SpotDataProvider({ children }) {
 
     const [filter, setFilter] = useState(new SpotFilter());
 
-    const filteredSpots = useMemo(() => filter.filter(spots), [filter, spots]);
+    //changes now and then while filtering by age, as spots age out
+    const [ageTick, setAgeTick] = useState(0);
+    const filteringByAge = filter.age !== ALL_CASES;
+    useEffect(() => {
+        if (!filteringByAge) return;
+
+        const timer = setInterval(
+            () => setAgeTick((t) => t + 1),
+            AGE_FILTER_REFRESH_MS,
+        );
+        return () => clearInterval(timer);
+    }, [filteringByAge]);
+
+    const filteredSpots = useMemo(
+        () => filter.filter(spots),
+        [filter, spots, ageTick],
+    );
 
     const clientRef = useRef(null);
 
@@ -256,6 +277,7 @@ export function SpotDataProvider({ children }) {
                 spots,
                 clearSpots,
                 filteredSpots,
+                ageTick,
                 filter,
                 setFilter,
                 status,

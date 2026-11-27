@@ -24,9 +24,8 @@
 import { useEffect } from "react";
 import { useSelectedSpot } from "@/contexts/SelectedSpotContext";
 import { useSettings } from "@/contexts/SettingsContext";
-import { useActiveStations } from "@/hooks/useActiveStations";
-import { useShownTypes } from "@/hooks/useTypeFilter";
-import { getShownStations } from "@/utils/activeStations";
+import { useShownStations } from "@/hooks/useStations";
+import { stationRow } from "@/utils/tableRows";
 import { fitPath, isInView } from "./mapView";
 import { getSelectionTarget } from "./selectionTarget";
 import { useSelectionMarker } from "./useSelectionMarker";
@@ -39,14 +38,13 @@ const HOVER_FIT_DELAY_MS = 350;
 //StationLayer, so that new decodes don't rerender the whole map
 export const SelectionLayer = ({ map, ready, location }) => {
     const { settings } = useSettings();
-    const { selectedKey, selectedSpot, selectedCall } = useSelectedSpot();
-    const { show } = useShownTypes();
-    const stations = getShownStations(useActiveStations(), show);
+    const { selectedKey, selectedSpot } = useSelectedSpot();
+    const stations = useShownStations();
 
     const target = getSelectionTarget(
         selectedKey,
         selectedSpot,
-        stations.find((s) => s.decode.call === selectedCall),
+        stations.find((s) => stationRow(s).key === selectedKey),
     );
 
     useSelectionMarker(map, ready, target, location);

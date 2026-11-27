@@ -21,7 +21,7 @@
  * SOFTWARE.
  */
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { setWorkerUrl } from "maplibre-gl";
 import workerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
 import "maplibre-gl/dist/maplibre-gl.css";
@@ -43,6 +43,7 @@ import { useHomeMarker } from "./useHomeMarker";
 import { useSpotLayer } from "./useSpotLayer";
 import { SpotPopup } from "./SpotPopup";
 import { StationLayer } from "./StationLayer";
+import { HeardRangeLayer } from "./HeardRangeLayer";
 import { SelectionLayer } from "./SelectionLayer";
 import { useMapPointer } from "./useMapPointer";
 import { fitPath } from "./mapView";
@@ -73,7 +74,6 @@ export const SpotMap = ({ spots, location }) => {
     const {
         selectedKey,
         selectedSpot,
-        selectedCall,
         pinned,
         hover,
         pin,
@@ -97,6 +97,10 @@ export const SpotMap = ({ spots, location }) => {
         zoom: DEFAULT_ZOOM,
     });
 
+    //set once the layers are added. Components that fill them in have to wait
+    //for this, as their effects run before ours
+    const [layersReady, setLayersReady] = useState(false);
+
     //setup home marker
     useHomeMarker(map, location);
 
@@ -112,6 +116,9 @@ export const SpotMap = ({ spots, location }) => {
         addConnectionLineLayer(map);
         addConnectionPointLayer(map);
         addStationLayer(map);
+        setLayersReady(true);
+
+        return () => setLayersReady(false);
     }, [ready]);
 
     //todo: refactor others to combine initialization
@@ -119,7 +126,7 @@ export const SpotMap = ({ spots, location }) => {
         map,
         ready,
         location,
-        furthestSpot?.distance,
+        spotsShown ? furthestSpot?.distance : undefined,
         settings.displayMode,
         settings.unitType,
         settings.showDistanceOverlay && settings.showDistanceRings,
@@ -191,7 +198,7 @@ export const SpotMap = ({ spots, location }) => {
             </ActionIcon>
             <SpotPopup
                 spot={selectedSpot}
-                stationCall={selectedCall}
+                selectedKey={selectedKey}
                 onUnpin={pinned ? unpin : undefined}
                 open={settings.showSpotDetail}
                 onOpenChange={setShowSpotDetail}
@@ -200,7 +207,12 @@ export const SpotMap = ({ spots, location }) => {
             <MapControls />
             <MapLineKey />
 
-            <StationLayer map={map} ready={ready} location={location} />
+            <StationLayer map={map} ready={layersReady} location={location} />
+            <HeardRangeLayer
+                map={map}
+                ready={layersReady}
+                location={location}
+            />
             <SelectionLayer map={map} ready={ready} location={location} />
 
             <SNRLegend

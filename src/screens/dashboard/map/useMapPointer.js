@@ -34,7 +34,9 @@ const getKeyAt = (map, point) => {
             : undefined;
 
     const station = hit(STATION_PATH);
-    if (station) return stationKey(station.properties.call);
+    if (station) {
+        return stationKey(station.properties.call, station.properties.band);
+    }
 
     const spot = hit(SPOT_PATH);
     if (spot) return spotKey(spot.properties.spotId);

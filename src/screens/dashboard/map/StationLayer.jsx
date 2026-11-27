@@ -23,28 +23,28 @@
 
 import { useEffect } from "react";
 import { useSelectedSpot } from "@/contexts/SelectedSpotContext";
-import { useActiveStations } from "@/hooks/useActiveStations";
-import { useShownTypes } from "@/hooks/useTypeFilter";
-import { getShownStations } from "@/utils/activeStations";
+import { useShownStations } from "@/hooks/useStations";
+import { stationRow } from "@/utils/tableRows";
+import { getStationCall } from "@/utils/selection";
 import { useStationLayer } from "./useStationLayer";
 
 //stations heard by WSJT-X. Draws nothing in the web version, as there are no
 //decodes. A separate component so that new decodes don't rerender the whole
 //map
 export const StationLayer = ({ map, ready, location }) => {
-    const { selectedCall, pin } = useSelectedSpot();
-    const { show } = useShownTypes();
-    const stations = getShownStations(useActiveStations(), show);
+    const { selectedKey, pin } = useSelectedSpot();
+    const stations = useShownStations();
 
     useStationLayer(map, ready, stations, location);
 
-    //don't show an expired (or hidden) station again if it comes back later
-    const expired =
-        selectedCall && !stations.some((s) => s.decode.call === selectedCall);
+    //don't show a hidden (or cleared) station again if it comes back later
+    const gone =
+        getStationCall(selectedKey) !== undefined &&
+        !stations.some((s) => stationRow(s).key === selectedKey);
 
     useEffect(() => {
-        if (expired) pin(undefined);
-    }, [expired, pin]);
+        if (gone) pin(undefined);
+    }, [gone, pin]);
 
     return null;
 };

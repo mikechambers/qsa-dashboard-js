@@ -57,7 +57,7 @@ export const spotRow = (spot) => ({
 
 //station is from getActiveStations
 export const stationRow = ({ type, decode }) => ({
-    key: stationKey(decode.call),
+    key: stationKey(decode.call, decode.band),
     type,
     call: decode.call,
     date: decode.receivedAt,

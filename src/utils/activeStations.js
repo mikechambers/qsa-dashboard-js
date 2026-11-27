@@ -21,17 +21,14 @@
  * SOFTWARE.
  */
 
-//works out which stations we are hearing right now, and which of them are
-//calling us or being worked
+//works out which stations we have heard, and which of them are calling CQ,
+//calling us or being worked right now
 
 import { distanceOnEarth } from "@ham2k/lib-geo-tools";
+import { CQ_EXPIRY_MS } from "@/consts/config";
 import { DecodeKind } from "@/enums/DecodeKind";
 import { StationType } from "@/enums/StationType";
 import Decode from "@/models/Decode";
-
-//a station in a contact transmits every 30 seconds, so this allows for one
-//missed decode before it drops off
-export const STATION_EXPIRY_MS = 75_000;
 
 //messages that end a contact, so aren't calling us
 const SIGN_OFFS = [DecodeKind.RR73, DecodeKind.SEVENTY_THREE];
@@ -46,36 +43,59 @@ export function getWorkingCall(status) {
     return status.dxCall || undefined;
 }
 
+//a station is kept once for each band it was heard on
+const stationId = ({ call, band }) => `${call}|${band ?? ""}`;
+
+//the latest decode of each station on each band, newest first. newer and older
+//must be newest first, and everything in newer more recent than older
+export function mergeHeard(newer, older, limit) {
+    const latest = new Map();
+
+    for (const decode of [...newer, ...older]) {
+        if (!decode.call) continue;
+
+        const id = stationId(decode);
+        if (!latest.has(id)) latest.set(id, decode);
+        if (latest.size >= limit) break;
+    }
+
+    return [...latest.values()];
+}
+
 //decodes must be newest first. Returns { type, decode, callingYou, working }
-//for each station heard. If band is set, only stations heard on it are returned
+//for each station heard on each band. band is the one WSJT-X is on: only a
+//station on it can be calling CQ, calling us or being worked. live is false
+//once WSJT-X has gone, when none of them can be
 export function getActiveStations(
     decodes,
-    { now = Date.now(), band, myCall, workingCall } = {},
+    { now = Date.now(), band, myCall, workingCall, live = true } = {},
 ) {
     const seen = new Set();
-    const active = [];
+    const stations = [];
 
     for (const decode of decodes) {
         const { call } = decode;
 
-        if (!call || call === myCall || seen.has(call)) continue;
-        if (band && decode.band !== band) continue;
+        if (!call || call === myCall) continue;
 
         //only the latest thing a station said counts
-        seen.add(call);
+        const id = stationId(decode);
+        if (seen.has(id)) continue;
+        seen.add(id);
 
-        //the station being worked stays, even if it fades for a while
-        const working = call === workingCall;
-        const age = now - decode.receivedAt.getTime();
-        if (!working && age > STATION_EXPIRY_MS) continue;
+        const onBand = live && (!band || decode.band === band);
+        const recent =
+            onBand && now - decode.receivedAt.getTime() <= CQ_EXPIRY_MS;
+        const working = onBand && call === workingCall;
 
-        active.push({
+        stations.push({
             type:
-                decode.kind === DecodeKind.CQ
+                recent && decode.kind === DecodeKind.CQ
                     ? StationType.CQ
                     : StationType.HEARD,
             decode,
             callingYou:
+                recent &&
                 !working &&
                 Boolean(myCall) &&
                 decode.toCall === myCall &&
@@ -84,7 +104,7 @@ export function getActiveStations(
         });
     }
 
-    return active;
+    return stations;
 }
 
 //whether we know where a station is. The middle of its country isn't good
@@ -92,10 +112,9 @@ export function getActiveStations(
 export const isMappable = (decode) =>
     Boolean(decode.location) && decode.locationSource !== "country";
 
-//the stations to show, given the type filter ({ [StationType]: boolean }).
-//Stations calling us or being worked are always shown
+//the stations to show, given the type filter ({ [StationType]: boolean })
 export const getShownStations = (stations, show) =>
-    stations.filter((s) => s.working || s.callingYou || show[s.type]);
+    stations.filter((s) => show[s.type]);
 
 //a copy of the decode with its distance measured from home. The decoder uses
 //the grid set in WSJT-X, but the app uses the one in its own settings

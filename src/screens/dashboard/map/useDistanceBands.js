@@ -32,6 +32,8 @@ import {
     DISTANCE_LABEL_SIZE,
     DISTANCE_RANGE_PATH,
     FURTHEST_RANGE_PATH,
+    HEARD_LABEL_PATH,
+    HEARD_RANGE_PATH,
     EMPTY_FEATURE_COLLECTION,
     SPOT_PATH,
 } from "./config";
@@ -111,7 +113,7 @@ const pointEast = ([lng, lat], km) => {
 };
 
 // Label for a distance ring, as a GeoJSON point.
-const labelFeature = (center, km, label, kind) => ({
+export const labelFeature = (center, km, label, kind) => ({
     type: "Feature",
     geometry: { type: "Point", coordinates: pointEast(center, km) },
     properties: { label, kind },
@@ -122,7 +124,7 @@ const labelPaint = (theme) => ({
 });
 
 // One ring as a GeoJSON feature
-const ringFeature = (center, distance, units, properties = {}) => {
+export const ringFeature = (center, distance, units, properties = {}) => {
     const ring = circle(center, distance, { units, steps: 128 });
     return {
         type: "Feature",
@@ -233,8 +235,53 @@ export const useDistanceBands = (
             beforeId,
         );
 
+        //ring for the furthest station heard, filled in by HeardRangeLayer
+        map.addSource(HEARD_RANGE_PATH, {
+            type: "geojson",
+            data: EMPTY_FEATURE_COLLECTION,
+        });
+
+        map.addLayer(
+            {
+                id: HEARD_RANGE_PATH,
+                source: HEARD_RANGE_PATH,
+                type: "line",
+                paint: {
+                    "line-color": theme.furthestHeard,
+                    "line-opacity": theme.furthestHeardOpacity,
+                    "line-width": 3,
+                },
+            },
+            beforeId,
+        );
+
+        map.addSource(HEARD_LABEL_PATH, {
+            type: "geojson",
+            data: EMPTY_FEATURE_COLLECTION,
+        });
+
+        map.addLayer(
+            {
+                id: HEARD_LABEL_PATH,
+                source: HEARD_LABEL_PATH,
+                type: "symbol",
+                layout: {
+                    "text-field": ["get", "label"],
+                    "text-font": [DISTANCE_LABEL_FONT],
+                    "text-size": DISTANCE_LABEL_SIZE,
+                    "text-allow-overlap": true,
+                },
+                paint: {
+                    ...labelPaint(theme),
+                },
+            },
+            beforeId,
+        );
+
         return () => {
             [
+                HEARD_LABEL_PATH,
+                HEARD_RANGE_PATH,
                 DISTANCE_LABEL_PATH,
                 FURTHEST_RANGE_PATH,
                 DISTANCE_RANGE_PATH,

@@ -28,7 +28,7 @@ import { useSettings } from "@/contexts/SettingsContext";
 import { useSpotData } from "@/contexts/SpotDataContext";
 import { useWsjtx } from "@/contexts/WsjtxContext";
 import { StationType } from "@/enums/StationType";
-import { useActiveStations } from "@/hooks/useActiveStations";
+import { useShownStations } from "@/hooks/useStations";
 import { getTheyHearYou, getYouHearThem } from "@/utils/signalReports";
 import {
     convertAndFormatDistance,
@@ -146,21 +146,21 @@ const HeardStation = ({ station, onUnpin, open, toggle }) => {
 //card for a PSK Reporter spot
 const SpotStation = ({ spot, onUnpin, open, toggle }) => {
     const { settings } = useSettings();
-    const { available, decodes } = useWsjtx();
+    const { available, heard } = useWsjtx();
 
     const row = spotRow(spot);
 
     const youHearThem = getYouHearThem({
         call: row.call,
         band: row.band,
-        decodes,
+        decodes: heard,
     });
 
     let note;
     if (available) {
         note = youHearThem
             ? `You decoded them ${timeAgo(youHearThem.date)}`
-            : "You haven't decoded them recently";
+            : "You haven't decoded them";
     }
 
     return (
@@ -182,13 +182,13 @@ const SpotStation = ({ spot, onUnpin, open, toggle }) => {
 //heard station, and can be collapsed to a single line.
 export const SpotPopup = ({
     spot,
-    stationCall,
+    selectedKey,
     onUnpin, //set when the selection is pinned
     open,
     onOpenChange,
 }) => {
-    const station = useActiveStations().find(
-        (s) => s.decode.call === stationCall,
+    const station = useShownStations().find(
+        (s) => stationRow(s).key === selectedKey,
     );
 
     const toggle = (

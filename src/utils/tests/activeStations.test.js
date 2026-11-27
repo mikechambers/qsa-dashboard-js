@@ -23,13 +23,14 @@
 
 import { describe, expect, it } from "vitest";
 import {
-    STATION_EXPIRY_MS,
     getActiveStations,
     getShownStations,
     getWorkingCall,
     isMappable,
+    mergeHeard,
     withDistanceFrom,
 } from "../activeStations";
+import { CQ_EXPIRY_MS } from "@/consts/config";
 import { DecodeKind } from "@/enums/DecodeKind";
 import { StationType } from "@/enums/StationType";
 import { gridToLocation } from "@/utils/geo";
@@ -89,7 +90,7 @@ describe("getActiveStations", () => {
         const old = decode({
             toCall: "W6MSH",
             kind: DecodeKind.REPORT,
-            receivedAt: new Date(NOW - STATION_EXPIRY_MS - 1),
+            receivedAt: new Date(NOW - CQ_EXPIRY_MS - 1),
         });
         const [station] = getActiveStations([old], {
             now: NOW,
@@ -113,16 +114,33 @@ describe("getActiveStations", () => {
         expect(calls([decode()], { myCall: "K1ABC" })).toEqual([]);
     });
 
-    it("expires old calls", () => {
+    it("shows an old CQ as heard, and keeps it", () => {
         const decodes = [
-            decode({ receivedAt: new Date(NOW - STATION_EXPIRY_MS - 1) }),
+            decode({ receivedAt: new Date(NOW - CQ_EXPIRY_MS - 1) }),
             decode({
                 call: "DL2XYZ",
-                receivedAt: new Date(NOW - STATION_EXPIRY_MS),
+                receivedAt: new Date(NOW - CQ_EXPIRY_MS),
             }),
         ];
+        const types = getActiveStations(decodes, { now: NOW }).map(
+            (s) => s.type,
+        );
 
-        expect(calls(decodes)).toEqual([decodes[1]]);
+        expect(types).toEqual([StationType.HEARD, StationType.CQ]);
+    });
+
+    it("stops showing an old call to us as calling you", () => {
+        const old = decode({
+            kind: DecodeKind.GRID,
+            toCall: "W6MSH",
+            receivedAt: new Date(NOW - CQ_EXPIRY_MS - 1),
+        });
+        const [station] = getActiveStations([old], {
+            now: NOW,
+            myCall: "W6MSH",
+        });
+
+        expect(station.callingYou).toBe(false);
     });
 
     it("keeps a played back decode with an old time stamp", () => {
@@ -131,10 +149,41 @@ describe("getActiveStations", () => {
         expect(calls(decodes)).toEqual(decodes);
     });
 
-    it("only returns stations on the current band", () => {
-        const decodes = [decode({ band: "40M" }), decode({ call: "DL2XYZ" })];
+    it("keeps each band, with CQs only on the current one", () => {
+        const decodes = [decode({ band: "40M" }), decode()];
+        const stations = getActiveStations(decodes, {
+            now: NOW,
+            band: "20M",
+            workingCall: "K1ABC",
+        });
 
-        expect(calls(decodes, { band: "20M" })).toEqual([decodes[1]]);
+        expect(stations.map((s) => [s.type, s.working])).toEqual([
+            [StationType.HEARD, false],
+            [StationType.CQ, true],
+        ]);
+    });
+
+    it("has nothing live once WSJT-X has gone", () => {
+        const [station] = getActiveStations([decode()], {
+            now: NOW,
+            workingCall: "K1ABC",
+            live: false,
+        });
+
+        expect(station).toMatchObject({
+            type: StationType.HEARD,
+            working: false,
+        });
+    });
+});
+
+describe("mergeHeard", () => {
+    it("keeps the latest of each station on each band, up to a limit", () => {
+        const older = [decode({ snr: 1 }), decode({ band: "40M" })];
+        const newer = [decode({ snr: 2 }), decode({ call: undefined })];
+
+        expect(mergeHeard(newer, older, 10)).toEqual([newer[0], older[1]]);
+        expect(mergeHeard(newer, older, 1)).toEqual([newer[0]]);
     });
 });
 
@@ -181,7 +230,7 @@ describe("getShownStations", () => {
         ...values,
     });
 
-    it("hides filtered types, but not stations with a line", () => {
+    it("hides filtered types, including stations with a line", () => {
         const stations = [
             station(),
             station({ type: StationType.CQ }),
@@ -190,7 +239,7 @@ describe("getShownStations", () => {
         ];
         const show = { [StationType.HEARD]: false, [StationType.CQ]: true };
 
-        expect(getShownStations(stations, show)).toEqual(stations.slice(1));
+        expect(getShownStations(stations, show)).toEqual([stations[1]]);
     });
 });
 

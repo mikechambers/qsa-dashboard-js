@@ -30,7 +30,9 @@ const SPOT_PREFIX = "spot-";
 const STATION_PREFIX = "station-";
 
 export const spotKey = (sequence) => `${SPOT_PREFIX}${sequence}`;
-export const stationKey = (call) => `${STATION_PREFIX}${call}`;
+//a station has a key for each band it was heard on
+export const stationKey = (call, band) =>
+    `${STATION_PREFIX}${call}${band ? `|${band}` : ""}`;
 
 //undefined if key isn't for a spot
 export const getSpotSequence = (key) =>
@@ -41,7 +43,7 @@ export const getSpotSequence = (key) =>
 //undefined if key isn't for a station
 export const getStationCall = (key) =>
     key?.startsWith(STATION_PREFIX)
-        ? key.slice(STATION_PREFIX.length)
+        ? key.slice(STATION_PREFIX.length).split("|")[0]
         : undefined;
 
 export const NO_SELECTION = Object.freeze({ key: undefined, pinned: false });

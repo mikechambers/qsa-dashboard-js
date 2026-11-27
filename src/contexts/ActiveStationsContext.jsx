@@ -21,7 +21,8 @@
  * SOFTWARE.
  */
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { STATION_REFRESH_MS } from "@/consts/config";
 import { useSettings } from "@/contexts/SettingsContext";
 import { useWsjtx } from "@/contexts/WsjtxContext";
 import { Band } from "@/enums/Band";
@@ -36,48 +37,56 @@ import { gridToLocation } from "@/utils/geo";
 import { gridStore, withKnownGrid } from "@/utils/gridStore";
 import { isValidMaidenHeadGrid } from "@/utils/radio";
 
-//how often to check for expired stations
-const REFRESH_MS = 5000;
-
-//works out which stations WSJT-X is hearing, on the band it is on, once for
-//everything that shows them. Must be inside SettingsProvider and WsjtxProvider
+//works out the stations WSJT-X has heard, once for everything that shows
+//them. Must be inside SettingsProvider and WsjtxProvider
 export function ActiveStationsProvider({ children }) {
     const { settings } = useSettings();
-    const { connected, status, decodes } = useWsjtx();
+    const { connected, status, heard } = useWsjtx();
 
-    //rerender now and then so old stations drop off
-    const [, setTick] = useState(0);
+    //recalculate now and then so CQs expire and ages stay current
+    const [tick, setTick] = useState(0);
+    const any = heard.length > 0;
     useEffect(() => {
-        if (!connected) return;
+        if (!any) return;
 
-        const timer = setInterval(() => setTick((t) => t + 1), REFRESH_MS);
+        const timer = setInterval(
+            () => setTick((t) => t + 1),
+            STATION_REFRESH_MS,
+        );
         return () => clearInterval(timer);
-    }, [connected]);
+    }, [any]);
 
-    //our own grid, from the app's settings, which is where the map puts home
-    const home = isValidMaidenHeadGrid(settings.grid)
-        ? gridToLocation(settings.grid)
+    const band = status
+        ? Band.fromFrequency(status.dialFrequency)
         : undefined;
+    const myCall = status?.deCall;
+    const workingCall = getWorkingCall(status);
 
-    //not memoized on purpose. Stations expire with time, and a new array each
-    //tick also rerenders what uses it, which keeps ages like "20s ago" current
-    //a station we have no grid for isn't shown anywhere, even one calling us
-    //or being worked. WSJT-X covers those
-    const stations = connected
-        ? getActiveStations(decodes, {
-              band: status && Band.fromFrequency(status.dialFrequency),
-              myCall: status?.deCall,
-              workingCall: getWorkingCall(status),
-          })
-              .map((station) => ({
-                  ...station,
-                  decode: withDistanceFrom(
-                      withKnownGrid(station.decode, gridStore, home),
-                      home,
-                  ),
-              }))
-              .filter((station) => isMappable(station.decode))
-        : [];
+    //a new array each tick, so that what uses it rerenders
+    const stations = useMemo(() => {
+        //our own grid, from the app's settings, which is where the map puts
+        //home
+        const home = isValidMaidenHeadGrid(settings.grid)
+            ? gridToLocation(settings.grid)
+            : undefined;
+
+        //a station we have no grid for isn't shown anywhere, even one calling
+        //us or being worked. WSJT-X covers those
+        return getActiveStations(heard, {
+            band,
+            myCall,
+            workingCall,
+            live: connected,
+        })
+            .map((station) => ({
+                ...station,
+                decode: withDistanceFrom(
+                    withKnownGrid(station.decode, gridStore, home),
+                    home,
+                ),
+            }))
+            .filter((station) => isMappable(station.decode));
+    }, [heard, tick, connected, band, myCall, workingCall, settings.grid]);
 
     return (
         <ActiveStationsContext.Provider value={stations}>

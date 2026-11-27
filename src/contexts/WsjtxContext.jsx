@@ -27,12 +27,13 @@ import { PLATFORM } from "@/utils/platform";
 import { configureWsjtx, listenToDecodes } from "@/utils/wsjtx";
 import { useSettings } from "@/contexts/SettingsContext";
 import { applyStatus } from "@/utils/wsjtxDecoder";
+import { DECODE_LIMIT, HEARD_LIMIT } from "@/consts/config";
+import { mergeHeard } from "@/utils/activeStations";
 
 //WSJT-X sends a heartbeat every 15 seconds. Allow for a couple to go missing
 const TIMEOUT_MS = 40_000;
 //decodes arrive in bursts, so add them to state in batches
 const BATCH_MS = 500;
-const DECODE_LIMIT = 500;
 
 const WsjtxContext = createContext(null);
 
@@ -47,6 +48,9 @@ export function WsjtxProvider({ children }) {
     const [connected, setConnected] = useState(false);
     const [status, setStatus] = useState(null);
     const [decodes, setDecodes] = useState([]); //newest first
+    //the latest decode of each station on each band, newest first. Kept after
+    //WSJT-X closes
+    const [heard, setHeard] = useState([]);
 
     const batchRef = useRef([]);
     const lastHeardRef = useRef(0);
@@ -101,6 +105,12 @@ export function WsjtxProvider({ children }) {
                     //keep the same array if nothing changed, to not rerender
                     return next.some((d, i) => d !== prev[i]) ? next : prev;
                 });
+                setHeard((prev) => {
+                    const next = prev.map(apply);
+                    return next.some((d, i) => d !== prev[i])
+                        ? mergeHeard(next, [], HEARD_LIMIT)
+                        : prev;
+                });
             }
             if (decode) batchRef.current.unshift(decode);
         });
@@ -117,6 +127,7 @@ export function WsjtxProvider({ children }) {
                 setDecodes((prev) =>
                     [...batch, ...prev].slice(0, DECODE_LIMIT),
                 );
+                setHeard((prev) => mergeHeard(batch, prev, HEARD_LIMIT));
             }
         }, BATCH_MS);
 
@@ -130,8 +141,16 @@ export function WsjtxProvider({ children }) {
             setConnected(false);
             setStatus(null);
             setDecodes([]);
+            setHeard([]);
         };
     }, [desktop, wsjtxEnabled, wsjtxAddress, wsjtxPort]);
+
+    //forget everything heard so far
+    const clearDecodes = () => {
+        batchRef.current = [];
+        setDecodes([]);
+        setHeard([]);
+    };
 
     return (
         <WsjtxContext.Provider
@@ -145,6 +164,8 @@ export function WsjtxProvider({ children }) {
                 connected,
                 status,
                 decodes,
+                heard,
+                clearDecodes,
             }}
         >
             {children}

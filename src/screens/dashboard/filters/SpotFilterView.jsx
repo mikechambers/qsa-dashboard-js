@@ -43,16 +43,25 @@ import { useSettings } from "../../../contexts/SettingsContext";
 import { UnitType } from "../../../enums/UnitType";
 import { IconChevronUp } from "@tabler/icons-react";
 import { kilometersToMiles, milesToKilometers } from "@/utils/geo";
-import { MIN_SNR } from "@/consts/config";
+import { AGE_FILTER_MINUTES, MIN_SNR } from "@/consts/config";
+import { useFilterCounts } from "@/hooks/useFilterCounts";
 import { FilterIcon } from "./FilterIcon";
 import { TypeFilter } from "./TypeFilter";
 import { useTypeFilter } from "@/hooks/useTypeFilter";
 
 const bandValues = [ALL_CASES, ...Band.cases];
 const modeValues = [ALL_CASES, ...Mode.cases];
+const ageValues = [
+    ALL_CASES,
+    ...AGE_FILTER_MINUTES.map((m) => ({
+        value: String(m),
+        label: m === 60 ? "1 hour" : `${m} min`,
+    })),
+];
 
 export const SpotFilterView = () => {
-    const { filter, setFilter, spots } = useSpotData();
+    const { filter, setFilter } = useSpotData();
+    const { shown, total, noun } = useFilterCounts();
     const types = useTypeFilter();
     const { settings, setShowFilters } = useSettings();
 
@@ -88,7 +97,7 @@ export const SpotFilterView = () => {
         settings.unitType == UnitType.METRIC
             ? filter.distance
             : Math.round(kilometersToMiles(filter.distance));
-    const isFiltered = types.shownSpots.length !== spots.length;
+    const isFiltered = shown !== total;
     return (
         <Paper withBorder>
             <Group align="flex-end" gap="lg" pos="relative">
@@ -110,14 +119,14 @@ export const SpotFilterView = () => {
                         c={isFiltered ? "orange" : "dimmed"}
                         fw={isFiltered ? 600 : undefined}
                     >
-                        {types.shownSpots.length} of {spots.length} spots
+                        {shown} of {total} {noun}
                     </Text>
                 </Stack>
 
                 <Group align="flex-start" gap="lg">
                     <TextInput
                         size="xs"
-                        label="Receiving Station"
+                        label="Callsign"
                         placeholder="callsign"
                         value={filter.callsign}
                         onChange={(e) =>
@@ -149,6 +158,22 @@ export const SpotFilterView = () => {
                         value={filter.mode}
                         w={140}
                         onChange={(v) => setFilter(filter.with({ mode: v }))}
+                        allowDeselect={false}
+                    />
+
+                    <Select
+                        label="Age"
+                        size="xs"
+                        data={ageValues}
+                        value={String(filter.age)}
+                        w={110}
+                        onChange={(v) =>
+                            setFilter(
+                                filter.with({
+                                    age: v === ALL_CASES ? v : Number(v),
+                                }),
+                            )
+                        }
                         allowDeselect={false}
                     />
 

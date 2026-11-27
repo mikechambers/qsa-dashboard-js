@@ -66,12 +66,26 @@ describe("getSummary", () => {
             spot("K1ABC", 100, "us"),
         ]);
 
-        expect(summary.furthest.call).toBe("F5RXL");
+        expect(summary.furthest.call).toBe("K1ABC");
+        expect(summary.furthestHeard.call).toBe("F5RXL");
+    });
+
+    it("keeps the furthest spot and furthest heard apart", () => {
+        const summary = getSummary([
+            spot("K1ABC", 9000, "us"),
+            station("N0CALL", undefined),
+            station("F5RXL", 900, "fr"),
+            station("W1AW", 400, "us"),
+        ]);
+
+        expect(summary.furthestHeard.call).toBe("F5RXL");
+        expect(summary.furthest.call).toBe("K1ABC");
     });
 
     it("is empty with no rows", () => {
         expect(getSummary([])).toEqual({
             furthest: undefined,
+            furthestHeard: undefined,
             mostRecent: undefined,
             stationCount: 0,
             countryCount: 0,

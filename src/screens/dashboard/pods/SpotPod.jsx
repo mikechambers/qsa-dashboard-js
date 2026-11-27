@@ -23,11 +23,14 @@
 
 import { useSelectedSpot } from "@/contexts/SelectedSpotContext";
 import { useSettings } from "@/contexts/SettingsContext";
+import { MAP_DISTANCE_RING_PALETTE } from "@/consts/config";
 import { SummaryBase } from "@/screens/dashboard/pods/PodBase";
 import { convertAndFormatDistance } from "@/utils/view";
 
 //row is from getTableRows: a spot, or a heard / CQ station
-export const SpotPod = ({ row, title }) => {
+//ring is which of the map's distance rings this pod goes with, if any, to
+//show its color
+export const SpotPod = ({ row, title, ring }) => {
     const { pin } = useSelectedSpot();
     const { settings } = useSettings();
 
@@ -50,7 +53,9 @@ export const SpotPod = ({ row, title }) => {
             value={d}
             unit={unit}
             onClick={onSpotClick}
-            swatchColor={undefined}
+            swatchColor={
+                ring && MAP_DISTANCE_RING_PALETTE[settings.displayMode][ring]
+            }
             subvalue={subvalue}
         />
     );

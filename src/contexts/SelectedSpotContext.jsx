@@ -25,7 +25,6 @@ import { createContext, useCallback, useContext, useState } from "react";
 import {
     NO_SELECTION,
     getSpotSequence,
-    getStationCall,
     hoverSelection,
     pinSelection,
     unpinSelection,
@@ -82,7 +81,6 @@ export function SelectedSpotProvider({ children }) {
                 selectedKey: selection.key,
                 pinned: selection.pinned,
                 selectedSpot,
-                selectedCall: getStationCall(selection.key),
                 hover,
                 pin,
                 unpin,

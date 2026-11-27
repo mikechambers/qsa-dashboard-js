@@ -43,7 +43,7 @@ import { useSpotData } from "@/contexts/SpotDataContext";
 import { CallsignCell } from "./CallsignCell";
 import { useTypeFilter } from "@/hooks/useTypeFilter";
 import { useWsjtx } from "@/contexts/WsjtxContext";
-import { useActiveStations } from "@/hooks/useActiveStations";
+import { useFilteredStations } from "@/hooks/useStations";
 import { StationType } from "@/enums/StationType";
 import { TableTab } from "@/enums/TableTab";
 import { getTheyHearYou } from "@/utils/signalReports";
@@ -64,14 +64,13 @@ const getEmptyText = (tab, { hidden, filtered }) => {
     if (hidden) {
         return ["Everything Is Hidden", "Set Type to All in the filters."];
     }
+    if (filtered) return ["Nothing Matches the Filters", ""];
     if (tab === TableTab.HEARD) {
         return ["No stations heard", "Stations you decode will appear here."];
     }
     if (tab === TableTab.CQ) {
         return ["No CQ calls", "Stations calling CQ will appear here."];
     }
-    if (filtered) return ["No Spots Match Filter", ""];
-
     return ["No spots yet", "Spots will appear here as they arrive."];
 };
 
@@ -88,8 +87,8 @@ export const SpotTable = ({ onCollapse }) => {
     const { settings } = useSettings();
 
     //only the desktop version hears stations, so the web has just spots
-    const { available, decodes, status } = useWsjtx();
-    const stations = useActiveStations();
+    const { available, decodes, status, clearDecodes } = useWsjtx();
+    const stations = useFilteredStations();
 
     //the tabs are the type filter, so they follow the map buttons and the
     //Type dropdown, and those follow them
@@ -118,17 +117,21 @@ export const SpotTable = ({ onCollapse }) => {
 
     const onDeleteSpots = () =>
         modals.openConfirmModal({
-            title: "Delete All Spots",
+            title: available ? "Delete All Stations" : "Delete All Spots",
             centered: true,
             confirmProps: { color: "red" },
             children: (
                 <Text size="sm">
-                    Are you sure you want to delete all spots? This action
-                    cannot be undone.
+                    Are you sure you want to delete all{" "}
+                    {available ? "spots and heard stations" : "spots"}? This
+                    action cannot be undone.
                 </Text>
             ),
-            labels: { confirm: "Delete Spots", cancel: "Cancel" },
-            onConfirm: clearSpots,
+            labels: { confirm: "Delete", cancel: "Cancel" },
+            onConfirm: () => {
+                clearSpots();
+                clearDecodes();
+            },
         });
 
     const virtualizer = useVirtualizer({
@@ -206,7 +209,11 @@ export const SpotTable = ({ onCollapse }) => {
                         variant="subtle"
                         size="xs"
                         color="red"
-                        title="Delete all spots."
+                        title={
+                            available
+                                ? "Delete all spots and heard stations."
+                                : "Delete all spots."
+                        }
                         onClick={onDeleteSpots}
                     >
                         <IconTrash />

@@ -24,6 +24,17 @@
 export const ADD_SPOT_JITTER = true;
 export const SPOT_BATCH_INTERVAL = 2000;
 export const SPOT_LIMIT = 3000;
+//how many stations heard by WSJT-X are kept, one for each station and band
+export const HEARD_LIMIT = 3000;
+//how many of the latest decodes are kept
+export const DECODE_LIMIT = 500;
+//after this a CQ is shown as Heard, and a station no longer as calling you
+export const CQ_EXPIRY_MS = 75_000;
+//how often to check what has expired or aged out
+export const STATION_REFRESH_MS = 5000;
+export const AGE_FILTER_REFRESH_MS = 5000;
+//the choices of the age filter, besides all
+export const AGE_FILTER_MINUTES = [5, 15, 30, 60];
 export const SETTINGS_PATH = "/settings";
 export const ABOUT_PATH = "/about";
 export const DASHBOARD_PATH = "/dashboard";
@@ -36,6 +47,8 @@ export const MAP_DISTANCE_RING_PALETTE = {
         ringOpacity: 0.5,
         furthest: "#1fa393",
         furthestOpacity: 0.6,
+        furthestHeard: "#2b7fd4",
+        furthestHeardOpacity: 0.6,
         label: "#495057",
     },
     DARK: {
@@ -43,6 +56,8 @@ export const MAP_DISTANCE_RING_PALETTE = {
         ringOpacity: 0.5,
         furthest: "#45c4ae",
         furthestOpacity: 0.5,
+        furthestHeard: "#5aa7ee",
+        furthestHeardOpacity: 0.5,
         label: "#f1f3f5",
     },
 };

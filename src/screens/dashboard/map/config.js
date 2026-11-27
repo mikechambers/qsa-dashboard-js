@@ -51,6 +51,8 @@ export const STATION_COLORS = {
 export const DISTANCE_RANGE_PATH = "DISTANCE_RANGE_PATH";
 export const FURTHEST_RANGE_PATH = "FURTHEST_RANGE_PATH";
 export const DISTANCE_LABEL_PATH = "DISTANCE_LABEL_PATH";
+export const HEARD_RANGE_PATH = "HEARD_RANGE_PATH";
+export const HEARD_LABEL_PATH = "HEARD_LABEL_PATH";
 export const DISTANCE_LABEL_SIZE = 12;
 //the font has to exist in the map style. The offline fonts have no Bold
 export const DISTANCE_LABEL_FONT =

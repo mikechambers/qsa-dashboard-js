@@ -45,7 +45,7 @@ export function useStationLayer(map, ready, stations, location) {
     const key = stations
         .map((station) => {
             const { decode, working, callingYou } = station;
-            return `${decode.call}:${decode.location.grid}:${getIcon(station)}:${working}:${callingYou}`;
+            return `${decode.call}:${decode.band}:${decode.location.grid}:${getIcon(station)}:${working}:${callingYou}`;
         })
         .join(",");
 
@@ -54,7 +54,8 @@ export function useStationLayer(map, ready, stations, location) {
 
         map.getSource(STATION_PATH)?.setData({
             type: "FeatureCollection",
-            features: stations.map((station) => ({
+            //oldest first, so the newest is on top where they share a spot
+            features: stations.toReversed().map((station) => ({
                 type: "Feature",
                 geometry: {
                     type: "Point",
@@ -62,6 +63,7 @@ export function useStationLayer(map, ready, stations, location) {
                 },
                 properties: {
                     call: station.decode.call,
+                    band: station.decode.band,
                     icon: getIcon(station),
                     order: getOrder(station),
                 },
