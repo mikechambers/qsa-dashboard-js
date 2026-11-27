@@ -57,7 +57,7 @@ export const HeaderContainer = ({ callsign, grid }) => {
                 </Group>
 
                 <ClockContainer breakpoint={breakpoint} />
-                <Group wrap="nowrap" gap={16}>
+                <Group wrap="nowrap" gap={8}>
                     <WsjtxStatus />
                     <ConnectionStatusBadge breakpoint={breakpoint} />
                     {/* the desktop app has these in its menu */}
