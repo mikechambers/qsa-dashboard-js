@@ -98,7 +98,8 @@ export const AboutScreen = () => {
 
                 <Stack gap="sm">
                     <Text>
-                        QSA Dashboard is a web based dashboard created by{" "}
+                        QSA Dashboard is a cross-platform desktop and web based
+                        dashboard created by{" "}
                         <ExternalLink href="https://www.mikechambers.com">
                             Mike Chambers
                         </ExternalLink>{" "}
