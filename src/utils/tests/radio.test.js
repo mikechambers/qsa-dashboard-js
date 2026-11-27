@@ -25,7 +25,7 @@
 import { describe, it, expect } from 'vitest'
 //import radio from '@/utils/radio'
 
-import {isValidCallsign, isValidUSCallsign, isValidGlobalCallsign, normalizeMaidenHeadGrid, isValidMaidenHeadGrid} from "@/utils/radio"
+import {isValidCallsign, isValidUSCallsign, isValidGlobalCallsign, normalizeMaidenHeadGrid, isValidMaidenHeadGrid, gridsDiffer} from "@/utils/radio"
 
 
 describe('isValidCallsign: valid', () => {
@@ -217,4 +217,23 @@ describe('normalizeMaidenHeadGrid', () => {
             expect(isValidMaidenHeadGrid("FN42bb22")).toBe(false);
         });
     });
+});
+
+describe("gridsDiffer", () => {
+  it("tells different places apart", () => {
+    expect(gridsDiffer("CM87", "DM79")).toBe(true);
+    expect(gridsDiffer("CM87tl", "CM87ss")).toBe(true);
+  });
+
+  it("ignores case and how precise each one is", () => {
+    expect(gridsDiffer("cm87TL", "CM87tl")).toBe(false);
+    expect(gridsDiffer("CM87", "CM87tl")).toBe(false);
+    expect(gridsDiffer("CM87tl", "CM87")).toBe(false);
+  });
+
+  it("is false without two grids to compare", () => {
+    expect(gridsDiffer("CM87", "")).toBe(false);
+    expect(gridsDiffer(undefined, "CM87")).toBe(false);
+    expect(gridsDiffer("CM87", "nope")).toBe(false);
+  });
 });

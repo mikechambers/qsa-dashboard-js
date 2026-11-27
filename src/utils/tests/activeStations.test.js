@@ -28,9 +28,11 @@ import {
     getShownStations,
     getWorkingCall,
     isMappable,
+    withDistanceFrom,
 } from "../activeStations";
 import { DecodeKind } from "@/enums/DecodeKind";
 import { StationType } from "@/enums/StationType";
+import { gridToLocation } from "@/utils/geo";
 
 const NOW = Date.UTC(2026, 0, 1, 12, 0, 0);
 
@@ -189,5 +191,26 @@ describe("getShownStations", () => {
         const show = { [StationType.HEARD]: false, [StationType.CQ]: true };
 
         expect(getShownStations(stations, show)).toEqual(stations.slice(1));
+    });
+});
+
+describe("withDistanceFrom", () => {
+    const home = gridToLocation("CM87");
+    const location = gridToLocation("JN18");
+
+    it("measures from home, replacing any distance it had", () => {
+        const result = withDistanceFrom({ location, distance: 1 }, home);
+
+        expect(result.distance).toBeGreaterThan(8000);
+        expect(result.location).toBe(location);
+    });
+
+    it("has no distance without both ends", () => {
+        expect(withDistanceFrom({ location }, undefined).distance).toBe(
+            undefined,
+        );
+        expect(withDistanceFrom({ distance: 1 }, home).distance).toBe(
+            undefined,
+        );
     });
 });

@@ -108,3 +108,14 @@ export const isValidGlobalCallsign = (callsign) => {
         callsign,
     );
 };
+
+//whether two grids are different places. One with more characters than the
+//other is the same place if they agree as far as the shorter one goes. false if
+//either isn't a grid
+export const gridsDiffer = (a, b) => {
+    const [first, second] = [a, b].map(normalizeMaidenHeadGrid);
+
+    if (![first, second].every(isValidMaidenHeadGrid)) return false;
+
+    return !first.startsWith(second) && !second.startsWith(first);
+};

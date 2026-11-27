@@ -24,8 +24,10 @@
 //works out which stations we are hearing right now, and which of them are
 //calling us or being worked
 
+import { distanceOnEarth } from "@ham2k/lib-geo-tools";
 import { DecodeKind } from "@/enums/DecodeKind";
 import { StationType } from "@/enums/StationType";
+import Decode from "@/models/Decode";
 
 //a station in a contact transmits every 30 seconds, so this allows for one
 //missed decode before it drops off
@@ -94,3 +96,14 @@ export const isMappable = (decode) =>
 //Stations calling us or being worked are always shown
 export const getShownStations = (stations, show) =>
     stations.filter((s) => s.working || s.callingYou || show[s.type]);
+
+//a copy of the decode with its distance measured from home. The decoder uses
+//the grid set in WSJT-X, but the app uses the one in its own settings
+export const withDistanceFrom = (decode, home) =>
+    new Decode({
+        ...decode,
+        distance:
+            home && decode.location
+                ? distanceOnEarth(home, decode.location)
+                : undefined,
+    });

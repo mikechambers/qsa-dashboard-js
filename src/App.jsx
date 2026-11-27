@@ -43,6 +43,8 @@ import { ModalsProvider } from "@mantine/modals";
 import { WsjtxProvider } from "./contexts/WsjtxContext";
 import { ActiveStationsProvider } from "./contexts/ActiveStationsContext";
 import { useDesktopMenu } from "./hooks/useDesktopMenu";
+import { NotificationProvider } from "./contexts/NotificationContext";
+import { GridMismatchNotice } from "./screens/notifications/GridMismatchNotice";
 
 const theme = createTheme({
     fontFamilyMonospace: "'Roboto Mono', monospace, monospace",
@@ -92,11 +94,14 @@ function ThemedApp() {
     return (
         <MantineProvider theme={theme} forceColorScheme={colorScheme}>
             <ModalsProvider>
-                <div id="main">
-                    <Suspense fallback={null}>
-                        <Outlet />
-                    </Suspense>
-                </div>
+                <NotificationProvider>
+                    <div id="main">
+                        <Suspense fallback={null}>
+                            <Outlet />
+                        </Suspense>
+                    </div>
+                    <GridMismatchNotice />
+                </NotificationProvider>
             </ModalsProvider>
         </MantineProvider>
     );

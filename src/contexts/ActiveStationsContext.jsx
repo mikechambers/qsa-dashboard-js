@@ -22,6 +22,7 @@
  */
 
 import { useEffect, useState } from "react";
+import { useSettings } from "@/contexts/SettingsContext";
 import { useWsjtx } from "@/contexts/WsjtxContext";
 import { Band } from "@/enums/Band";
 import { ActiveStationsContext } from "@/hooks/useActiveStations";
@@ -29,6 +30,7 @@ import {
     getActiveStations,
     getWorkingCall,
     isMappable,
+    withDistanceFrom,
 } from "@/utils/activeStations";
 import { gridToLocation } from "@/utils/geo";
 import { gridStore, withKnownGrid } from "@/utils/gridStore";
@@ -38,8 +40,9 @@ import { isValidMaidenHeadGrid } from "@/utils/radio";
 const REFRESH_MS = 5000;
 
 //works out which stations WSJT-X is hearing, on the band it is on, once for
-//everything that shows them. Must be inside WsjtxProvider
+//everything that shows them. Must be inside SettingsProvider and WsjtxProvider
 export function ActiveStationsProvider({ children }) {
+    const { settings } = useSettings();
     const { connected, status, decodes } = useWsjtx();
 
     //rerender now and then so old stations drop off
@@ -51,11 +54,10 @@ export function ActiveStationsProvider({ children }) {
         return () => clearInterval(timer);
     }, [connected]);
 
-    //our own grid, as set in WSJT-X
-    const home =
-        status?.deGrid && isValidMaidenHeadGrid(status.deGrid)
-            ? gridToLocation(status.deGrid)
-            : undefined;
+    //our own grid, from the app's settings, which is where the map puts home
+    const home = isValidMaidenHeadGrid(settings.grid)
+        ? gridToLocation(settings.grid)
+        : undefined;
 
     //not memoized on purpose. Stations expire with time, and a new array each
     //tick also rerenders what uses it, which keeps ages like "20s ago" current
@@ -69,7 +71,10 @@ export function ActiveStationsProvider({ children }) {
           })
               .map((station) => ({
                   ...station,
-                  decode: withKnownGrid(station.decode, gridStore, home),
+                  decode: withDistanceFrom(
+                      withKnownGrid(station.decode, gridStore, home),
+                      home,
+                  ),
               }))
               .filter((station) => isMappable(station.decode))
         : [];
