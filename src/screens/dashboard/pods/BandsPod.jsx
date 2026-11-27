@@ -27,13 +27,8 @@ import { ActionIcon, Box, Group, Text } from "@mantine/core";
 import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
 import { StationType } from "@/enums/StationType";
 import { useInterval } from "@mantine/hooks";
-
-import { UnitType } from "@/enums/UnitType";
-import { kilometersToMiles } from "@/utils/geo";
-import { timeAgo } from "@/utils/date";
-import { getColorForBand } from "../spots/BandBadge";
-
 import classes from "./BandsPod.module.css";
+import { BandTile } from "./BandTile";
 
 const TILE_HEIGHT = 72;
 const GAP = 6;
@@ -67,93 +62,8 @@ const getBandStats = (rows) => {
         s.furthest = Math.max(s.furthest, row.distance ?? 0);
     }
 
-    return [...stats.values()].sort((a, b) => b.count - a.count || b.last - a.last);
-};
-
-//1234 spots becomes 1.2k
-const compactCount = (n) => (n >= 1000 ? `${(n / 1000).toFixed(1)}k` : `${n}`);
-
-//12,649 km becomes 12.6k
-const compactDistance = (km, unitType) => {
-    const miles = unitType === UnitType.IMPERIAL;
-    const v = miles ? kilometersToMiles(km) : km;
-
-    return {
-        text: v >= 1000 ? `${(v / 1000).toFixed(1)}k` : `${Math.round(v)}`,
-        unit: miles ? "mi" : "km",
-    };
-};
-
-const BandTile = ({ stat, width, unitType, selected, onClick }) => {
-    const color = `var(--mantine-color-${getColorForBand(stat.band)}-6)`;
-    const snr = Math.round(stat.snrTotal / stat.count);
-    const furthest = compactDistance(stat.furthest, unitType);
-    //spots are their report of us, and decodes are ours of them, so there is
-    //no one average for a mix of the two
-    const mixed = stat.spots > 0 && stat.spots < stat.count;
-    //spots are reports (a station can have several), heard and CQ rows are
-    //stations, and a mix of the two is neither
-    const noun = mixed ? "entries" : stat.spots ? "spots" : "stations";
-    const average = mixed ? "" : ` avg ${snr} dB,`;
-    const ago = timeAgo(new Date(stat.last)).replace(/ ago$/, "");
-
-    return (
-        <Box
-            component="button"
-            type="button"
-            aria-pressed={selected}
-            onClick={onClick}
-            className={classes.tile}
-            data-selected={selected || undefined}
-            w={width}
-            h={TILE_HEIGHT}
-            px={6}
-            py={5}
-            style={{
-                flex: "none",
-                boxSizing: "border-box",
-                textAlign: "left",
-                font: "inherit",
-                color: "inherit",
-                cursor: "pointer",
-                "--band-color": color,
-                lineHeight: 1.15,
-            }}
-            title={`${stat.band.toLowerCase()}: ${stat.count} ${noun}, last heard ${ago === "now" ? "now" : `${ago} ago`},${average} furthest ${furthest.text} ${furthest.unit}`}
-        >
-            <Group gap={4} wrap="nowrap">
-                <Box
-                    w={6}
-                    h={6}
-                    style={{
-                        flex: "none",
-                        borderRadius: "50%",
-                        background: color,
-                    }}
-                />
-                <Text fz={12} fw={600} lh={1.15}>
-                    {stat.band.toLowerCase()}
-                </Text>
-            </Group>
-            {/* the count is the main thing in the tile */}
-            <Group gap={4} wrap="nowrap" align="baseline" mt={2}>
-                <Text fz={26} fw={700} lh={1}>
-                    {compactCount(stat.count)}
-                </Text>
-                <Text fz={10} c="dimmed">
-                    {noun}
-                </Text>
-            </Group>
-            <Text
-                fz={11}
-                c="dimmed"
-                lh={1.2}
-                mt={2}
-                style={{ whiteSpace: "nowrap" }}
-            >
-                {furthest.text} {furthest.unit}
-            </Text>
-        </Box>
+    return [...stats.values()].sort(
+        (a, b) => b.count - a.count || b.last - a.last,
     );
 };
 
@@ -226,7 +136,9 @@ export const BandsPod = ({
             variant="default"
             size="sm"
             radius="xl"
-            aria-label={direction > 0 ? "Show more bands" : "Show earlier bands"}
+            aria-label={
+                direction > 0 ? "Show more bands" : "Show earlier bands"
+            }
             onClick={() => scrollBy(direction)}
         >
             {direction > 0 ? (
@@ -259,6 +171,7 @@ export const BandsPod = ({
                         key={stat.band}
                         stat={stat}
                         width={tileWidth}
+                        height={TILE_HEIGHT}
                         unitType={unitType}
                         selected={stat.band === selectedBand}
                         onClick={() =>

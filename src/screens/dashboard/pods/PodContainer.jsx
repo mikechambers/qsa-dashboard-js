@@ -34,7 +34,6 @@ import { FurthestSpotPod } from "./FurthestSpotPod";
 import { FurthestHeardPod } from "./FurthestHeardPod";
 import { MostRecentSpotPod } from "./MostRecentSpotPod";
 import { BandsPod } from "./BandsPod";
-import { TILE_WIDTH, WIDE_TILE_WIDTH } from "./bandTile";
 import { WsjtxPod } from "./WsjtxPod";
 import { ALL_CASES } from "@/consts";
 import { ChartContainer } from "./charts/ChartContainer";
@@ -48,6 +47,11 @@ import { useTypeFilter } from "@/hooks/useTypeFilter";
 import { StationType } from "@/enums/StationType";
 import { getTableRows } from "@/utils/tableRows";
 import { getSummary } from "@/utils/summary";
+
+//width of a band tile. The wide one has room for "stations" after the count,
+//and is used on desktop so the tiles don't resize as the type filter changes
+const TILE_WIDTH = 92;
+const WIDE_TILE_WIDTH = 106;
 
 export const PodContainer = () => {
     const {
