@@ -24,7 +24,11 @@
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { Platform } from "@/enums/Platform";
 import { PLATFORM } from "@/utils/platform";
-import { configureWsjtx, listenToDecodes } from "@/utils/wsjtx";
+import {
+    configureWsjtx,
+    listenForIgnoredWsjtx,
+    listenToDecodes,
+} from "@/utils/wsjtx";
 import { useSettings } from "@/contexts/SettingsContext";
 import { applyStatus } from "@/utils/wsjtxDecoder";
 import {
@@ -52,7 +56,12 @@ export function WsjtxProvider({ children }) {
     //WSJT-X closes
     const [heard, setHeard] = useState([]);
 
+    //a second WSJT-X that is being ignored, as { sender, id }. Only one is
+    //supported, so status and decodes here are always from a single instance
+    const [ignored, setIgnored] = useState(null);
+
     const batchRef = useRef([]);
+    const lastIgnoredRef = useRef(0);
     const lastHeardRef = useRef(0);
 
     //(re)starts the listener whenever its settings change
@@ -115,7 +124,17 @@ export function WsjtxProvider({ children }) {
             if (decode) batchRef.current.unshift(decode);
         });
 
+        const stopIgnored = listenForIgnoredWsjtx((next) => {
+            lastIgnoredRef.current = Date.now();
+            setIgnored((prev) => (prev?.sender === next.sender ? prev : next));
+        });
+
         const timer = setInterval(() => {
+            //the second one has stopped sending
+            if (Date.now() - lastIgnoredRef.current > WSJTX_TIMEOUT_MS) {
+                setIgnored(null);
+            }
+
             if (Date.now() - lastHeardRef.current > WSJTX_TIMEOUT_MS) {
                 setConnected(false);
                 setStatus(null);
@@ -134,6 +153,8 @@ export function WsjtxProvider({ children }) {
         return () => {
             clearInterval(timer);
             stopListening();
+            stopIgnored();
+            setIgnored(null);
 
             //what we heard was from the old connection
             batchRef.current = [];
@@ -163,6 +184,7 @@ export function WsjtxProvider({ children }) {
                 retry: () => setAttempt((n) => n + 1),
                 connected,
                 status,
+                ignored,
                 decodes,
                 heard,
                 clearDecodes,

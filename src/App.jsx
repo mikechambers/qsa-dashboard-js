@@ -45,6 +45,7 @@ import { ActiveStationsProvider } from "./contexts/ActiveStationsContext";
 import { useDesktopMenu } from "./hooks/useDesktopMenu";
 import { NotificationProvider } from "./contexts/NotificationContext";
 import { GridMismatchNotice } from "./screens/notifications/GridMismatchNotice";
+import { SecondWsjtxNotice } from "./screens/notifications/SecondWsjtxNotice";
 
 const theme = createTheme({
     fontFamilyMonospace: "'Roboto Mono', monospace, monospace",
@@ -101,6 +102,7 @@ function ThemedApp() {
                         </Suspense>
                     </div>
                     <GridMismatchNotice />
+                    <SecondWsjtxNotice />
                 </NotificationProvider>
             </ModalsProvider>
         </MantineProvider>

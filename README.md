@@ -301,7 +301,7 @@ Settings are saved on your computer, in the browser's local storage (or the desk
 
 - The first minute in the charts is often much higher than the minutes after it (see the note under Spots / Minute)
 - Distance rings (especially large ones) can look distorted on the map due to how the map is projected
-- The desktop app supports only one WSJT-X instance at a time. If more than one sends to it, their status gets mixed up, including the state of the Reply button, which can transmit.
+- The desktop app supports only one WSJT-X instance at a time. It uses the first one it hears and ignores any other, with a notice. To switch, close the one in use.
 
 ## Development
 

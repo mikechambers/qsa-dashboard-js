@@ -1,10 +1,9 @@
-use std::collections::HashMap;
 use std::io;
 use std::net::{Ipv4Addr, SocketAddr, SocketAddrV4, UdpSocket};
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, Mutex};
 use std::thread::{self, JoinHandle};
-use std::time::Duration;
+use std::time::{Duration, Instant};
 
 use serde::Serialize;
 use socket2::{Domain, Protocol, Socket, Type};
@@ -18,6 +17,88 @@ const EVENT: &str = "wsjtx";
 // How often the listening thread stops waiting for a packet to see if it
 // should quit
 const STOP_CHECK: Duration = Duration::from_millis(250);
+
+// Name of the event for a second WSJT-X being ignored
+const IGNORED_EVENT: &str = "wsjtx-ignored";
+
+// At most this often, so a busy second instance doesn't flood the web app
+const IGNORED_EVENT_EVERY: Duration = Duration::from_secs(5);
+
+// The WSJT-X we are using is gone after this long without a message. It sends a
+// heartbeat every 15 seconds. Keep the same as WSJTX_TIMEOUT_MS in
+// src/consts/config.js, which is when the web app shows it as gone
+const PEER_TIMEOUT: Duration = Duration::from_secs(40);
+
+// ONLY ONE WSJT-X IS SUPPORTED, AND THIS IS WHERE THAT IS ENFORCED.
+//
+// The web app keeps one status (band, Tx state, who is being worked) and uses
+// it to decide whether Reply is allowed. A Reply can put the radio on the air.
+// With two instances, one's status could allow a Reply to the other, or a Reply
+// could be sent to the wrong one. So the first one heard is the only one
+// listened to, until it says it is closing or goes quiet.
+//
+// It is identified by its id AND the address and port it sends from, as two
+// instances can have the same id ("WSJT-X" unless started with --rig-name).
+//
+// To support more than one, each would need its own status in the web app,
+// and Reply would have to use the status of the one that sent the decode.
+//
+// This guards against mistakes. UDP senders can be faked, so it is not a
+// defense against someone on the network trying to get in the way.
+struct Peer {
+  id: String,
+  // replies are sent here
+  address: SocketAddr,
+  last_heard: Instant,
+}
+
+// What to do with a message
+#[derive(Debug, PartialEq)]
+enum Sender {
+  // the instance in use
+  Current,
+  // appears to be the one in use, arriving a second way. WSJT-X can send
+  // multicast on more than one network interface, which gives the same id and
+  // port but another address. Ignored without saying anything
+  Duplicate,
+  // some other instance. Ignored, and the user is told
+  Other,
+}
+
+// Takes on the sender if there is no instance in use
+fn check_sender(peer: &mut Option<Peer>, id: &str, address: SocketAddr, now: Instant) -> Sender {
+  if let Some(current) = peer {
+    if now.duration_since(current.last_heard) <= PEER_TIMEOUT {
+      if current.id != id {
+        return Sender::Other;
+      }
+      if current.address != address {
+        return if current.address.port() == address.port() {
+          Sender::Duplicate
+        } else {
+          // includes WSJT-X restarting without saying it closed, such as after
+          // a crash. It is taken on once the old one has timed out
+          Sender::Other
+        };
+      }
+    }
+  }
+
+  // the instance in use, or a new one
+  *peer = Some(Peer {
+    id: id.to_string(),
+    address,
+    last_heard: now,
+  });
+  Sender::Current
+}
+
+// A second instance that is being ignored
+#[derive(Clone, Serialize)]
+struct Ignored {
+  sender: String,
+  id: String,
+}
 
 #[derive(Clone, Serialize)]
 struct Event {
@@ -42,8 +123,8 @@ struct Listener {
 #[derive(Default)]
 pub struct Connection {
   listener: Mutex<Option<Listener>>,
-  // where each WSJT-X instance (by id) last sent from
-  peers: Mutex<HashMap<String, SocketAddr>>,
+  // the one WSJT-X instance in use. See Peer
+  peer: Mutex<Option<Peer>>,
 }
 
 // Why we aren't listening, for the web app to explain
@@ -91,8 +172,9 @@ pub fn wsjtx_configure(
     // the port is only free once the thread has dropped its socket
     let _ = listener.thread.join();
   }
-  if let Ok(mut peers) = connection.peers.lock() {
-    peers.clear();
+  // start again with whichever instance is heard first
+  if let Ok(mut peer) = connection.peer.lock() {
+    *peer = None;
   }
 
   if !enabled {
@@ -138,18 +220,19 @@ fn open_socket(address: Ipv4Addr, port: u16) -> io::Result<UdpSocket> {
   Ok(socket.into())
 }
 
-// Called from JavaScript to reply to a CQ. JavaScript only picks the instance,
-// so it can't make us send to any other address
+// Called from JavaScript to reply to a CQ. JavaScript only names the instance,
+// which has to be the one in use, so it can't make us send anywhere else
 #[tauri::command]
 pub fn wsjtx_reply(connection: State<Connection>, id: String, decode: Reply) -> Result<(), String> {
   let current = connection.listener.lock().map_err(|e| e.to_string())?;
   let socket = &current.as_ref().ok_or("Not listening for WSJT-X")?.socket;
   let address = connection
-    .peers
+    .peer
     .lock()
     .map_err(|e| e.to_string())?
-    .get(&id)
-    .copied()
+    .as_ref()
+    .filter(|peer| peer.id == id)
+    .map(|peer| peer.address)
     .ok_or("WSJT-X has not been heard from")?;
 
   socket
@@ -185,6 +268,9 @@ fn receive(app: AppHandle, socket: UdpSocket, stop: &AtomicBool) {
   // large enough for any UDP packet
   let mut buffer = vec![0u8; 65536];
 
+  // when the web app was last told about a second instance
+  let mut told_ignored: Option<Instant> = None;
+
   while !stop.load(Ordering::Relaxed) {
     // blocks this thread (not the app) until a packet arrives or the read
     // times out
@@ -207,10 +293,33 @@ fn receive(app: AppHandle, socket: UdpSocket, stop: &AtomicBool) {
 
     // None means it isn't a WSJT-X message, or a type we don't handle
     if let Some((id, message)) = protocol::parse(&buffer[..length]) {
-      // remember where to send replies
-      if let Ok(mut peers) = connection.peers.lock() {
-        peers.insert(id.clone(), sender);
+      // only one instance is used. Nothing from any other reaches the web app
+      let Ok(mut peer) = connection.peer.lock() else {
+        continue;
+      };
+      let now = Instant::now();
+      match check_sender(&mut peer, &id, sender, now) {
+        Sender::Current => {}
+        Sender::Duplicate => continue,
+        Sender::Other => {
+          if told_ignored.is_none_or(|told| now.duration_since(told) >= IGNORED_EVENT_EVERY) {
+            told_ignored = Some(now);
+            let ignored = Ignored {
+              sender: sender.to_string(),
+              id,
+            };
+            if let Err(e) = app.emit(IGNORED_EVENT, ignored) {
+              eprintln!("WSJT-X: could not send event: {e}");
+            }
+          }
+          continue;
+        }
       }
+      // it is closing, so the next one heard can take over
+      if message == Message::Close {
+        *peer = None;
+      }
+      drop(peer);
 
       let event = Event {
         sender: sender.to_string(),
@@ -235,6 +344,50 @@ mod tests {
   fn free_port() -> u16 {
     let socket = UdpSocket::bind((Ipv4Addr::LOCALHOST, 0)).unwrap();
     socket.local_addr().unwrap().port()
+  }
+
+  fn address(last: u8, port: u16) -> SocketAddr {
+    SocketAddr::from((Ipv4Addr::new(192, 168, 1, last), port))
+  }
+
+  #[test]
+  fn only_the_first_instance_is_used() {
+    let (mut peer, now) = (None, Instant::now());
+    let first = address(10, 5000);
+
+    assert_eq!(check_sender(&mut peer, "WSJT-X", first, now), Sender::Current);
+    assert_eq!(check_sender(&mut peer, "WSJT-X", first, now), Sender::Current);
+
+    // the same name from elsewhere, and another name from the same place
+    let second = address(20, 6000);
+    assert_eq!(check_sender(&mut peer, "WSJT-X", second, now), Sender::Other);
+    assert_eq!(check_sender(&mut peer, "WSJT-X - 2", first, now), Sender::Other);
+
+    // replies still go to the first
+    assert_eq!(peer.unwrap().address, first);
+  }
+
+  #[test]
+  fn another_interface_is_a_duplicate() {
+    let (mut peer, now) = (None, Instant::now());
+    check_sender(&mut peer, "WSJT-X", address(10, 5000), now);
+
+    let other = address(11, 5000);
+    assert_eq!(check_sender(&mut peer, "WSJT-X", other, now), Sender::Duplicate);
+  }
+
+  #[test]
+  fn another_instance_takes_over_once_the_first_is_quiet() {
+    let (mut peer, start) = (None, Instant::now());
+    check_sender(&mut peer, "WSJT-X", address(10, 5000), start);
+    let second = address(10, 6000);
+
+    let at_timeout = start + PEER_TIMEOUT;
+    assert_eq!(check_sender(&mut peer, "WSJT-X", second, at_timeout), Sender::Other);
+
+    let after = at_timeout + Duration::from_secs(1);
+    assert_eq!(check_sender(&mut peer, "WSJT-X", second, after), Sender::Current);
+    assert_eq!(peer.unwrap().address, second);
   }
 
   #[test]

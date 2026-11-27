@@ -57,6 +57,21 @@ export function listenToWsjtx(onMessage) {
     };
 }
 
+//calls onIgnored with { sender, id } while a second WSJT-X is sending. Only one
+//is supported, so the Rust listener drops its messages (see Peer in
+//listener.rs). Returns a function that stops listening
+export function listenForIgnoredWsjtx(onIgnored) {
+    if (PLATFORM !== Platform.DESKTOP) return () => {};
+
+    const unlisten = listen("wsjtx-ignored", (event) =>
+        onIgnored(event.payload),
+    );
+
+    return () => {
+        unlisten.then((off) => off());
+    };
+}
+
 //asks WSJT-X to reply to a CQ, as if the decode was double clicked there.
 //This can make the radio transmit, so only call it when the user asks
 export function sendReply(decode) {
