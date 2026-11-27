@@ -24,7 +24,6 @@
 import { useEffect } from "react";
 import { getCSSColorForSNR } from "@/utils/view";
 import { SPOT_PATH } from "./config";
-import { ADD_SPOT_JITTER } from "@/consts/config";
 import { getSpotMapCoordinates } from "./spotCoordinates";
 
 //hook that manages drawing contact spots on the map
@@ -35,7 +34,7 @@ export function useSpotLayer(map, ready, spots) {
 
         //create the geojson for the spots
         const features = spots.map((s) => {
-            const c = getSpotMapCoordinates(s, ADD_SPOT_JITTER);
+            const c = getSpotMapCoordinates(s);
 
             return {
                 type: "Feature",
@@ -43,7 +42,11 @@ export function useSpotLayer(map, ready, spots) {
                     type: "Point",
                     coordinates: c,
                 },
-                properties: { color: getCSSColorForSNR(s.snr), spotId: s.id },
+                properties: {
+                    color: getCSSColorForSNR(s.snr),
+                    spotId: s.id,
+                    time: s.date.getTime(),
+                },
             };
         });
 

@@ -49,6 +49,8 @@ export function addSpotLayer(map) {
         id: SPOT_PATH,
         source: SPOT_PATH,
         type: "circle",
+        //spots from the same station are on the same point, newest on top
+        layout: { "circle-sort-key": ["get", "time"] },
         paint: {
             "circle-radius": CIRCLE_RADIUS,
             "circle-color": ["get", "color"],

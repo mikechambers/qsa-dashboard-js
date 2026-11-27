@@ -23,20 +23,10 @@
 
 import { useEffect } from "react";
 import greatCircle from "@turf/great-circle";
-import { getJitteredCoordinates } from "@/utils/geo";
-import { ADD_SPOT_JITTER } from "@/consts/config";
 import { StationType } from "@/enums/StationType";
 import { STATION_LINE_PATH, STATION_PATH } from "./config";
-import { getStationIconId } from "./stationIcons";
-
-//turns a callsign into a number, so a station is always jittered the same way
-const hashCall = (call) =>
-    [...call].reduce((hash, c) => (hash * 31 + c.charCodeAt(0)) | 0, 0);
-
-export const getStationMapCoordinates = ({ call, location }) =>
-    ADD_SPOT_JITTER
-        ? getJitteredCoordinates(location, hashCall(call))
-        : location.coordinates;
+import { getStationMapCoordinates } from "./spotCoordinates";
+import { getStationIconId, getStationSignal } from "./stationIcons";
 
 //which is drawn on top where they overlap
 const getOrder = ({ type, working, callingYou }) => {
@@ -48,12 +38,15 @@ const getOrder = ({ type, working, callingYou }) => {
 //hook that draws the stations from getActiveStations, with lines from home to
 //those calling us or being worked
 export function useStationLayer(map, ready, stations, location) {
+    const getIcon = ({ type, decode }) =>
+        getStationIconId(type, getStationSignal(type, decode.snr));
+
     //only redraw when a station is added, removed, moves or changes
     const key = stations
-        .map(
-            ({ type, decode, working, callingYou }) =>
-                `${decode.call}:${decode.location.grid}:${type}:${working}:${callingYou}`,
-        )
+        .map((station) => {
+            const { decode, working, callingYou } = station;
+            return `${decode.call}:${decode.location.grid}:${getIcon(station)}:${working}:${callingYou}`;
+        })
         .join(",");
 
     useEffect(() => {
@@ -69,7 +62,7 @@ export function useStationLayer(map, ready, stations, location) {
                 },
                 properties: {
                     call: station.decode.call,
-                    icon: getStationIconId(station.type),
+                    icon: getIcon(station),
                     order: getOrder(station),
                 },
             })),

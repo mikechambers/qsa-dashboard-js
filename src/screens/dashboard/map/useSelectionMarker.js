@@ -44,6 +44,7 @@ export function useSelectionMarker(map, ready, target, location) {
     const key = target?.key;
     const type = target?.stationType;
     const position = target?.coordinates.join();
+    const color = target?.color;
     const hasLine = target?.line;
 
     //ring with a dot (spot) or a pin (station), so it moves with the map
@@ -61,7 +62,7 @@ export function useSelectionMarker(map, ready, target, location) {
         if (type) {
             center = document.createElement("img");
             center.className = classes.pin;
-            center.src = getStationIconURL(type);
+            center.src = getStationIconURL(type, target.signal);
             center.alt = "";
         } else {
             center = document.createElement("div");
@@ -90,7 +91,7 @@ export function useSelectionMarker(map, ready, target, location) {
             el.classList.add(classes.out);
             setTimeout(() => marker.remove(), EXIT_MS);
         };
-    }, [map, ready, key, type, position]);
+    }, [map, ready, key, type, position, color]);
 
     //line from home, and for a spot a small circle where it ends
     useEffect(() => {

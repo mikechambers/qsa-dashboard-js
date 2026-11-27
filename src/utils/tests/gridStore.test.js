@@ -68,7 +68,33 @@ describe("createGridStore", () => {
     });
 });
 
+describe("refine", () => {
+    it("uses a longer spot grid that is inside the one given", () => {
+        const grids = createGridStore();
+        grids.addReported("K1ABC", "FN42ab");
+
+        expect(grids.refine("k1abc", "FN42")).toBe("FN42ab");
+        //somewhere else, such as when portable
+        expect(grids.refine("K1ABC", "EM12")).toBe("EM12");
+        expect(grids.refine("W6DEF", "FN42")).toBe("FN42");
+    });
+});
+
 describe("withKnownGrid", () => {
+    it("makes a grid from a message more precise", () => {
+        const grids = createGridStore();
+        grids.addReported("K1ABC", "FN42ab");
+        const own = new Decode({
+            call: "K1ABC",
+            location: gridToLocation("FN42"),
+            locationSource: "message",
+        });
+
+        const d = withKnownGrid(own, grids, home);
+        expect(d.location.grid.toUpperCase()).toBe("FN42AB");
+        expect(d.locationSource).toBe("message");
+    });
+
     it("places a station and works out the distance again", () => {
         const grids = createGridStore();
         grids.addReported("K1ABC", "FN42");

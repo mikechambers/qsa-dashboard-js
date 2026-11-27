@@ -21,11 +21,12 @@
  * SOFTWARE.
  */
 
-import { ADD_SPOT_JITTER } from "@/consts/config";
 import { getCSSColorForSNR } from "@/utils/view";
-import { STATION_COLORS } from "./config";
-import { getSpotMapCoordinates } from "./spotCoordinates";
-import { getStationMapCoordinates } from "./useStationLayer";
+import {
+    getSpotMapCoordinates,
+    getStationMapCoordinates,
+} from "./spotCoordinates";
+import { getStationColor, getStationSignal } from "./stationIcons";
 
 //what the map needs to show the selection, from either a Spot or a station
 //(from getActiveStations). undefined if there is nowhere to show it
@@ -33,14 +34,15 @@ import { getStationMapCoordinates } from "./useStationLayer";
 //  key
 //  coordinates: where its marker is drawn (jitter included)
 //  at: where it is, for moving the map to it
-//  color, stationType (not set for a spot), line (draw a line from home)
+//  color, line (draw a line from home)
+//  stationType, signal: for the pin (see stationIcons). Not set for a spot
 export function getSelectionTarget(key, spot, station) {
     if (spot) {
         if (!spot.receiverLocation) return;
 
         return {
             key,
-            coordinates: getSpotMapCoordinates(spot, ADD_SPOT_JITTER),
+            coordinates: getSpotMapCoordinates(spot),
             at: spot.receiverLocation.coordinates,
             color: getCSSColorForSNR(spot.snr),
             line: true,
@@ -48,12 +50,15 @@ export function getSelectionTarget(key, spot, station) {
     }
 
     if (station) {
+        const signal = getStationSignal(station.type, station.decode.snr);
+
         return {
             key,
             coordinates: getStationMapCoordinates(station.decode),
             at: station.decode.location.coordinates,
-            color: STATION_COLORS[station.type],
+            color: getStationColor(station.type, signal),
             stationType: station.type,
+            signal,
             //calling us and being worked already have a line from home
             line: !station.callingYou && !station.working,
         };

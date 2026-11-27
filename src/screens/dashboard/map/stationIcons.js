@@ -23,6 +23,7 @@
 
 //the teardrop markers for stations WSJT-X is hearing. Drawn once here, and
 //used both on the map and in the map buttons
+import { SignalColor } from "@/enums/SignalColors";
 import { StationType } from "@/enums/StationType";
 import { STATION_COLORS } from "./config";
 
@@ -37,9 +38,19 @@ const PIXEL_RATIO = 3;
 const TEARDROP =
     "M0 0C-5 -7 -10 -11 -10 -17A10 10 0 1 1 10 -17C10 -11 5 -7 0 0Z";
 
-export const getStationIconId = (type) => `station-${type}`;
+//heard stations are colored by how strong their signal is, on the same scale
+//as spots. Returns the SignalColor name, or undefined for other types
+export const getStationSignal = (type, snr) =>
+    type === StationType.HEARD ? SignalColor.getNameForSNR(snr) : undefined;
 
-const drawIcon = (type) => {
+//signal is from getStationSignal. Without one, it is the color of the type
+export const getStationColor = (type, signal) =>
+    signal ? SignalColor.getColor(signal) : STATION_COLORS[type];
+
+export const getStationIconId = (type, signal) =>
+    signal ? `station-${type}-${signal}` : `station-${type}`;
+
+const drawIcon = (type, signal) => {
     const canvas = document.createElement("canvas");
     canvas.width = ICON_WIDTH * PIXEL_RATIO;
     canvas.height = ICON_HEIGHT * PIXEL_RATIO;
@@ -49,7 +60,7 @@ const drawIcon = (type) => {
     ctx.translate(ICON_WIDTH / 2, ICON_HEIGHT - ICON_PADDING);
 
     const teardrop = new Path2D(TEARDROP);
-    ctx.fillStyle = STATION_COLORS[type];
+    ctx.fillStyle = getStationColor(type, signal);
     ctx.fill(teardrop);
     ctx.strokeStyle = "white";
     ctx.lineWidth = 1.8;
@@ -71,14 +82,20 @@ const drawIcon = (type) => {
     return canvas;
 };
 
-export const getStationIconURL = (type) => drawIcon(type).toDataURL();
+export const getStationIconURL = (type, signal) =>
+    drawIcon(type, signal).toDataURL();
 
 export function addStationIcons(map) {
-    for (const type of [StationType.CQ, StationType.HEARD]) {
-        const canvas = drawIcon(type);
+    const icons = [
+        [StationType.CQ],
+        ...SignalColor.cases.map((signal) => [StationType.HEARD, signal]),
+    ];
+
+    for (const [type, signal] of icons) {
+        const canvas = drawIcon(type, signal);
 
         map.addImage(
-            getStationIconId(type),
+            getStationIconId(type, signal),
             canvas
                 .getContext("2d")
                 .getImageData(0, 0, canvas.width, canvas.height),

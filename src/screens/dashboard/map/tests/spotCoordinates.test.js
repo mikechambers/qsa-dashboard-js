@@ -22,12 +22,21 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { getSpotMapCoordinates } from "../spotCoordinates";
-import { getJitteredCoordinates, gridToLocation } from "@/utils/geo";
+import {
+    getSpotMapCoordinates,
+    getStationMapCoordinates,
+} from "../spotCoordinates";
+import { gridToLocation } from "@/utils/geo";
 
-const spot = (id = 1, grid = "FN42") => ({
+const spot = (call = "K1ABC", grid = "FN42", id = 1) => ({
     id,
+    receiverCall: call,
     receiverLocation: gridToLocation(grid),
+});
+
+const decode = (call = "K1ABC", grid = "FN42") => ({
+    call,
+    location: gridToLocation(grid),
 });
 
 describe("getSpotMapCoordinates", () => {
@@ -38,27 +47,36 @@ describe("getSpotMapCoordinates", () => {
         );
     });
 
-    it("returns the jittered location when jitter is on", () => {
-        const s = spot(99);
-        expect(getSpotMapCoordinates(s, true)).toEqual(
-            getJitteredCoordinates(s.receiverLocation, 99),
-        );
+    it("returns a point near the location when jitter is on", () => {
+        const s = spot();
         expect(getSpotMapCoordinates(s, true)).not.toEqual(
             s.receiverLocation.coordinates,
         );
     });
 
-    //the dot, marker and path line all call this, so they have to agree
-    it("gives the same point every time for the same spot", () => {
-        const s = spot(5);
-        expect(getSpotMapCoordinates(s, true)).toEqual(
-            getSpotMapCoordinates(s, true),
+    it("puts every spot from a station on the same point", () => {
+        expect(getSpotMapCoordinates(spot("K1ABC", "FN42", 1), true)).toEqual(
+            getSpotMapCoordinates(spot("K1ABC", "FN42", 2), true),
         );
     });
 
-    it("spreads spots that share a grid square", () => {
-        const a = getSpotMapCoordinates(spot(1), true);
-        const b = getSpotMapCoordinates(spot(2), true);
-        expect(a).not.toEqual(b);
+    it("spreads stations that share a grid square", () => {
+        expect(getSpotMapCoordinates(spot("K1ABC"), true)).not.toEqual(
+            getSpotMapCoordinates(spot("W6DEF"), true),
+        );
+    });
+
+    it("ignores precision beyond 6 characters", () => {
+        expect(getSpotMapCoordinates(spot("K1ABC", "FN42ab12"), true)).toEqual(
+            getSpotMapCoordinates(spot("K1ABC", "FN42ab"), true),
+        );
+    });
+});
+
+describe("getStationMapCoordinates", () => {
+    it("puts a heard station on the same point as its spots", () => {
+        expect(getStationMapCoordinates(decode(), true)).toEqual(
+            getSpotMapCoordinates(spot(), true),
+        );
     });
 });

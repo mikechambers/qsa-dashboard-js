@@ -48,6 +48,18 @@ export function createGridStore() {
         //the grid of a station that spotted us
         addReported: (call, grid) => add(reported, call, grid),
 
+        //the longer grid from their spots, if it is inside this one, as it
+        //says more precisely where they are. Otherwise the grid given
+        refine(call, grid) {
+            const spotted = reported.get(call?.toUpperCase());
+            const inside =
+                grid &&
+                spotted?.length > grid.length &&
+                spotted.toUpperCase().startsWith(grid.toUpperCase());
+
+            return inside ? spotted : grid;
+        },
+
         //{ grid, source } or undefined. What was sent over the air wins, as
         //it is what the station is saying itself
         find(call) {
@@ -66,15 +78,20 @@ export function createGridStore() {
 //the one the app uses
 export const gridStore = createGridStore();
 
-//a copy of the decode placed at a grid we know, if its message didn't have one.
+//a copy of the decode placed at the best grid we know: the one in its message,
+//or else one we learned, made more precise if their spots have a longer one.
 //Otherwise the same decode. home is our Location, for the distance
 export function withKnownGrid(decode, grids, home) {
-    if (decode.locationSource === "message") return decode;
-
-    const known = grids.find(decode.call);
+    const known =
+        decode.locationSource === "message"
+            ? { grid: decode.location?.grid, source: "message" }
+            : grids.find(decode.call);
     if (!known) return decode;
 
-    const location = gridToLocation(known.grid);
+    const grid = grids.refine(decode.call, known.grid);
+    if (known.source === "message" && grid === known.grid) return decode;
+
+    const location = gridToLocation(grid);
 
     return new Decode({
         ...decode,
