@@ -682,6 +682,7 @@ const WSJTX_TEST_SPOTS = [
     }),
 );
 
-export const MOCK_SPOTS = [...OLDER, ...HAND_SPOTS, ...WSJTX_TEST_SPOTS].map((data) =>
-    Spot.fromData(data, ADD_SPOT_JITTER),
-);
+//newest first, the same as live spots
+export const MOCK_SPOTS = [...OLDER, ...HAND_SPOTS, ...WSJTX_TEST_SPOTS]
+    .map((data) => Spot.fromData(data, ADD_SPOT_JITTER))
+    .sort((a, b) => b.date - a.date);

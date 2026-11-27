@@ -29,6 +29,7 @@ import {
     IconCloudExclamation,
     IconCloudX,
 } from "@tabler/icons-react";
+import { STATUS_ICON_SIZE } from "@/consts/config";
 
 const STATUS_STYLES = {
     [CS.CONNECTED]: {
@@ -55,7 +56,10 @@ export const ConnectionStatusBadge = () => {
 
     return (
         <Tooltip label={`PSK Reporter: ${label}`}>
-            <Icon size={28} color={`var(--mantine-color-${color}-6)`} />
+            <Icon
+                size={STATUS_ICON_SIZE}
+                color={`var(--mantine-color-${color}-6)`}
+            />
         </Tooltip>
     );
 };

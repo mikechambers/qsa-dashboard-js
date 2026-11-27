@@ -22,23 +22,47 @@
  */
 
 import { Tooltip } from "@mantine/core";
-import { IconBroadcast, IconBroadcastOff } from "@tabler/icons-react";
+import {
+    IconWorldCheck,
+    IconWorldExclamation,
+    IconWorldX,
+} from "@tabler/icons-react";
 import { useWsjtx } from "@/contexts/WsjtxContext";
+import { STATUS_ICON_SIZE } from "@/consts/config";
+
+//the same colors and badges as the PSK Reporter status, on a world
+const STATUS_STYLES = {
+    connected: {
+        color: "green",
+        label: "WSJT-X connected",
+        icon: IconWorldCheck,
+    },
+    waiting: {
+        color: "yellow",
+        label: "Waiting for WSJT-X",
+        icon: IconWorldExclamation,
+    },
+    error: {
+        color: "red",
+        label: "WSJT-X not connected",
+        icon: IconWorldX,
+    },
+};
 
 //WSJT-X connection indicator. Desktop only
 export const WsjtxStatus = () => {
-    const { available, connected } = useWsjtx();
+    const { available, connected, error } = useWsjtx();
 
     if (!available) return null;
 
-    const Icon = connected ? IconBroadcast : IconBroadcastOff;
-    const color = connected ? "green" : "red";
-    const label = connected ? "WSJT-X connected" : "WSJT-X not connected";
+    //error means we can't listen at all, such as when the port is in use
+    const state = error ? "error" : connected ? "connected" : "waiting";
+    const { color, label, icon: Icon } = STATUS_STYLES[state];
 
     return (
         <Tooltip label={label}>
             <Icon
-                size={28}
+                size={STATUS_ICON_SIZE}
                 color={`var(--mantine-color-${color}-6)`}
                 aria-label={label}
             />

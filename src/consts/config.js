@@ -52,6 +52,8 @@ export const DASHBOARD_PATH = "/dashboard";
 export const MIN_SNR = -30;
 export const SETTINGS_NAMESPACE = "qsa.setting";
 
+export const STATUS_ICON_SIZE = 22;
+
 export const MAP_DISTANCE_RING_PALETTE = {
     LIGHT: {
         ring: "#495057",
