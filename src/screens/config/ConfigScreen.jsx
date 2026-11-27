@@ -63,16 +63,19 @@ const Section = {
     WSJTX: "wsjtx",
     DISPLAY: "display",
     MAP: "map",
+    MISC: "misc",
 };
 
 const SECTIONS = [
     { value: Section.STATION, label: "Station" },
+    { value: Section.DISPLAY, label: "General" },
+    { value: Section.MAP, label: "Map" },
     //the web version has no WSJT-X
     ...(PLATFORM === Platform.DESKTOP
         ? [{ value: Section.WSJTX, label: "WSJT-X" }]
         : []),
-    { value: Section.DISPLAY, label: "Display" },
-    { value: Section.MAP, label: "Map" },
+
+    { value: Section.MISC, label: "Misc" },
 ];
 
 const greylineLayers = [
@@ -245,106 +248,72 @@ export default function ConfigScreen() {
                         )}
 
                         <Tabs.Panel value={Section.DISPLAY}>
-                            <Stack gap="lg">
-                                <Fieldset legend="Display">
-                                    <Stack gap="md">
-                                        <Stack gap={4}>
-                                            <Text size="sm" fw={600}>
-                                                Theme
-                                            </Text>
-                                            <SegmentedControl
-                                                fullWidth
-                                                value={settings.displayMode}
-                                                onChange={setDisplayMode}
-                                                data={[
-                                                    {
-                                                        label: "Light",
-                                                        value: DisplayMode.LIGHT,
-                                                    },
-                                                    {
-                                                        label: "Dark",
-                                                        value: DisplayMode.DARK,
-                                                    },
-                                                ]}
-                                            />
-                                        </Stack>
-
-                                        <Stack gap={4}>
-                                            <Text size="sm" fw={600}>
-                                                Units
-                                            </Text>
-                                            <SegmentedControl
-                                                fullWidth
-                                                value={settings.unitType}
-                                                onChange={setUnitType}
-                                                data={[
-                                                    {
-                                                        label: "Metric",
-                                                        value: UnitType.METRIC,
-                                                    },
-                                                    {
-                                                        label: "Imperial",
-                                                        value: UnitType.IMPERIAL,
-                                                    },
-                                                ]}
-                                            />
-                                        </Stack>
-
-                                        <Stack gap={4}>
-                                            <Text size="sm" fw={600}>
-                                                Time Zone
-                                            </Text>
-                                            <SegmentedControl
-                                                fullWidth
-                                                value={settings.timeMode}
-                                                onChange={setTimeMode}
-                                                data={[
-                                                    {
-                                                        label: "UTC",
-                                                        value: TimeMode.UTC,
-                                                    },
-                                                    {
-                                                        label: "Local",
-                                                        value: TimeMode.LOCAL,
-                                                    },
-                                                ]}
-                                            />
-                                        </Stack>
-                                    </Stack>
-                                </Fieldset>
-                                <Fieldset legend="Demo">
-                                    <Stack gap="md">
-                                        <Checkbox
-                                            checked={settings.demoMode}
-                                            onChange={(e) =>
-                                                setDemoMode(
-                                                    e.currentTarget.checked,
-                                                )
-                                            }
-                                            label="Add Mock Spots"
-                                            styles={{
-                                                label: { width: "100%" },
-                                                labelWrapper: { flex: 1 },
-                                            }}
-                                        />
-                                        <Text size="xs" c="dimmed">
-                                            Adds generated spot data. Change
-                                            requires{" "}
-                                            <Anchor
-                                                component="button"
-                                                type="button"
-                                                inherit
-                                                onClick={() =>
-                                                    window.location.reload()
-                                                }
-                                            >
-                                                page refresh
-                                            </Anchor>{" "}
-                                            to take effect.
+                            <Fieldset legend="Display">
+                                <Stack gap="md">
+                                    <Stack gap={4}>
+                                        <Text size="sm" fw={600}>
+                                            Theme
                                         </Text>
+                                        <SegmentedControl
+                                            fullWidth
+                                            value={settings.displayMode}
+                                            onChange={setDisplayMode}
+                                            data={[
+                                                {
+                                                    label: "Light",
+                                                    value: DisplayMode.LIGHT,
+                                                },
+                                                {
+                                                    label: "Dark",
+                                                    value: DisplayMode.DARK,
+                                                },
+                                            ]}
+                                        />
                                     </Stack>
-                                </Fieldset>
-                            </Stack>
+
+                                    <Stack gap={4}>
+                                        <Text size="sm" fw={600}>
+                                            Units
+                                        </Text>
+                                        <SegmentedControl
+                                            fullWidth
+                                            value={settings.unitType}
+                                            onChange={setUnitType}
+                                            data={[
+                                                {
+                                                    label: "Metric",
+                                                    value: UnitType.METRIC,
+                                                },
+                                                {
+                                                    label: "Imperial",
+                                                    value: UnitType.IMPERIAL,
+                                                },
+                                            ]}
+                                        />
+                                    </Stack>
+
+                                    <Stack gap={4}>
+                                        <Text size="sm" fw={600}>
+                                            Time Zone
+                                        </Text>
+                                        <SegmentedControl
+                                            fullWidth
+                                            value={settings.timeMode}
+                                            onChange={setTimeMode}
+                                            data={[
+                                                {
+                                                    label: "UTC",
+                                                    value: TimeMode.UTC,
+                                                },
+                                                {
+                                                    label: "Local",
+                                                    value: TimeMode.LOCAL,
+                                                },
+                                            ]}
+                                        />
+                                    </Stack>
+                                </Stack>
+                            </Fieldset>
                         </Tabs.Panel>
 
                         <Tabs.Panel value={Section.MAP}>
@@ -488,6 +457,39 @@ export default function ConfigScreen() {
                                             projection stretches the world.
                                         </Text>
                                     </Stack>
+                                </Stack>
+                            </Fieldset>
+                        </Tabs.Panel>
+
+                        <Tabs.Panel value={Section.MISC}>
+                            <Fieldset legend="Demo">
+                                <Stack gap="md">
+                                    <Checkbox
+                                        checked={settings.demoMode}
+                                        onChange={(e) =>
+                                            setDemoMode(e.currentTarget.checked)
+                                        }
+                                        label="Add Mock Spots"
+                                        styles={{
+                                            label: { width: "100%" },
+                                            labelWrapper: { flex: 1 },
+                                        }}
+                                    />
+                                    <Text size="xs" c="dimmed">
+                                        Adds generated spot data. Change
+                                        requires{" "}
+                                        <Anchor
+                                            component="button"
+                                            type="button"
+                                            inherit
+                                            onClick={() =>
+                                                window.location.reload()
+                                            }
+                                        >
+                                            page refresh
+                                        </Anchor>{" "}
+                                        to take effect.
+                                    </Text>
                                 </Stack>
                             </Fieldset>
                         </Tabs.Panel>

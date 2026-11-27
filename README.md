@@ -143,7 +143,7 @@ The app and installers are written to `src-tauri/target/release/bundle`.
 
 ### Demo mode
 
-If you want to play around without transmitting, turn on **Add Mock Spots** (under **Settings** > **Display**), which will prepopulate the app with mock spots.
+If you want to play around without transmitting, turn on **Add Mock Spots** (under **Settings** > **Misc**), which will prepopulate the app with mock spots.
 
 ## Usage
 
@@ -281,7 +281,6 @@ Click **Update connection** to save a new address or port.
 |          **Theme** | Light or Dark.                                                               |
 |          **Units** | Metric or Imperial.                                                          |
 |      **Time Zone** | UTC or Local (your system time zone).                                        |
-| **Add Mock Spots** | Demo mode: adds generated spot data. Requires a page refresh to take effect. |
 
 ### Map
 
@@ -294,6 +293,12 @@ Click **Update connection** to save a new address or port.
 |       **Max distance** | A ring at the distance of the furthest spot shown. The desktop app also draws one (in blue) for the furthest station heard.  |
 
 Grey Line and Distance rings can also be turned on and off with the buttons on the map.
+
+### Misc
+
+|            SETTING | DESCRIPTION                                                                  |
+| -----------------: | ---------------------------------------------------------------------------- |
+| **Add Mock Spots** | Demo mode: adds generated spot data. Requires a page refresh to take effect. |
 
 Settings are saved on your computer, in the browser's local storage (or the desktop app's).
 
