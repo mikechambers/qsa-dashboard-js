@@ -52,7 +52,7 @@ export function SettingsProvider({ children }) {
     //the connection to WSJT-X. Desktop only
     const [wsjtxEnabled, setWsjtxEnabled] = useLocalStorage({
         key: getSettingKey("wsjtxEnabled"),
-        defaultValue: true,
+        defaultValue: false,
         getInitialValueInEffect: false,
     });
 
