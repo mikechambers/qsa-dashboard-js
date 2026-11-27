@@ -9,7 +9,8 @@ pub fn run() {
     .plugin(tauri_plugin_opener::init())
     .invoke_handler(tauri::generate_handler![
       menu::set_menu_state,
-      wsjtx::listener::wsjtx_reply
+      wsjtx::listener::wsjtx_reply,
+      wsjtx::listener::wsjtx_configure
     ])
     .setup(|app| {
       if cfg!(debug_assertions) {
@@ -20,7 +21,6 @@ pub fn run() {
         )?;
       }
       menu::setup(app.handle())?;
-      wsjtx::start(app.handle().clone());
       Ok(())
     })
     .run(tauri::generate_context!())

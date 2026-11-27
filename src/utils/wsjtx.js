@@ -29,6 +29,21 @@ import { createDecoder } from "./wsjtxDecoder";
 import { gridStore } from "./gridStore";
 import { loadCallsignLookup } from "./callsignLookup";
 
+let configuring = Promise.resolve();
+
+//starts, restarts or stops the Rust listener. Rejects with a ListenError if it
+//can't listen. Calls are run one at a time, so the last one wins
+export function configureWsjtx({ enabled, address, port }) {
+    if (PLATFORM !== Platform.DESKTOP) return Promise.resolve();
+
+    const next = configuring
+        .catch(() => {})
+        .then(() => invoke("wsjtx_configure", { enabled, address, port }));
+    configuring = next;
+
+    return next;
+}
+
 //calls onMessage with each message from WSJT-X (sent by the Rust listener).
 //Returns a function that stops listening. Does nothing in the web version.
 export function listenToWsjtx(onMessage) {

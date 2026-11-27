@@ -24,7 +24,8 @@
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { Platform } from "@/enums/Platform";
 import { PLATFORM } from "@/utils/platform";
-import { listenToDecodes } from "@/utils/wsjtx";
+import { configureWsjtx, listenToDecodes } from "@/utils/wsjtx";
+import { useSettings } from "@/contexts/SettingsContext";
 import { applyStatus } from "@/utils/wsjtxDecoder";
 
 //WSJT-X sends a heartbeat every 15 seconds. Allow for a couple to go missing
@@ -35,7 +36,14 @@ const DECODE_LIMIT = 500;
 
 const WsjtxContext = createContext(null);
 
+//must be inside SettingsProvider
 export function WsjtxProvider({ children }) {
+    const { settings } = useSettings();
+    const { wsjtxEnabled, wsjtxAddress, wsjtxPort } = settings;
+    const desktop = PLATFORM === Platform.DESKTOP;
+
+    const [error, setError] = useState(null); //why we aren't listening
+    const [attempt, setAttempt] = useState(0); //changes to try again
     const [connected, setConnected] = useState(false);
     const [status, setStatus] = useState(null);
     const [decodes, setDecodes] = useState([]); //newest first
@@ -43,8 +51,30 @@ export function WsjtxProvider({ children }) {
     const batchRef = useRef([]);
     const lastHeardRef = useRef(0);
 
+    //(re)starts the listener whenever its settings change
     useEffect(() => {
-        if (PLATFORM !== Platform.DESKTOP) return;
+        if (!desktop) return;
+
+        let current = true; //false once the settings have changed again
+        configureWsjtx({
+            enabled: wsjtxEnabled,
+            address: wsjtxAddress,
+            port: wsjtxPort,
+        }).catch((e) => {
+            console.error("WSJT-X: could not listen", e);
+            if (!current) return;
+            //anything but a ListenError is a message
+            setError(e?.kind ? e : { kind: "other", message: String(e) });
+        });
+
+        return () => {
+            current = false;
+            setError(null);
+        };
+    }, [desktop, wsjtxEnabled, wsjtxAddress, wsjtxPort, attempt]);
+
+    useEffect(() => {
+        if (!desktop || !wsjtxEnabled) return;
 
         const stopListening = listenToDecodes((message, decode) => {
             if (decode) console.log("decode", decode.text, decode);
@@ -93,14 +123,25 @@ export function WsjtxProvider({ children }) {
         return () => {
             clearInterval(timer);
             stopListening();
+
+            //what we heard was from the old connection
+            batchRef.current = [];
+            lastHeardRef.current = 0;
+            setConnected(false);
+            setStatus(null);
+            setDecodes([]);
         };
-    }, []);
+    }, [desktop, wsjtxEnabled, wsjtxAddress, wsjtxPort]);
 
     return (
         <WsjtxContext.Provider
             value={{
-                //false in the web version, so UI can hide itself
-                available: PLATFORM === Platform.DESKTOP,
+                //false in the web version or when turned off, so UI can hide
+                //itself
+                available: desktop && wsjtxEnabled,
+                error,
+                //try to listen again, after an error
+                retry: () => setAttempt((n) => n + 1),
                 connected,
                 status,
                 decodes,

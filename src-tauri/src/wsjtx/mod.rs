@@ -4,4 +4,4 @@
 pub mod listener;
 mod protocol;
 
-pub use listener::{Connection, start};
+pub use listener::Connection;

@@ -31,6 +31,7 @@ import { ActionIcon } from "@mantine/core";
 import { useSettings } from "@/contexts/SettingsContext";
 import { StationType } from "@/enums/StationType";
 import { useShownTypes } from "@/hooks/useTypeFilter";
+import { useWsjtx } from "@/contexts/WsjtxContext";
 import { SNRLegend } from "./SNRKey";
 import { MapControls } from "./MapControls";
 
@@ -126,7 +127,10 @@ export const SpotMap = ({ spots, location }) => {
         stationFocus,
     } = useSelectedSpot();
     const { furthestSpot } = useSpotData();
-    const spotsShown = useShownTypes().show[StationType.SPOT];
+    //without WSJT-X there are no type buttons, so spots are always shown
+    const { available } = useWsjtx();
+    const spotShownSetting = useShownTypes().show[StationType.SPOT];
+    const spotsShown = !available || spotShownSetting;
 
     const mapContainer = useRef(null);
 

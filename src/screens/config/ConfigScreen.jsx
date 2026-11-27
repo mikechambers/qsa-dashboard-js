@@ -43,6 +43,9 @@ import { isValidCallsign, isValidMaidenHeadGrid } from "@/utils/radio";
 
 import { useNavigate } from "react-router";
 import NavBar from "../nav/NavBar";
+import { WsjtxSettings } from "./WsjtxSettings";
+import { Platform } from "@/enums/Platform";
+import { PLATFORM } from "@/utils/platform";
 import classes from "./ConfigScreen.module.css";
 import screenClasses from "../screens.module.css";
 import { UnitType } from "@/enums/UnitType";
@@ -177,6 +180,8 @@ export default function ConfigScreen() {
                             </Button>
                         </Stack>
                     </Fieldset>
+
+                    {PLATFORM === Platform.DESKTOP && <WsjtxSettings />}
 
                     <Fieldset legend="Display">
                         <Stack gap="md">

@@ -28,6 +28,7 @@ import { TimeMode } from "../enums/TimeMode";
 import { DisplayMode } from "../enums/DisplayMode";
 import { ElevationValue } from "@/lib/twilight";
 import { SETTINGS_NAMESPACE } from "@/consts/config";
+import { DEFAULT_WSJTX_ADDRESS, DEFAULT_WSJTX_PORT } from "@/consts/wsjtx";
 
 const SettingsContext = createContext(null);
 
@@ -45,6 +46,25 @@ export function SettingsProvider({ children }) {
     const [grid, setGrid] = useLocalStorage({
         key: getSettingKey("grid"),
         defaultValue: "",
+        getInitialValueInEffect: false,
+    });
+
+    //the connection to WSJT-X. Desktop only
+    const [wsjtxEnabled, setWsjtxEnabled] = useLocalStorage({
+        key: getSettingKey("wsjtxEnabled"),
+        defaultValue: true,
+        getInitialValueInEffect: false,
+    });
+
+    const [wsjtxAddress, setWsjtxAddress] = useLocalStorage({
+        key: getSettingKey("wsjtxAddress"),
+        defaultValue: DEFAULT_WSJTX_ADDRESS,
+        getInitialValueInEffect: false,
+    });
+
+    const [wsjtxPort, setWsjtxPort] = useLocalStorage({
+        key: getSettingKey("wsjtxPort"),
+        defaultValue: DEFAULT_WSJTX_PORT,
         getInitialValueInEffect: false,
     });
 
@@ -171,6 +191,9 @@ export function SettingsProvider({ children }) {
         timeMode,
         grid,
         callsign,
+        wsjtxEnabled,
+        wsjtxAddress,
+        wsjtxPort,
         unitType,
         displayMode,
         showGreyline,
@@ -194,6 +217,9 @@ export function SettingsProvider({ children }) {
                 settings,
                 setCallsign,
                 setGrid,
+                setWsjtxEnabled,
+                setWsjtxAddress,
+                setWsjtxPort,
                 setUnitType,
                 setTimeMode,
                 setDisplayMode,
