@@ -25,53 +25,59 @@ import { useEffect } from "react";
 import { Marker } from "maplibre-gl";
 import greatCircle from "@turf/great-circle";
 import {
+    CONNECTION_LINE_PATH,
+    CONNECTION_POINT,
     EMPTY_FEATURE_COLLECTION,
-    SELECTED_STATION_PATH,
-    STATION_COLORS,
 } from "./config";
+import { isMapAlive } from "./mapView";
 import { getStationIconURL } from "./stationIcons";
-import { isMapAlive } from "./useSpotHighlightEffects";
-import { getStationMapCoordinates } from "./useStationLayer";
 
 import classes from "./SpotPopup.module.css";
 
 //how long the marker lingers to play its exit animation (.out in the css)
 const EXIT_MS = 200;
 
-//draws the selected heard / CQ station like a selected spot: a larger marker
-//and ring that pop in, and a line from home. station is from
-//getActiveStations, and must be mappable. undefined if none is selected
-export function useSelectedStationMarker(map, ready, station, location) {
-    const type = station?.type;
-    const call = station?.decode.call;
-    const grid = station?.decode.location.grid;
-    //calling us and being worked already have a line from home
-    const hasLine = station?.callingYou || station?.working;
+//draws the selected spot or station: a larger HTML marker above all the others,
+//and a line from home. The detail card is separate (see SpotPopup). target is
+//from getSelectionTarget, undefined if nothing is selected
+export function useSelectionMarker(map, ready, target, location) {
+    const key = target?.key;
+    const type = target?.stationType;
+    const position = target?.coordinates.join();
+    const hasLine = target?.line;
 
+    //ring with a dot (spot) or a pin (station), so it moves with the map
     useEffect(() => {
-        if (!map || !ready || !station) return;
+        if (!map || !ready || !target) return;
 
         const el = document.createElement("div");
         el.className = classes.marker;
-        el.style.setProperty("--spot-color", STATION_COLORS[type]);
+        el.style.setProperty("--spot-color", target.color);
 
         const ring = document.createElement("div");
         ring.className = classes.ring;
 
-        const pin = document.createElement("img");
-        pin.className = classes.pin;
-        pin.src = getStationIconURL(type);
-        pin.alt = "";
+        let center;
+        if (type) {
+            center = document.createElement("img");
+            center.className = classes.pin;
+            center.src = getStationIconURL(type);
+            center.alt = "";
+        } else {
+            center = document.createElement("div");
+            center.className = classes.dot;
+        }
 
-        el.append(ring, pin);
+        el.append(ring, center);
 
         const marker = new Marker({ element: el })
-            .setLngLat(getStationMapCoordinates(station.decode))
+            .setLngLat(target.coordinates)
             .addTo(map);
 
         return () => {
-            //as for spots, shrink away before removing, unless the map is
-            //gone or the user prefers reduced motion
+            //let the marker shrink away before removing it. Skip that if the
+            //map is already gone (unmounting) or the user prefers reduced
+            //motion.
             const reduceMotion = window.matchMedia(
                 "(prefers-reduced-motion: reduce)",
             ).matches;
@@ -84,25 +90,33 @@ export function useSelectedStationMarker(map, ready, station, location) {
             el.classList.add(classes.out);
             setTimeout(() => marker.remove(), EXIT_MS);
         };
-    }, [map, ready, call, type, grid]);
+    }, [map, ready, key, type, position]);
 
+    //line from home, and for a spot a small circle where it ends
     useEffect(() => {
-        if (!map || !ready || !station || !location || hasLine) return;
+        if (!map || !ready || !target || !location || !hasLine) return;
 
-        map.getSource(SELECTED_STATION_PATH)?.setData(
-            greatCircle(
-                location.coordinates,
-                getStationMapCoordinates(station.decode),
-                { npoints: 64 },
-            ),
+        map.getSource(CONNECTION_LINE_PATH)?.setData(
+            greatCircle(location.coordinates, target.coordinates, {
+                npoints: 64,
+            }),
         );
+
+        if (!type) {
+            map.getSource(CONNECTION_POINT)?.setData({
+                type: "Feature",
+                geometry: { type: "Point", coordinates: target.coordinates },
+                properties: {},
+            });
+        }
 
         return () => {
             if (!isMapAlive(map)) return;
 
-            map.getSource(SELECTED_STATION_PATH)?.setData(
+            map.getSource(CONNECTION_LINE_PATH)?.setData(
                 EMPTY_FEATURE_COLLECTION,
             );
+            map.getSource(CONNECTION_POINT)?.setData(EMPTY_FEATURE_COLLECTION);
         };
-    }, [map, ready, call, grid, hasLine, location?.id]);
+    }, [map, ready, key, position, hasLine, location?.id]);
 }

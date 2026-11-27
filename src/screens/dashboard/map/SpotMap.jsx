@@ -22,7 +22,7 @@
  */
 
 import { useEffect, useRef } from "react";
-import { LngLatBounds, setWorkerUrl } from "maplibre-gl";
+import { setWorkerUrl } from "maplibre-gl";
 import workerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
 import "maplibre-gl/dist/maplibre-gl.css";
 
@@ -41,9 +41,12 @@ import { getMapStyle } from "./mapStyle";
 import { useMapInstance } from "./useMapInstance";
 import { useHomeMarker } from "./useHomeMarker";
 import { useSpotLayer } from "./useSpotLayer";
-import { useSelectedSpotMarker } from "./useSelectedSpotMarker";
 import { SpotPopup } from "./SpotPopup";
 import { StationLayer } from "./StationLayer";
+import { SelectionLayer } from "./SelectionLayer";
+import { useMapPointer } from "./useMapPointer";
+import { fitPath } from "./mapView";
+import { getSpotSequence } from "@/utils/selection";
 import { MapLineKey } from "./MapLineKey";
 
 import { addGreylineLayers } from "./greylineLayers";
@@ -58,73 +61,24 @@ import {
 } from "./spotLayers";
 
 import { useSelectedSpot } from "../../../contexts/SelectedSpotContext";
-import { useSpotHighlightEffects } from "./useSpotHighlightEffects";
 import { useDistanceBands } from "./useDistanceBands";
 import { useSpotData } from "@/contexts/SpotDataContext";
-import { SELECTED_STATION_PATH, SPOT_PATH } from "./config";
+import { SPOT_PATH } from "./config";
 
 //setup work for map library to do stuff on another threads
 setWorkerUrl(workerUrl);
 
-//how long the mouse rests on a table row before an off-map spot is brought into view
-const HOVER_FIT_DELAY_MS = 350;
-
-//rough size of the area the popup card covers, at the top right of the map
-const POPUP_AREA = { width: 360, openHeight: 260, closedHeight: 56 };
-
-//is the point on screen, and not hidden behind the popup?
-const isInView = (map, [lng, lat], detailOpen) => {
-    //the map can show several copies of the world, so use the one nearest the center
-    const centerLng = map.getCenter().lng;
-    const wrappedLng = centerLng + ((((lng - centerLng + 180) % 360) + 360) % 360) - 180;
-
-    const { x, y } = map.project([wrappedLng, lat]);
-    const { clientWidth: w, clientHeight: h } = map.getContainer();
-    const margin = 30;
-
-    //the popup covers the top right of the map
-    const popupHeight = detailOpen
-        ? POPUP_AREA.openHeight
-        : POPUP_AREA.closedHeight;
-    if (x > w - POPUP_AREA.width && y < popupHeight) return false;
-
-    return x > margin && x < w - margin && y > margin && y < h - margin;
-};
-
-//zoom the map to show the path from home to a spot
-const fitPath = (map, [fromLng, fromLat], [toLng, toLat]) => {
-    //take the short way around the world
-    if (toLng - fromLng > 180) toLng -= 360;
-    else if (toLng - fromLng < -180) toLng += 360;
-
-    const bounds = new LngLatBounds(
-        [fromLng, fromLat],
-        [fromLng, fromLat],
-    ).extend([toLng, toLat]);
-
-    const reduceMotion = window.matchMedia(
-        "(prefers-reduced-motion: reduce)",
-    ).matches;
-
-    //extra room on top, so the spot isn't hidden behind the popup
-    map.fitBounds(bounds, {
-        padding: { top: 200, bottom: 50, left: 60, right: 60 },
-        maxZoom: 6,
-        duration: reduceMotion ? 0 : 800,
-    });
-};
-
 export const SpotMap = ({ spots, location }) => {
     const { settings, setShowSpotDetail } = useSettings();
     const {
+        selectedKey,
         selectedSpot,
-        setSelectedSpot,
+        selectedCall,
+        pinned,
+        hover,
+        pin,
+        unpin,
         focusRequest,
-        station,
-        hoverStation,
-        pinStation,
-        unpinStation,
-        stationFocus,
     } = useSelectedSpot();
     const { furthestSpot } = useSpotData();
     //without WSJT-X there are no type buttons, so spots are always shown
@@ -156,8 +110,6 @@ export const SpotMap = ({ spots, location }) => {
         addStationLineLayers(map);
         addSpotLayer(map);
         addConnectionLineLayer(map);
-        //spots and stations each have a line, as both can be selected
-        addConnectionLineLayer(map, SELECTED_STATION_PATH);
         addConnectionPointLayer(map);
         addStationLayer(map);
     }, [ready]);
@@ -176,8 +128,8 @@ export const SpotMap = ({ spots, location }) => {
 
     //draw items
     useGreyline(map, ready, settings);
-    useSpotHighlightEffects(map, ready, selectedSpot, location);
-    useSpotLayer(map, ready, spots, setSelectedSpot);
+    useSpotLayer(map, ready, spots);
+    useMapPointer(map, ready, hover, pin);
 
     //the Spot toggle and type filter
     useEffect(() => {
@@ -189,44 +141,19 @@ export const SpotMap = ({ spots, location }) => {
             spotsShown ? "visible" : "none",
         );
         //don't leave a hidden spot selected
-        if (!spotsShown) setSelectedSpot(undefined);
-    }, [map, ready, spotsShown, setSelectedSpot]);
+        if (!spotsShown && getSpotSequence(selectedKey) !== undefined) {
+            pin(undefined);
+        }
+    }, [map, ready, spotsShown, pin]);
 
-    //selected spot ring / dot
-    useSelectedSpotMarker(map, ready, selectedSpot);
-
-    //when a spot is clicked in the table, fit the path from home to it so
-    //the spot (and its popup) is always in view, even a far away one.
+    //when something is clicked in the table, fit the path from home to it so
+    //it (and its popup) is always in view, even if far away.
     useEffect(() => {
-        const to = selectedSpot?.receiverLocation?.coordinates;
-        if (!map || !ready || !focusRequest || !location || !to) return;
+        const to = focusRequest?.coordinates;
+        if (!map || !ready || !location || !to) return;
 
         fitPath(map, location.coordinates, to);
     }, [focusRequest]);
-
-    //the same for a station clicked in the table
-    useEffect(() => {
-        const to = stationFocus?.coordinates;
-        if (!map || !ready || !location || !to) return;
-
-        fitPath(map, location.coordinates, to);
-    }, [stationFocus]);
-
-    //hovering a table row selects a spot, but if it is off the map there is
-    //nothing to see. Once the mouse rests on the row for a moment, bring the
-    //path into view. The delay keeps the map from swooping around while the
-    //mouse passes over rows.
-    useEffect(() => {
-        const to = selectedSpot?.receiverLocation?.coordinates;
-        if (!map || !ready || !location || !to) return;
-        if (isInView(map, to, settings.showSpotDetail)) return;
-
-        const timer = setTimeout(
-            () => fitPath(map, location.coordinates, to),
-            HOVER_FIT_DELAY_MS,
-        );
-        return () => clearTimeout(timer);
-    }, [map, ready, selectedSpot?.id]);
 
     //center and zoom on home location
     const centerOnLocation = () => {
@@ -264,8 +191,8 @@ export const SpotMap = ({ spots, location }) => {
             </ActionIcon>
             <SpotPopup
                 spot={selectedSpot}
-                stationCall={station.call}
-                onUnpin={station.pinned ? unpinStation : undefined}
+                stationCall={selectedCall}
+                onUnpin={pinned ? unpin : undefined}
                 open={settings.showSpotDetail}
                 onOpenChange={setShowSpotDetail}
             />
@@ -273,14 +200,8 @@ export const SpotMap = ({ spots, location }) => {
             <MapControls />
             <MapLineKey />
 
-            <StationLayer
-                map={map}
-                ready={ready}
-                location={location}
-                selectedCall={station.call}
-                onHover={hoverStation}
-                onPin={pinStation}
-            />
+            <StationLayer map={map} ready={ready} location={location} />
+            <SelectionLayer map={map} ready={ready} location={location} />
 
             <SNRLegend
                 selectedSpot={selectedSpot}

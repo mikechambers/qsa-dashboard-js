@@ -28,7 +28,7 @@ import { convertAndFormatDistance } from "@/utils/view";
 
 //row is from getTableRows: a spot, or a heard / CQ station
 export const SpotPod = ({ row, title }) => {
-    const { setSelectedSpot, pinStation } = useSelectedSpot();
+    const { pin } = useSelectedSpot();
     const { settings } = useSettings();
 
     const { d, unit } =
@@ -42,15 +42,7 @@ export const SpotPod = ({ row, title }) => {
               .join(" · ")
         : "";
 
-    const onSpotClick = () => {
-        if (row?.decode) {
-            pinStation(row.call);
-        } else {
-            //a pinned station would otherwise stay in the card
-            pinStation();
-            setSelectedSpot(row?.spot);
-        }
-    };
+    const onSpotClick = () => pin(row?.key);
 
     return (
         <SummaryBase

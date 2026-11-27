@@ -25,6 +25,7 @@
 
 import { StationType, STATION_TYPE_LIST } from "@/enums/StationType";
 import { TableTab } from "@/enums/TableTab";
+import { spotKey, stationKey } from "@/utils/selection";
 
 //a row is the same shape whether it came from a Spot or a Decode, so that
 //what shows one doesn't need to know which:
@@ -38,7 +39,7 @@ import { TableTab } from "@/enums/TableTab";
 //spot or decode is the original, for what only one of them can do
 
 export const spotRow = (spot) => ({
-    key: `spot-${spot.sequence}`,
+    key: spotKey(spot.sequence),
     type: StationType.SPOT,
     call: spot.receiverCall,
     date: spot.date,
@@ -56,7 +57,7 @@ export const spotRow = (spot) => ({
 
 //station is from getActiveStations
 export const stationRow = ({ type, decode }) => ({
-    key: `station-${decode.call}`,
+    key: stationKey(decode.call),
     type,
     call: decode.call,
     date: decode.receivedAt,

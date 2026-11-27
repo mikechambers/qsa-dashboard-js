@@ -144,7 +144,7 @@ const HeardStation = ({ station, onUnpin, open, toggle }) => {
 };
 
 //card for a PSK Reporter spot
-const SpotStation = ({ spot, open, toggle }) => {
+const SpotStation = ({ spot, onUnpin, open, toggle }) => {
     const { settings } = useSettings();
     const { available, decodes } = useWsjtx();
 
@@ -171,6 +171,7 @@ const SpotStation = ({ spot, open, toggle }) => {
             showYouHear={available}
             time={formatWhen(row.date, settings.timeMode)}
             note={note}
+            onUnpin={onUnpin}
             open={open}
             toggle={toggle}
         />
@@ -182,7 +183,7 @@ const SpotStation = ({ spot, open, toggle }) => {
 export const SpotPopup = ({
     spot,
     stationCall,
-    onUnpin, //set when the heard station is pinned
+    onUnpin, //set when the selection is pinned
     open,
     onOpenChange,
 }) => {
@@ -217,7 +218,14 @@ export const SpotPopup = ({
             />
         );
     } else if (spot) {
-        content = <SpotStation spot={spot} open={open} toggle={toggle} />;
+        content = (
+            <SpotStation
+                spot={spot}
+                onUnpin={onUnpin}
+                open={open}
+                toggle={toggle}
+            />
+        );
     } else {
         //nothing selected yet
         content = (

@@ -22,41 +22,29 @@
  */
 
 import { useEffect } from "react";
+import { useSelectedSpot } from "@/contexts/SelectedSpotContext";
 import { useActiveStations } from "@/hooks/useActiveStations";
 import { useShownTypes } from "@/hooks/useTypeFilter";
 import { getShownStations } from "@/utils/activeStations";
 import { useStationLayer } from "./useStationLayer";
-import { useSelectedStationMarker } from "./useSelectedStationMarker";
 
 //stations heard by WSJT-X. Draws nothing in the web version, as there are no
 //decodes. A separate component so that new decodes don't rerender the whole
-//map. The details are shown in SpotPopup
-export const StationLayer = ({
-    map,
-    ready,
-    location,
-    selectedCall,
-    onHover,
-    onPin,
-}) => {
+//map
+export const StationLayer = ({ map, ready, location }) => {
+    const { selectedCall, pin } = useSelectedSpot();
     const { show } = useShownTypes();
     const stations = getShownStations(useActiveStations(), show);
 
-    useStationLayer(map, ready, stations, location, onHover, onPin);
-    useSelectedStationMarker(
-        map,
-        ready,
-        stations.find((s) => s.decode.call === selectedCall),
-        location,
-    );
+    useStationLayer(map, ready, stations, location);
 
-    //don't show an expired station again if it comes back later
+    //don't show an expired (or hidden) station again if it comes back later
     const expired =
         selectedCall && !stations.some((s) => s.decode.call === selectedCall);
 
     useEffect(() => {
-        if (expired) onPin(undefined);
-    }, [expired, onPin]);
+        if (expired) pin(undefined);
+    }, [expired, pin]);
 
     return null;
 };

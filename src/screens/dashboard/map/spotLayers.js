@@ -59,18 +59,18 @@ export function addSpotLayer(map) {
 }
 
 //adds a layer for drawing a connection line, from home to what is selected
-export function addConnectionLineLayer(map, id = CONNECTION_LINE_PATH) {
-    map.addSource(id, {
+export function addConnectionLineLayer(map) {
+    map.addSource(CONNECTION_LINE_PATH, {
         type: "geojson",
         data: EMPTY_FEATURE_COLLECTION,
     });
 
     //the layer we draw the line into. empty until something is selected.
     map.addLayer({
-        id,
+        id: CONNECTION_LINE_PATH,
         type: "line",
         layout: { "line-cap": "round" },
-        source: id,
+        source: CONNECTION_LINE_PATH,
         paint: {
             "line-color": LOCATION_COLOR,
             "line-width": 2,

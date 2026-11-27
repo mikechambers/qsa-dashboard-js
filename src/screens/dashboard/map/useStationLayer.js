@@ -21,7 +21,7 @@
  * SOFTWARE.
  */
 
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import greatCircle from "@turf/great-circle";
 import { getJitteredCoordinates } from "@/utils/geo";
 import { ADD_SPOT_JITTER } from "@/consts/config";
@@ -46,25 +46,8 @@ const getOrder = ({ type, working, callingYou }) => {
 };
 
 //hook that draws the stations from getActiveStations, with lines from home to
-//those calling us or being worked. onHover is called with the callsign under
-//the mouse. onClick is called with the callsign clicked (or tapped), or
-//undefined for a click anywhere else
-export function useStationLayer(
-    map,
-    ready,
-    stations,
-    location,
-    onHover,
-    onClick,
-) {
-    const hoverRef = useRef(onHover);
-    const clickRef = useRef(onClick);
-
-    useEffect(() => {
-        hoverRef.current = onHover;
-        clickRef.current = onClick;
-    }, [onHover, onClick]);
-
+//those calling us or being worked
+export function useStationLayer(map, ready, stations, location) {
     //only redraw when a station is added, removed, moves or changes
     const key = stations
         .map(
@@ -111,42 +94,4 @@ export function useStationLayer(
             ),
         });
     }, [map, ready, key, location?.id]);
-
-    useEffect(() => {
-        if (!map || !ready) return;
-
-        const handleClick = (e) => {
-            if (!map.getLayer(STATION_PATH)) return;
-
-            const [hit] = map.queryRenderedFeatures(e.point, {
-                layers: [STATION_PATH],
-            });
-            clickRef.current(hit?.properties.call);
-        };
-
-        //mousemove (not just mouseenter) so moving straight from one station
-        //to a neighboring one still updates the details
-        const handleHover = (e) => {
-            hoverRef.current(e.features[0]?.properties.call);
-        };
-
-        const onEnter = () => {
-            map.getCanvas().style.cursor = "pointer";
-        };
-        const onLeave = () => {
-            map.getCanvas().style.cursor = "";
-        };
-
-        map.on("click", handleClick);
-        map.on("mouseenter", STATION_PATH, onEnter);
-        map.on("mousemove", STATION_PATH, handleHover);
-        map.on("mouseleave", STATION_PATH, onLeave);
-
-        return () => {
-            map.off("click", handleClick);
-            map.off("mouseenter", STATION_PATH, onEnter);
-            map.off("mousemove", STATION_PATH, handleHover);
-            map.off("mouseleave", STATION_PATH, onLeave);
-        };
-    }, [map, ready]);
 }

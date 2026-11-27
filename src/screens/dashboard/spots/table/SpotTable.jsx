@@ -78,18 +78,10 @@ const getEmptyText = (tab, { hidden, filtered }) => {
 export const SpotTable = ({ onCollapse }) => {
     const { spots, filteredSpots, filter, clearSpots } = useSpotData();
     const { shownSpots, show, setShow } = useTypeFilter();
-    const hoverSelect = useRef(false);
-    //the station row under the mouse
-    const hoveredCall = useRef(null);
+    //the row under the mouse
+    const hoveredKey = useRef(null);
 
-    const {
-        selectedSpot,
-        setSelectedSpot,
-        focusSpot,
-        station,
-        hoverStation,
-        focusStation,
-    } = useSelectedSpot();
+    const { selectedKey, hover, focus } = useSelectedSpot();
 
     const [scrollParent, setScrollParent] = useState(null);
 
@@ -158,18 +150,12 @@ export const SpotTable = ({ onCollapse }) => {
     rowsRef.current = rows;
     virtualizerRef.current = virtualizer;
 
-    const selectedSequence = selectedSpot?.sequence;
-
+    //show the row selected from the map or a pod. Not one selected by hovering
+    //it here, as it is already in view
     useEffect(() => {
-        if (selectedSequence == null) return;
-        if (hoverSelect.current) {
-            hoverSelect.current = false;
-            return;
-        }
+        if (!selectedKey || hoveredKey.current === selectedKey) return;
 
-        const index = rowsRef.current.findIndex(
-            (r) => r.spot?.sequence === selectedSequence,
-        );
+        const index = rowsRef.current.findIndex((r) => r.key === selectedKey);
         if (index < 0) return;
 
         const v = virtualizerRef.current;
@@ -177,25 +163,7 @@ export const SpotTable = ({ onCollapse }) => {
         const visible =
             range && index >= range.startIndex && index <= range.endIndex;
         if (!visible) v.scrollToIndex(index, { align: "start" });
-    }, [selectedSequence]);
-
-    //the same for a station hovered on the map
-    const stationCall = station.call;
-
-    useEffect(() => {
-        if (!stationCall || hoveredCall.current === stationCall) return;
-
-        const index = rowsRef.current.findIndex(
-            (r) => !r.spot && r.call === stationCall,
-        );
-        if (index < 0) return;
-
-        const v = virtualizerRef.current;
-        const range = v.range;
-        const visible =
-            range && index >= range.startIndex && index <= range.endIndex;
-        if (!visible) v.scrollToIndex(index, { align: "start" });
-    }, [stationCall]);
+    }, [selectedKey]);
 
     const virtualItems = virtualizer.getVirtualItems();
 
@@ -329,9 +297,7 @@ export const SpotTable = ({ onCollapse }) => {
                             {virtualItems.map((virtualRow) => {
                                 const row = rows[virtualRow.index];
                                 const { spot } = row;
-                                const selected = spot
-                                    ? selectedSpot === spot
-                                    : station.call === row.call;
+                                const selected = row.key === selectedKey;
 
                                 //how they hear us, for stations calling CQ
                                 const report =
@@ -360,16 +326,12 @@ export const SpotTable = ({ onCollapse }) => {
                                             scrollMarginTop: 40,
                                             cursor: "pointer",
                                         }}
-                                        onClick={() => {
-                                            if (spot) {
-                                                focusSpot(spot);
-                                                return;
-                                            }
-                                            focusStation(
-                                                row.call,
+                                        onClick={() =>
+                                            focus(
+                                                row.key,
                                                 row.location?.coordinates,
-                                            );
-                                        }}
+                                            )
+                                        }
                                         id={
                                             spot
                                                 ? `spot-row-${spot.id}`
@@ -377,16 +339,11 @@ export const SpotTable = ({ onCollapse }) => {
                                         }
                                         key={row.key}
                                         onMouseEnter={() => {
-                                            if (!spot) {
-                                                hoveredCall.current = row.call;
-                                                hoverStation(row.call);
-                                                return;
-                                            }
-                                            hoverSelect.current = true;
-                                            setSelectedSpot(spot);
+                                            hoveredKey.current = row.key;
+                                            hover(row.key);
                                         }}
                                         onMouseLeave={() => {
-                                            hoveredCall.current = null;
+                                            hoveredKey.current = null;
                                         }}
                                     >
                                         <Table.Td w={20}>

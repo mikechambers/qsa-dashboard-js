@@ -21,96 +21,73 @@
  * SOFTWARE.
  */
 
+import { createContext, useCallback, useContext, useState } from "react";
 import {
-    createContext,
-    useCallback,
-    useContext,
-    useEffect,
-    useState,
-} from "react";
+    NO_SELECTION,
+    getSpotSequence,
+    getStationCall,
+    hoverSelection,
+    pinSelection,
+    unpinSelection,
+} from "@/utils/selection";
 import { useSpotData } from "./SpotDataContext";
 
 const SelectedSpotContext = createContext(null);
 
+//the one selected spot or station (see utils/selection). Only the key is kept
+//here: station details change with every decode, so what needs them looks them
+//up itself, rather than rerendering everything that uses this
 export function SelectedSpotProvider({ children }) {
-    const [selectedId, setSelectedId] = useState();
+    const [selection, setSelection] = useState(NO_SELECTION);
 
-    //bumped when a spot is explicitly chosen (a table click), so the map can
-    //fit the path to it. Hover selection doesn't do this, since the map would
-    //jump around as the mouse moves over the table.
+    //bumped when something is explicitly chosen (a table click), so the map can
+    //fit the path to it
     const [focusRequest, setFocusRequest] = useState(null);
 
     const { filteredSpots } = useSpotData();
 
-    const selectedSpot = filteredSpots.find((s) => s.id === selectedId);
+    const sequence = getSpotSequence(selection.key);
+    const selectedSpot =
+        sequence === undefined
+            ? undefined
+            : filteredSpots.find((s) => s.sequence === sequence);
 
     //forget a selected spot once a filter hides it (or it is cleared), so it
     //doesn't come back selected when the filter is changed or reset
-    if (selectedId !== undefined && !selectedSpot) setSelectedId(undefined);
+    if (sequence !== undefined && !selectedSpot) setSelection(NO_SELECTION);
 
-    //only need to create once
-    const setSelectedSpot = useCallback((spot) => setSelectedId(spot?.id), []);
-
-    //WSJT-X station shown in the card, as { call, pinned }. The card shows
-    //either a spot or a station, whichever was hovered last. Clicking a
-    //station pins it, so it stays while the mouse moves to the Reply button
-    const [station, setStation] = useState({});
-
-    //like focusRequest, to bring a station clicked in the table into view
-    const [stationFocus, setStationFocus] = useState(null);
-
-    const hoverStation = useCallback((call) => {
-        if (!call) return;
-        setStation((prev) => (prev.pinned ? prev : { call, pinned: false }));
-        setSelectedId(undefined);
-    }, []);
-
-    //with no call, clears the station
-    const pinStation = useCallback((call) => {
-        setStation(call ? { call, pinned: true } : {});
-        if (call) setSelectedId(undefined);
-    }, []);
-
-    const unpinStation = useCallback(
-        () => setStation((prev) => ({ ...prev, pinned: false })),
+    //preview what the mouse is over, unless something is pinned
+    const hover = useCallback(
+        (key) => setSelection((prev) => hoverSelection(prev, key)),
         [],
     );
 
-    //pin a station and show it on the map. coordinates is optional
-    const focusStation = useCallback(
-        (call, coordinates) => {
-            pinStation(call);
-            setStationFocus((r) => ({ coordinates, n: (r?.n ?? 0) + 1 }));
+    //with no key, clears the selection
+    const pin = useCallback((key) => setSelection(pinSelection(key)), []);
+
+    const unpin = useCallback(() => setSelection(unpinSelection), []);
+
+    //pin and show it on the map. coordinates is optional
+    const focus = useCallback(
+        (key, coordinates) => {
+            pin(key);
+            setFocusRequest((r) => ({ coordinates, n: (r?.n ?? 0) + 1 }));
         },
-        [pinStation],
+        [pin],
     );
-
-    //a hovered spot replaces the station, unless it is pinned
-    useEffect(() => {
-        if (selectedSpot?.id) setStation((prev) => (prev.pinned ? prev : {}));
-    }, [selectedSpot?.id]);
-
-    const focusSpot = useCallback((spot) => {
-        if (!spot) return;
-        //clicking a spot in the table always shows it
-        setStation({});
-        setSelectedId(spot.id);
-        setFocusRequest((r) => ({ id: spot.id, n: (r?.n ?? 0) + 1 }));
-    }, []);
 
     return (
         <SelectedSpotContext.Provider
             value={{
+                selectedKey: selection.key,
+                pinned: selection.pinned,
                 selectedSpot,
-                setSelectedSpot,
-                focusSpot,
+                selectedCall: getStationCall(selection.key),
+                hover,
+                pin,
+                unpin,
+                focus,
                 focusRequest,
-                station,
-                hoverStation,
-                pinStation,
-                unpinStation,
-                focusStation,
-                stationFocus,
             }}
         >
             {children}

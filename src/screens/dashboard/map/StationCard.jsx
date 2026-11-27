@@ -23,7 +23,7 @@
 
 import { ActionIcon, Group, Stack, Text } from "@mantine/core";
 import { IconPinFilled } from "@tabler/icons-react";
-import { STATION_TYPE_INFO } from "@/enums/StationType";
+import { STATION_TYPE_INFO, StationType } from "@/enums/StationType";
 import { getCSSColorForSNR } from "@/utils/view";
 
 import { BandBadge } from "../spots/BandBadge";
@@ -115,6 +115,22 @@ export const StationCard = ({
         </span>
     );
 
+    const unpinButton = onUnpin && (
+        <ActionIcon
+            variant="default"
+            size="sm"
+            aria-label="Unpin"
+            title="Unpin"
+            onClick={onUnpin}
+        >
+            <IconPinFilled size={14} />
+        </ActionIcon>
+    );
+
+    //a pinned station card needs the room for the pin button. A spot keeps its
+    //badges, as the mode isn't shown anywhere else
+    const showBadges = !onUnpin || type === StationType.SPOT;
+
     //collapsed: the essentials on one line
     if (!open) {
         return (
@@ -140,6 +156,7 @@ export const StationCard = ({
                                 ? `↑ ${formatSNR(theyHearYou)} · ↓ ${formatSNR(youHearThem)} dB`
                                 : `${formatSNR(theyHearYou)} dB`}
                         </Text>
+                        {unpinButton}
                         {toggle}
                     </Group>
                 </Group>
@@ -166,23 +183,13 @@ export const StationCard = ({
                     </Text>
                 </Group>
                 <Group gap={4} wrap="nowrap" style={{ flexShrink: 0 }}>
-                    {/* pinned cards need the room for the pin button */}
-                    {onUnpin ? (
-                        <ActionIcon
-                            variant="default"
-                            size="sm"
-                            aria-label="Unpin station"
-                            title="Unpin"
-                            onClick={onUnpin}
-                        >
-                            <IconPinFilled size={14} />
-                        </ActionIcon>
-                    ) : (
+                    {showBadges && (
                         <>
                             {mode && <ModeField mode={mode} />}
                             {band && <BandBadge band={band} />}
                         </>
                     )}
+                    {unpinButton}
                     {toggle}
                 </Group>
             </Group>
