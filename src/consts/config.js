@@ -33,6 +33,17 @@ export const CQ_EXPIRY_MS = 75_000;
 //how often to check what has expired or aged out
 export const STATION_REFRESH_MS = 5000;
 export const AGE_FILTER_REFRESH_MS = 5000;
+//how often the shared clock ticks, which keeps the ages in the table current
+export const SECOND_TICK_MS = 1000;
+//how often the times in the band tiles are redrawn
+export const BANDS_REFRESH_MS = 15_000;
+//how often the grey line is redrawn, so it stays in the right place
+export const TWILIGHT_REFRESH_MS = 60_000;
+//decodes arrive in bursts, so they are added in batches this often
+export const WSJTX_BATCH_MS = 500;
+//WSJT-X is gone after this long without a message. It sends a heartbeat every
+//15 seconds, so this allows for a couple to go missing
+export const WSJTX_TIMEOUT_MS = 40_000;
 //the choices of the age filter, besides all
 export const AGE_FILTER_MINUTES = [5, 15, 30, 60];
 export const SETTINGS_PATH = "/settings";

@@ -56,9 +56,6 @@ import {
 import { TableTabs } from "./TableTabs";
 import { TypeLine } from "./TypeLine";
 
-//how often to update the ages in the table
-const AGE_REFRESH_MS = 5000;
-
 //what to say when there are no rows. tab is undefined for a mix of types
 const getEmptyText = (tab, { hidden, filtered }) => {
     if (hidden) {
@@ -100,15 +97,6 @@ export const SpotTable = ({ onCollapse }) => {
         available ? show : { [StationType.SPOT]: true },
     );
     const totalSpots = shownSpots.length;
-
-    //rerender now and then so the ages stay right
-    const [, setTick] = useState(0);
-    useEffect(() => {
-        if (!available) return;
-
-        const timer = setInterval(() => setTick((t) => t + 1), AGE_REFRESH_MS);
-        return () => clearInterval(timer);
-    }, [available]);
 
     const [emptyTitle, emptyDescription] = getEmptyText(tab, {
         hidden: available && !Object.values(show).some(Boolean),

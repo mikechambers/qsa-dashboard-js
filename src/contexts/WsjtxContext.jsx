@@ -27,13 +27,13 @@ import { PLATFORM } from "@/utils/platform";
 import { configureWsjtx, listenToDecodes } from "@/utils/wsjtx";
 import { useSettings } from "@/contexts/SettingsContext";
 import { applyStatus } from "@/utils/wsjtxDecoder";
-import { DECODE_LIMIT, HEARD_LIMIT } from "@/consts/config";
+import {
+    DECODE_LIMIT,
+    HEARD_LIMIT,
+    WSJTX_BATCH_MS,
+    WSJTX_TIMEOUT_MS,
+} from "@/consts/config";
 import { mergeHeard } from "@/utils/activeStations";
-
-//WSJT-X sends a heartbeat every 15 seconds. Allow for a couple to go missing
-const TIMEOUT_MS = 40_000;
-//decodes arrive in bursts, so add them to state in batches
-const BATCH_MS = 500;
 
 const WsjtxContext = createContext(null);
 
@@ -116,7 +116,7 @@ export function WsjtxProvider({ children }) {
         });
 
         const timer = setInterval(() => {
-            if (Date.now() - lastHeardRef.current > TIMEOUT_MS) {
+            if (Date.now() - lastHeardRef.current > WSJTX_TIMEOUT_MS) {
                 setConnected(false);
                 setStatus(null);
             }
@@ -129,7 +129,7 @@ export function WsjtxProvider({ children }) {
                 );
                 setHeard((prev) => mergeHeard(batch, prev, HEARD_LIMIT));
             }
-        }, BATCH_MS);
+        }, WSJTX_BATCH_MS);
 
         return () => {
             clearInterval(timer);

@@ -29,8 +29,6 @@ import {
 } from "@/lib/twilight";
 import { EMPTY_FEATURE_COLLECTION } from "./config";
 
-export const TWILIGHT_REFRESH_MS = 60_000;
-
 const TWILIGHT_LINES = "TWILIGHT_LINES";
 const NIGHT_PATH = "NIGHT_PATH";
 const DAY_PATH = "DAY_PATH";

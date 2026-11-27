@@ -23,9 +23,13 @@
 
 import { Group, Text } from "@mantine/core";
 import { STATION_TYPE_INFO } from "@/enums/StationType";
+import { useSecondTick } from "@/hooks/useSecondTick";
 import { shortAge } from "@/utils/tableRows";
 import { STATION_COLORS } from "../../map/config";
 import { TypeIcon } from "../../map/TypeIcon";
+
+//only this rerenders on each tick, not the table
+const Age = ({ date }) => shortAge(date, useSecondTick());
 
 //under the callsign: what the row is, and how old
 export const TypeLine = ({ type, date }) => (
@@ -37,7 +41,7 @@ export const TypeLine = ({ type, date }) => (
             c={STATION_COLORS[type]}
             style={{ whiteSpace: "nowrap" }}
         >
-            {STATION_TYPE_INFO[type].name} · {shortAge(date)}
+            {STATION_TYPE_INFO[type].name} · <Age date={date} />
         </Text>
     </Group>
 );

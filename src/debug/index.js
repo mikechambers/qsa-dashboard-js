@@ -44,7 +44,7 @@ const NOW = Date.now();
 
 // ---- your hand-written spots: same spacing, anchored to now -----------------
 
-const REF_LAST = Date.parse("2026-11-12T18:45:07Z"); // newest original timestamp
+const REF_LAST = Date.parse("2026-11-12T18:49:07Z"); // newest original timestamp
 const at = (iso) => new Date(NOW - 20 * SECOND - (REF_LAST - Date.parse(iso)));
 
 // ---- generated older spots --------------------------------------------------

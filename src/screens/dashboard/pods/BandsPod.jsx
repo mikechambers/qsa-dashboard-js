@@ -21,6 +21,7 @@
  * SOFTWARE.
  */
 
+import { BANDS_REFRESH_MS } from "@/consts/config";
 import { useEffect, useRef, useState } from "react";
 import { ActionIcon, Box, Group, Text } from "@mantine/core";
 import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
@@ -169,7 +170,7 @@ export const BandsPod = ({
 }) => {
     //times in the tiles are relative, so redraw every so often
     const [, setTick] = useState(0);
-    const interval = useInterval(() => setTick((t) => t + 1), 15000);
+    const interval = useInterval(() => setTick((t) => t + 1), BANDS_REFRESH_MS);
     useEffect(() => {
         interval.start();
         return interval.stop;
