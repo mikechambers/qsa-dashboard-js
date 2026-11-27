@@ -94,6 +94,13 @@ describe("SpotFilter.filter", () => {
         expect(result.map((s) => s.receiverCall)).toEqual(["K1ABC"]);
     });
 
+    it("ignores spaces around the callsign", () => {
+        const spots = [spot({ receiverCall: "K1ABC" })];
+        const filter = new SpotFilter().with({ callsign: " k1 " });
+        expect(filter.filter(spots)).toHaveLength(1);
+        expect(new SpotFilter().with({ callsign: " " }).hasFilter()).toBe(false);
+    });
+
     it("does not match a callsign in the middle", () => {
         const result = new SpotFilter()
             .with({ callsign: "ABC" })

@@ -97,14 +97,17 @@ export const isValidCallsign = (callsign) => {
 
 export const isValidUSCallsign = (callsign) => {
     //ai helped with the regex
-    return /^(?:[KNW][0-9][A-Z]{2,3}|(?:A[A-L]|[KNW][A-Z])[0-9][A-Z]{1,3})$/i.test(
+    //includes the 1x1 special event calls, such as K4A
+    return /^(?:[KNW][0-9][A-Z]{1,3}|(?:A[A-L]|[KNW][A-Z])[0-9][A-Z]{1,3})$/i.test(
         callsign,
     );
 };
 
 export const isValidGlobalCallsign = (callsign) => {
     //ai helped with the regex
-    return /^(?:[A-Z]{1,2}|[A-Z][0-9]|[0-9][A-Z])[0-9][A-Z]{1,3}$/i.test(
+    //looser than the US one, for special event calls such as GB100RS, II0IARU
+    //and 3DA0RU
+    return /^(?:3DA|[A-Z]{1,2}|[A-Z][0-9]|[0-9][A-Z])[0-9]{1,4}[A-Z]{1,4}$/i.test(
         callsign,
     );
 };

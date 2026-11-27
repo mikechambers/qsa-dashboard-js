@@ -40,6 +40,9 @@ describe('isValidCallsign: valid', () => {
     'VE3ABC', 'PY2ABC', 'LU1ABC', 'JA1ABC', 'VK2ABC', 'ZL1ABC', 'BV1ABC',
     // Digit-first prefixes
     '9A1A', '4X4AA', '2E0ABC', '5B4ABC',
+    // Special events
+    'GB100RS', '3DA0RU', 'VI110WIA', 'TM100AB', 'DL2025X', 'II0IARU',
+    'OE2025XXX', 'K4A', 'W1A', 'N5N',
   ])('accepts %s', (call) => {
     expect(isValidCallsign(call)).toBe(true)
   })

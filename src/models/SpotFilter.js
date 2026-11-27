@@ -49,7 +49,7 @@ export class SpotFilter {
 
     hasFilter() {
         return (
-            this.callsign != SpotFilterDefaults.CALLSIGN ||
+            this.callsign?.trim() != SpotFilterDefaults.CALLSIGN ||
             this.band != SpotFilterDefaults.BAND ||
             this.mode != SpotFilterDefaults.MODE ||
             this.snr != SpotFilterDefaults.SNR ||
@@ -61,8 +61,9 @@ export class SpotFilter {
 
     //whether the other station of a spot or decode passes
     matches({ call, band, mode, snr, distance, date }, now = Date.now()) {
-        if (this.callsign) {
-            const c = this.callsign.toUpperCase();
+        //trimmed here rather than as it is typed
+        const c = this.callsign?.trim().toUpperCase();
+        if (c) {
             if (!call?.toUpperCase().startsWith(c)) {
                 return false;
             }

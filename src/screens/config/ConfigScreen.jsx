@@ -147,7 +147,7 @@ export default function ConfigScreen() {
                     return null;
                 }
 
-                let o = isValidMaidenHeadGrid(grid);
+                let o = isValidMaidenHeadGrid(g);
 
                 return o ? null : "Invalid Maidenhead Grid";
             },
