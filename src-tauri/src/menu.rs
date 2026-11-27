@@ -1,14 +1,24 @@
-// The native menu items for moving between screens. The web app owns the
-// screens, so picking an item sends it an event, and it tells us which items
+// The native menu, laid out to each platform's conventions. The web app owns
+// the screens, so picking one sends it an event, and it tells us which items
 // to disable.
-use tauri::menu::{Menu, MenuItem, MenuItemKind, PredefinedMenuItem, Submenu};
+use tauri::menu::{
+  HELP_SUBMENU_ID, Menu, MenuItem, PredefinedMenuItem, Submenu, WINDOW_SUBMENU_ID,
+};
 use tauri::{AppHandle, Emitter, Manager, State, Wry};
+use tauri_plugin_opener::OpenerExt;
 
 // the item ids, also sent to the web app (see utils/menu.js)
 const DASHBOARD: &str = "dashboard";
 const SETTINGS: &str = "settings";
 const ABOUT: &str = "about";
 const FULLSCREEN: &str = "fullscreen";
+const QUIT: &str = "quit";
+const HELP: &str = "help";
+const ISSUES: &str = "issues";
+
+const APP_NAME: &str = "QSA Dashboard";
+const HELP_URL: &str = "https://github.com/mikechambers/qsa-dashboard-js#readme";
+const ISSUES_URL: &str = "https://github.com/mikechambers/qsa-dashboard-js/issues";
 
 const NAVIGATE_EVENT: &str = "menu-navigate";
 
@@ -19,40 +29,22 @@ pub struct NavItems {
 }
 
 pub fn setup(app: &AppHandle) -> tauri::Result<()> {
-  let item = |id: &str, text: &str, keys: Option<&str>| {
-    MenuItem::with_id(app, id, text, true, keys)
-  };
+  let mac = cfg!(target_os = "macos");
 
-  let about_text = if cfg!(target_os = "macos") {
-    "About QSA Dashboard"
-  } else {
-    "About"
-  };
+  // mac marks items that need more input with an ellipsis. The & marks the Alt
+  // key letter on windows and linux, and is removed on mac
+  let settings_text = if mac { "Settings…" } else { "&Settings" };
 
   let items = NavItems {
-    dashboard: item(DASHBOARD, "Dashboard", Some("CmdOrCtrl+D"))?,
-    settings: item(SETTINGS, "Settings", Some("CmdOrCtrl+,"))?,
-    about: item(ABOUT, about_text, None)?,
+    dashboard: item(app, DASHBOARD, "&Dashboard", Some("CmdOrCtrl+D"))?,
+    settings: item(app, SETTINGS, settings_text, Some("CmdOrCtrl+,"))?,
+    about: item(app, ABOUT, &format!("About {APP_NAME}"), None)?,
   };
 
-  let menu = if cfg!(target_os = "macos") {
+  let menu = if mac {
     mac_menu(app, &items)?
   } else {
-    // other platforms have no menu by default, so just add ours. The
-    // standard full screen item only exists on mac, so these need their own
-    let view = Submenu::with_items(
-      app,
-      "View",
-      true,
-      &[
-        &items.dashboard,
-        &items.settings,
-        &items.about,
-        &PredefinedMenuItem::separator(app)?,
-        &item(FULLSCREEN, "Toggle Full Screen", Some("F11"))?,
-      ],
-    )?;
-    Menu::with_items(app, &[&view])?
+    window_menu_bar(app, &items)?
   };
 
   app.set_menu(menu)?;
@@ -68,6 +60,12 @@ pub fn setup(app: &AppHandle) -> tauri::Result<()> {
       if let Err(error) = toggle_fullscreen(app) {
         log::error!("could not toggle full screen: {error}");
       }
+    } else if id == QUIT {
+      app.exit(0);
+    } else if id == HELP {
+      open_link(app, HELP_URL);
+    } else if id == ISSUES {
+      open_link(app, ISSUES_URL);
     }
   });
 
@@ -81,43 +79,145 @@ fn toggle_fullscreen(app: &AppHandle) -> tauri::Result<()> {
   Ok(())
 }
 
-// the standard mac menu (which has full screen in its View menu), with About and Settings in the app menu, and
-// Dashboard in the View menu
+// opens in the system browser
+fn open_link(app: &AppHandle, url: &str) {
+  if let Err(error) = app.opener().open_url(url, None::<&str>) {
+    log::error!("could not open {url}: {error}");
+  }
+}
+
+fn item(app: &AppHandle, id: &str, text: &str, keys: Option<&str>) -> tauri::Result<MenuItem<Wry>> {
+  MenuItem::with_id(app, id, text, true, keys)
+}
+
+// built in full, rather than from Menu::default, which names Hide and Quit
+// after the bundle, has no Show All and lists Close Window twice
 fn mac_menu(app: &AppHandle, items: &NavItems) -> tauri::Result<Menu<Wry>> {
-  let menu = Menu::default(app)?;
-  let submenus: Vec<_> = menu
-    .items()?
-    .iter()
-    .filter_map(MenuItemKind::as_submenu)
-    .cloned()
-    .collect();
+  let app_menu = Submenu::with_items(
+    app,
+    APP_NAME,
+    true,
+    &[
+      &items.about,
+      &PredefinedMenuItem::separator(app)?,
+      &items.settings,
+      &PredefinedMenuItem::separator(app)?,
+      &PredefinedMenuItem::services(app, None)?,
+      &PredefinedMenuItem::separator(app)?,
+      &PredefinedMenuItem::hide(app, Some(&format!("Hide {APP_NAME}")))?,
+      &PredefinedMenuItem::hide_others(app, None)?,
+      &PredefinedMenuItem::show_all(app, None)?,
+      &PredefinedMenuItem::separator(app)?,
+      &PredefinedMenuItem::quit(app, Some(&format!("Quit {APP_NAME}")))?,
+    ],
+  )?;
 
-  // the app menu is always first, and starts with the standard About panel,
-  // which ours replaces
-  if let Some(app_menu) = submenus.first() {
-    app_menu.remove_at(0)?;
-    app_menu.insert_items(
-      &[
-        &items.about,
-        &PredefinedMenuItem::separator(app)?,
-        &items.settings,
-      ],
-      0,
-    )?;
-  }
+  let file = Submenu::with_items(
+    app,
+    "File",
+    true,
+    &[&PredefinedMenuItem::close_window(app, None)?],
+  )?;
 
-  let view = submenus
-    .iter()
-    .find(|menu| menu.text().is_ok_and(|text| text == "View"));
+  // needed for copy and paste to work
+  let edit = Submenu::with_items(
+    app,
+    "Edit",
+    true,
+    &[
+      &PredefinedMenuItem::undo(app, None)?,
+      &PredefinedMenuItem::redo(app, None)?,
+      &PredefinedMenuItem::separator(app)?,
+      &PredefinedMenuItem::cut(app, None)?,
+      &PredefinedMenuItem::copy(app, None)?,
+      &PredefinedMenuItem::paste(app, None)?,
+      &PredefinedMenuItem::select_all(app, None)?,
+    ],
+  )?;
 
-  if let Some(view) = view {
-    view.insert_items(
-      &[&items.dashboard, &PredefinedMenuItem::separator(app)?],
-      0,
-    )?;
-  }
+  let view = Submenu::with_items(
+    app,
+    "View",
+    true,
+    &[
+      &items.dashboard,
+      &PredefinedMenuItem::separator(app)?,
+      &PredefinedMenuItem::fullscreen(app, None)?,
+    ],
+  )?;
 
-  Ok(menu)
+  // the ids let mac add its own items to these two
+  let window = Submenu::with_id_and_items(
+    app,
+    WINDOW_SUBMENU_ID,
+    "Window",
+    true,
+    &[
+      &PredefinedMenuItem::minimize(app, None)?,
+      &PredefinedMenuItem::maximize(app, None)?,
+    ],
+  )?;
+
+  let help = Submenu::with_id_and_items(
+    app,
+    HELP_SUBMENU_ID,
+    "Help",
+    true,
+    &[
+      &item(app, HELP, &format!("{APP_NAME} Help"), None)?,
+      &item(app, ISSUES, "Report an Issue", None)?,
+    ],
+  )?;
+
+  Menu::with_items(app, &[&app_menu, &file, &edit, &view, &window, &help])
+}
+
+// windows and linux
+fn window_menu_bar(app: &AppHandle, items: &NavItems) -> tauri::Result<Menu<Wry>> {
+  // windows calls it Exit, and already closes with Alt+F4. The built in quit
+  // item doesn't work on linux, so both use our own
+  let (quit_text, quit_keys) = if cfg!(windows) {
+    ("E&xit", None)
+  } else {
+    ("&Quit", Some("Ctrl+Q"))
+  };
+
+  let file = Submenu::with_items(
+    app,
+    "&File",
+    true,
+    &[
+      &items.settings,
+      &PredefinedMenuItem::separator(app)?,
+      &item(app, QUIT, quit_text, quit_keys)?,
+    ],
+  )?;
+
+  // the standard full screen item only exists on mac
+  let view = Submenu::with_items(
+    app,
+    "&View",
+    true,
+    &[
+      &items.dashboard,
+      &PredefinedMenuItem::separator(app)?,
+      &item(app, FULLSCREEN, "&Full Screen", Some("F11"))?,
+    ],
+  )?;
+
+  let help = Submenu::with_items(
+    app,
+    "&Help",
+    true,
+    &[
+      &item(app, HELP, &format!("{APP_NAME} &Help"), None)?,
+      &item(app, ISSUES, "&Report an Issue", None)?,
+      &PredefinedMenuItem::separator(app)?,
+      &items.about,
+    ],
+  )?;
+
+  Menu::with_items(app, &[&file, &view, &help])
 }
 
 // which items can be picked

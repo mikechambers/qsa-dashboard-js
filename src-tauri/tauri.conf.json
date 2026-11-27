@@ -32,6 +32,9 @@
   "bundle": {
     "active": true,
     "targets": "all",
+    "macOS": {
+      "bundleName": "QSA Dashboard"
+    },
     "resources": {
       "resources/map/": "map/"
     },
