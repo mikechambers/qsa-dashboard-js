@@ -28,6 +28,7 @@ import App from "./App";
 import { ABOUT_PATH, DASHBOARD_PATH, SETTINGS_PATH } from "@/consts/config";
 import { Platform } from "@/enums/Platform";
 import { PLATFORM } from "@/utils/platform";
+import { blockContextMenu } from "@/utils/contextMenu";
 import { AboutScreen } from "@/screens/about/AboutScreen";
 
 //loaded on first visit, so their code stays out of the initial bundle
@@ -39,6 +40,11 @@ const DashboardScreen = lazy(
 //the desktop app opens on the dashboard (which goes to settings if there is
 //no callsign yet). The web version opens on About
 const START_PATH = PLATFORM === Platform.DESKTOP ? DASHBOARD_PATH : ABOUT_PATH;
+
+//left on in dev, for Inspect Element, and on the web
+if (PLATFORM === Platform.DESKTOP && !import.meta.env.DEV) {
+    blockContextMenu(window);
+}
 
 const root = document.getElementById("root");
 
